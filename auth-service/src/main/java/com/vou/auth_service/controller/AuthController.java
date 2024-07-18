@@ -1,12 +1,13 @@
 package com.vou.auth_service.controller;
 
-import com.vou.auth_service.dto.request.ApiResponse;
-import com.vou.auth_service.dto.request.LoginDto;
-import com.vou.auth_service.exception.TestCustomException;
+import com.vou.auth_service.dto.*;
+import com.vou.auth_service.entity.Auth;
 import com.vou.auth_service.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,25 +20,69 @@ public class AuthController {
     }
 
     @GetMapping
-    public ApiResponse<String> hello() {
-        ApiResponse<String> response = new ApiResponse<>();
-        response.setMessage("Success");
-        response.setResult("Hello world");
+    public ApiResponse<List<Auth>> getAuthList() {
+        ApiResponse<List<Auth>> authList = new ApiResponse<>();
+        authList.setResult(authService.getAuthList());
+        return authList;
+    }
+
+    @PostMapping("/token")
+    public ApiResponse<AuthResponse> getToken(@Valid @RequestBody AuthDto authDto) {
+        ApiResponse<AuthResponse> response = new ApiResponse<>();
+        AuthResponse authResponse = authService.authenticate(authDto);
         response.setCode(200);
+        response.setMessage("Authorized");
+        response.setResult(authResponse);
         return response;
     }
 
-    @PostMapping("exception")
-    public void testException() {
-        throw new TestCustomException("This is a test message", 69);
-    }
-
-    @PostMapping("login")
-    public ApiResponse<String> login(@Valid @RequestBody LoginDto loginDto) {
-        ApiResponse<String> response = new ApiResponse<>();
-        response.setResult(authService.login(loginDto));
+    @PostMapping("/refresh")
+    public ApiResponse<AuthResponse> refreshToken(@Valid @RequestBody RefreshDto refreshDto) {
+        ApiResponse<AuthResponse> response = new ApiResponse<>();
+        AuthResponse authResponse = authService.refresh(refreshDto);
         response.setCode(200);
+        response.setMessage("Authorized");
+        response.setResult(authResponse);
         return response;
     }
 
+    @PostMapping("/verify")
+    public ApiResponse<String> verifyToken(@Valid @RequestBody VerifyDto verifyDto) {
+        boolean verified = authService.verify(verifyDto.getToken());
+        ApiResponse<String> response = new ApiResponse<>();
+        response.setCode(verified ? 200:401);
+        response.setMessage(verified ? "Authorized" : "Unauthorized");
+        return response;
+    }
+
+    @PostMapping("/logout")
+    public void logout(@Valid @RequestBody LogoutDto logoutDto) {
+        authService.logout(logoutDto);
+    }
+
+    @PostMapping("/register")
+    public ApiResponse<Auth> register(@Valid @RequestBody AuthDto authDto) {
+        ApiResponse<Auth> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(authService.createAuth(authDto));
+        apiResponse.setCode(200);
+        return apiResponse;
+    }
+
+    // FOR DEBUGGING ONLY
+    @DeleteMapping("/delete/{username}")
+    public ApiResponse<String> delete(@PathVariable String username) {
+        ApiResponse<String> apiResponse = new ApiResponse<>();
+        authService.deleteAuth(username);
+        apiResponse.setCode(200);
+        apiResponse.setMessage("User deleted successfully");
+        return apiResponse;
+    }
+
+    @GetMapping("/protected")
+    public ApiResponse<String> protectedRoute() {
+        ApiResponse<String> response = new ApiResponse<>();
+        response.setMessage("Hey there");
+        response.setCode(200);
+        return response;
+    }
 }
