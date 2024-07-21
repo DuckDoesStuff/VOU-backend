@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run API" type="Application" factoryName="Application">
+    <envs>
+      <env name="SPRING_PROFILES_ACTIVE" value="local" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.vou.auth_service.AuthServiceApplication" />
+    <module name="auth-service.main" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
