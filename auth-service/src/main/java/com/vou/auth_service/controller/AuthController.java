@@ -85,4 +85,12 @@ public class AuthController {
         response.setCode(200);
         return response;
     }
+
+    @PostMapping("/test")
+    public ApiResponse<String> testRoute() {
+        ApiResponse<String> response = new ApiResponse<>();
+        response.setMessage("Testing 123");
+        response.setCode(200);
+        return response;
+    }
 }
