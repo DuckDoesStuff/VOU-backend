@@ -2,7 +2,7 @@ spring:
   application:
     name: "auth-service"
   datasource:
-    url: "jdbc:postgresql://localhost:5432/auth_service"
+    url: "jdbc:postgresql://db:5432/auth_service"
     username: vou
     password: vouadmin123
   jpa:
