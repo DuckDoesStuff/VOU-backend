@@ -1,0 +1,47 @@
+2024/07/11 12:59:39 [notice] 10412#21100: signal process started
+2024/07/11 12:59:42 [notice] 23396#23476: signal process started
+2024/07/11 12:59:42 [error] 23396#23476: CreateFile() "C:\Users\Toan\Desktop\nginx-1.26.1 (1)\nginx-1.26.1/logs/nginx.pid" failed (2: The system cannot find the file specified)
+2024/07/21 18:05:22 [emerg] 18784#18644: "upstream" directive is not allowed here in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:44
+2024/07/21 18:06:26 [emerg] 29732#10456: host not found in upstream "your-auth-service" in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:55
+2024/07/22 20:02:04 [emerg] 17916#10924: invalid host in upstream "localhost:8080/auth" in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:37
+2024/07/22 20:04:36 [emerg] 43100#17640: invalid host in upstream "localhost:8080/auth" in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:37
+2024/07/22 20:05:26 [emerg] 29556#15520: "auth_request" directive is not allowed here in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:93
+2024/07/22 20:11:29 [emerg] 33904#3688: "auth_request" directive is not allowed here in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:93
+2024/07/22 20:13:29 [emerg] 43972#19592: "auth_request" directive is not allowed here in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:93
+2024/07/22 20:14:50 [notice] 38048#35200: signal process started
+2024/07/22 20:19:03 [emerg] 13516#15752: "auth_request" directive is not allowed here in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:95
+2024/07/22 20:21:34 [emerg] 28568#38496: "auth_request" directive is not allowed here in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:95
+2024/07/22 21:17:19 [emerg] 35576#19544: CreateFile() "./auth.conf" failed (2: The system cannot find the file specified) in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:91
+2024/07/22 21:17:51 [emerg] 12108#8060: CreateFile() "C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/conf\auth.conf" failed (3: The system cannot find the path specified) in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:91
+2024/07/22 21:18:20 [emerg] 9788#29572: "auth_request" directive is not allowed here in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/auth.conf:1
+2024/07/22 21:20:09 [error] 24624#10432: *1 CreateFile() "C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/html/favicon.ico" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8000", referrer: "http://localhost:8000/"
+2024/07/22 21:39:56 [error] 24624#10432: *6 "C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/html/auht/index.html" is not found (3: The system cannot find the path specified), client: 127.0.0.1, server: localhost, request: "GET /auht/ HTTP/1.1", host: "localhost:8000"
+2024/07/22 21:40:01 [error] 24624#10432: *6 CreateFile() "C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/html/auht" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /auht HTTP/1.1", host: "localhost:8000"
+2024/07/22 22:02:48 [emerg] 10752#33684: host not found in upstream "backend_server" in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:129
+2024/07/22 22:03:26 [emerg] 39696#25004: location "/auth" is outside location "/inter" in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:130
+2024/07/22 22:04:08 [emerg] 42700#34784: location "/auth" is outside location "/inter" in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:130
+2024/07/22 22:13:58 [emerg] 43332#20620: location "/auth" is outside location "/inter" in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:130
+2024/07/22 22:14:49 [emerg] 28420#2296: location "/auth" is outside location "/inter" in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:130
+2024/07/22 22:17:12 [emerg] 38164#43144: location "/user" is outside location "/inter" in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:130
+2024/07/22 22:17:32 [emerg] 21132#20984: location "/auth" is outside location "/inter" in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:130
+2024/07/22 22:17:50 [emerg] 16780#2176: location "/auth" is outside location "/inter" in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:129
+2024/07/22 22:18:04 [emerg] 39544#30784: location "/auth" is outside location "/inter" in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:129
+2024/07/22 22:18:12 [emerg] 6900#16916: location "/auth" is outside location "/inter" in C:\Users\Toan\Desktop\WorkStation\nginx-1.26.1/conf/nginx.conf:126
+2024/07/22 22:27:21 [notice] 17900#38388: signal process started
+2024/07/22 22:32:13 [notice] 7352#5520: signal process started
+2024/07/22 22:32:28 [notice] 39436#5460: signal process started
+2024/07/22 22:33:20 [notice] 11840#14876: signal process started
+2024/07/22 22:33:57 [notice] 29264#23096: signal process started
+2024/07/22 22:34:05 [notice] 37884#15520: signal process started
+2024/07/22 22:36:45 [notice] 36184#9632: signal process started
+2024/07/22 22:37:58 [notice] 31584#24996: signal process started
+2024/07/22 22:51:07 [notice] 36436#31268: signal process started
+2024/07/22 22:51:12 [error] 42464#17348: *42 auth request unexpected status: 404 while sending to client, client: 127.0.0.1, server: localhost, request: "GET /api/auth/verify HTTP/1.1", host: "localhost:8000"
+2024/07/22 22:51:30 [error] 42464#17348: *44 auth request unexpected status: 404 while sending to client, client: 127.0.0.1, server: localhost, request: "GET /api/auth/verify HTTP/1.1", host: "localhost:8000"
+2024/07/22 22:51:35 [notice] 20132#10796: signal process started
+2024/07/22 22:52:07 [notice] 43716#40236: signal process started
+2024/07/22 22:52:43 [notice] 17352#9444: signal process started
+2024/07/22 22:53:08 [notice] 13852#20920: signal process started
+2024/07/22 22:54:48 [notice] 43404#25940: signal process started
+2024/07/22 22:54:52 [notice] 40808#30824: signal process started
+2024/07/22 22:56:22 [notice] 2764#21132: signal process started
