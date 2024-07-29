@@ -1,0 +1,22 @@
+
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - user-network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: BeGrateful123
+      POSTGRES_DB: VOA_UserProfile
+    volumes:
+      - user-data:/var/lib/postgresql/data
+
+networks:
+  user-network:
+    driver: bridge
+
+volumes:
+  user-data:
