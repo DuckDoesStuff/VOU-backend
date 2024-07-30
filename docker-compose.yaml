@@ -1,0 +1,53 @@
+
+
+services:
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: vou@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    networks:
+      - auth-network
+      - user-network
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+      
+  auth-db:
+    image: postgres
+    ports:
+      - "5431:5432"
+    networks:
+      - auth-network
+    environment:
+      POSTGRES_USER: vou
+      POSTGRES_PASSWORD: vouadmin123
+      POSTGRES_DB: auth_service
+    volumes:
+      - auth-data:/var/lib/postgresql/data
+
+  user-db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - user-network
+    environment:
+      POSTGRES_USER: vou
+      POSTGRES_PASSWORD: vouadmin123
+      POSTGRES_DB: user_service
+    volumes:
+      - user-data:/var/lib/postgresql/data
+
+networks:
+  auth-network:
+    driver: bridge
+  user-network:
+    driver: bridge
+
+volumes:
+  auth-data:
+  user-data:
+  pgadmin-data:

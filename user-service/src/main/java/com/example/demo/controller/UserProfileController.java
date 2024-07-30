@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ProfileStateDto;
+import com.example.demo.dto.RegisterDto;
 import com.example.demo.entity.UserProfile;
 import com.example.demo.service.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +27,13 @@ public class UserProfileController {
     }
 
     @PostMapping
-    public UserProfile createUser(@RequestBody UserProfile userProfile) {
-        return userProfileService.createUser(userProfile);
+    public String createUser(@RequestBody RegisterDto registerDto) {
+        return userProfileService.createUser(registerDto);
+    }
+
+    @PostMapping("/{username}")
+    public UserProfile changeProfileState(@PathVariable String username, @RequestBody ProfileStateDto profileStateDto) {
+        return userProfileService.changeProfileState(username, profileStateDto);
     }
 
     @PutMapping("/{id}")
@@ -39,13 +46,13 @@ public class UserProfileController {
         userProfileService.deleteUser(id);
     }
 
-    @PutMapping("/{id}/activate")
-    public UserProfile activateUser(@PathVariable Long id) {
-        return userProfileService.activateUser(id);
-    }
-
-    @PutMapping("/{id}/deactivate")
-    public UserProfile deactivateUser(@PathVariable Long id) {
-        return userProfileService.deactivateUser(id);
-    }
+//    @PutMapping("/{id}/activate")
+//    public UserProfile activateUser(@PathVariable Long id) {
+//        return userProfileService.activateUser(id);
+//    }
+//
+//    @PutMapping("/{id}/deactivate")
+//    public UserProfile deactivateUser(@PathVariable Long id) {
+//        return userProfileService.deactivateUser(id);
+//    }
 }

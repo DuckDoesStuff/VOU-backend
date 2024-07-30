@@ -12,13 +12,17 @@ import java.util.Date;
 public class Otp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @Column(nullable = false)
-    private String phoneNumber;
+    private String phone;
 
     @Column(nullable = false)
     private String otp;
+
+    @OneToOne
+    @JoinColumn(referencedColumnName = "id", name = "auth_id")
+    private Auth auth;
 
     @Column(nullable = false)
     private Date expiryDate;

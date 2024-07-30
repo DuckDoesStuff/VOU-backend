@@ -6,11 +6,15 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.vou.auth_service.dto.AuthDto;
-import com.vou.auth_service.dto.AuthResponse;
+import com.vou.auth_service.dto.RegisterDto;
+import com.vou.auth_service.dto.response.AuthResponse;
 import com.vou.auth_service.dto.LogoutDto;
 import com.vou.auth_service.dto.RefreshDto;
 import com.vou.auth_service.entity.Auth;
+import com.vou.auth_service.entity.Otp;
 import com.vou.auth_service.entity.Session;
+import com.vou.auth_service.enumerate.ProfileState;
+import com.vou.auth_service.enumerate.Role;
 import com.vou.auth_service.exception.AuthException;
 import com.vou.auth_service.exception.ErrorCode;
 import com.vou.auth_service.repository.AuthRepository;
@@ -40,6 +44,9 @@ public class AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private OtpService otpService;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -123,16 +130,27 @@ public class AuthService {
         sessionRepository.delete(session);
     }
 
-    public Auth createAuth(AuthDto authDto) {
-        if (authRepository.findByUsername(authDto.getUsername()) != null)
+    public Auth createAuth(RegisterDto registerDto) {
+        // Check duplicate info
+        if (authRepository.findByUsername(registerDto.getUsername()) != null)
             throw new AuthException(ErrorCode.USER_EXISTED);
 
+        // Create auth credential with "pending" state
         Auth auth = new Auth();
+        auth.setUsername(registerDto.getUsername());
+        auth.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        auth.setRole(registerDto.getRole());
+        auth.setProfileState(ProfileState.PENDING);
 
-        auth.setUsername(authDto.getUsername());
-        auth.setPassword(passwordEncoder.encode(authDto.getPassword()));
+        Auth savedAuth = authRepository.save(auth);
 
-        return authRepository.save(auth);
+        // Generate OTP
+        Otp otp = otpService.createOtp(registerDto.getPhone(), savedAuth);
+
+        // Call SMS Service
+        // ??????
+
+        return savedAuth;
     }
 
     public void deleteAuth(String username) {
