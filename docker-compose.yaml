@@ -13,7 +13,6 @@ services:
       - user-network
     volumes:
       - pgadmin-data:/var/lib/pgadmin
-
       
   auth-db:
     image: postgres
