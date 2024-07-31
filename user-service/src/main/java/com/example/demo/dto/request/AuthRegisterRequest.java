@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.demo.dto.request;
 
 import com.example.demo.enumerate.Role;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class RegisterAuthDto {
+public class AuthRegisterRequest {
     @NotNull(message = "Username is required")
     private String username;
     @NotNull(message = "Password is required")

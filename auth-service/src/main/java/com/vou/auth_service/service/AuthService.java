@@ -7,6 +7,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.vou.auth_service.dto.AuthDto;
 import com.vou.auth_service.dto.RegisterDto;
+import com.vou.auth_service.dto.response.AuthRegisterResponse;
 import com.vou.auth_service.dto.response.AuthResponse;
 import com.vou.auth_service.dto.LogoutDto;
 import com.vou.auth_service.dto.RefreshDto;
@@ -130,7 +131,7 @@ public class AuthService {
         sessionRepository.delete(session);
     }
 
-    public Auth createAuth(RegisterDto registerDto) {
+    public AuthRegisterResponse createAuth(RegisterDto registerDto) {
         // Check duplicate info
         if (authRepository.findByUsername(registerDto.getUsername()) != null)
             throw new AuthException(ErrorCode.USER_EXISTED);
@@ -150,7 +151,13 @@ public class AuthService {
         // Call SMS Service
         // ??????
 
-        return savedAuth;
+        AuthRegisterResponse response = new AuthRegisterResponse();
+        response.setUsername(registerDto.getUsername());
+        response.setPhone(registerDto.getPhone());
+        response.setState(savedAuth.getProfileState());
+        response.setRole(savedAuth.getRole());
+
+        return response;
     }
 
     public void deleteAuth(String username) {

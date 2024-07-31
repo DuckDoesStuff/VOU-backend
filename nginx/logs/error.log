@@ -45,3 +45,6 @@
 2024/07/22 22:54:48 [notice] 43404#25940: signal process started
 2024/07/22 22:54:52 [notice] 40808#30824: signal process started
 2024/07/22 22:56:22 [notice] 2764#21132: signal process started
+2024/07/30 23:03:14 [emerg] 30576#25864: CreateDirectory() "D:\Study\Courses\SoftwareArchitech\ProjectRepo\VOU-backend\nginx/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2024/07/30 23:03:28 [emerg] 34444#10088: CreateDirectory() "D:\Study\Courses\SoftwareArchitech\ProjectRepo\VOU-backend\nginx/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2024/07/30 23:03:53 [emerg] 8068#19380: CreateDirectory() "D:\Study\Courses\SoftwareArchitech\ProjectRepo\VOU-backend\nginx/temp/client_body_temp" failed (3: The system cannot find the path specified)

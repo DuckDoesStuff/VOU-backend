@@ -54,26 +54,24 @@ public class OtpService {
         List<Otp> otpList = otpRepository.findByPhone(phone);
         Otp verifiedOtp = verifyOtp(otpList, code);
 
-        if (verifiedOtp != null) {
-            Auth auth = verifiedOtp.getAuth();
-            auth.setProfileState(ProfileState.VERIFIED);
-            otpRepository.delete(verifiedOtp);
+        if (verifiedOtp == null)
+            return false;
 
-            // Call user service to verify user profile
-            String url = "http://localhost:8002/users/" + auth.getUsername();
-            WebClient webClient = webClientBuilder.build();
-            webClient
-                    .post()
-                    .uri(url)
-                    .body(Mono.just(new ProfileStateDto(ProfileState.VERIFIED)), ProfileStateDto.class)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
-            System.out.println("Here");
-            return true;
-        }
+        Auth auth = verifiedOtp.getAuth();
+        auth.setProfileState(ProfileState.VERIFIED);
+        otpRepository.delete(verifiedOtp);
 
-        return false;
+        // Call user service to verify user profile
+        String url = "http://localhost:8002/users/" + auth.getUsername();
+        WebClient webClient = webClientBuilder.build();
+        webClient
+                .post()
+                .uri(url)
+                .body(Mono.just(new ProfileStateDto(ProfileState.VERIFIED)), ProfileStateDto.class)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        return true;
     }
 
     public Otp verifyOtp(List<Otp> otpList, String code) {

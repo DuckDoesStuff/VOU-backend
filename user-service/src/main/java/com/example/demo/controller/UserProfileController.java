@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ProfileStateDto;
 import com.example.demo.dto.RegisterDto;
+import com.example.demo.dto.response.AuthRegisterResponse;
 import com.example.demo.entity.UserProfile;
 import com.example.demo.service.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class UserProfileController {
     }
 
     @PostMapping
-    public String createUser(@RequestBody RegisterDto registerDto) {
+    public AuthRegisterResponse createUser(@RequestBody RegisterDto registerDto) {
         return userProfileService.createUser(registerDto);
     }
 
