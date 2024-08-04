@@ -52,9 +52,10 @@ public class UserProfileService {
         userProfile.setEmail(registerDto.getEmail());
         userProfile.setPhone(registerDto.getPhone());
         userProfile.setUsername(registerDto.getUsername());
-        userProfile.setRole(Role.USER);
+        userProfile.setRole(registerDto.getRole());
         userProfile.setState(ProfileState.PENDING);
         userProfileRepository.save(userProfile);
+
 
         // Call auth API to create auth credential and perform OTP check
         WebClient webClient = webClientBuilder.build();

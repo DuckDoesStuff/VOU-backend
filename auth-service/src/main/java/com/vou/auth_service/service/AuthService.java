@@ -136,6 +136,7 @@ public class AuthService {
     }
 
     public AuthRegisterResponse createAuth(RegisterDto registerDto) {
+        System.out.println(registerDto.getRole());
         // Check duplicate info
         if (authRepository.findByUsername(registerDto.getUsername()) != null)
             throw new AuthException(ErrorCode.USER_EXISTED);

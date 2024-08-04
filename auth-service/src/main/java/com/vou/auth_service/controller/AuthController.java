@@ -6,6 +6,7 @@ import com.vou.auth_service.dto.response.AuthRegisterResponse;
 import com.vou.auth_service.dto.response.AuthResponse;
 import com.vou.auth_service.entity.Auth;
 import com.vou.auth_service.exception.AuthException;
+import com.vou.auth_service.exception.ErrorCode;
 import com.vou.auth_service.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,9 +54,11 @@ public class AuthController {
     @PostMapping("/verify")
     public ApiResponse<String> verifyToken(@Valid @RequestBody VerifyDto verifyDto) {
         boolean verified = authService.verify(verifyDto.getToken());
+        if (!verified)
+            throw new AuthException(ErrorCode.INVALID_TOKEN);
         ApiResponse<String> response = new ApiResponse<>();
-        response.setCode(verified ? 200:401);
-        response.setMessage(verified ? "Authorized" : "Unauthorized");
+        response.setCode(200);
+        response.setMessage("Authorized");
         return response;
     }
 

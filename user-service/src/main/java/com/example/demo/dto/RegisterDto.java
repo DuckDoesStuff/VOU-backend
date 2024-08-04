@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.example.demo.enumerate.Role;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -15,4 +16,6 @@ public class RegisterDto {
     private String phone;
     @NotNull(message = "Email is required")
     private String email;
+    @NotNull(message = "Role is required")
+    private Role role;
 }

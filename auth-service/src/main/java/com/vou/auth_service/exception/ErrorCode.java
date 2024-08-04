@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum ErrorCode {
     USER_EXISTED(1001, "Username already exist"),
     USER_NOT_EXIST(404, "This user doesn't exist"),
-    UNAUTHENTICATED(401, "Unauthenticated")
+    UNAUTHENTICATED(401, "Unauthenticated"),
+    INVALID_TOKEN(401, "Invalid token")
     ;
 
     ErrorCode(int code, String message) {
