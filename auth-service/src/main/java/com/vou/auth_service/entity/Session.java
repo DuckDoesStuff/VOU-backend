@@ -1,5 +1,6 @@
 package com.vou.auth_service.entity;
 
+import com.vou.auth_service.enumerate.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +18,9 @@ public class Session {
 
     @Column(name = "refresh_token", nullable = false)
     private String refreshToken;
+
+    @Column(nullable = false)
+    private Role role;
 
     @ManyToOne(cascade = {CascadeType.REMOVE})
     @JoinColumn(name = "auth")

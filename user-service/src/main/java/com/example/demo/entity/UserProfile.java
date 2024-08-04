@@ -5,6 +5,7 @@ import com.example.demo.enumerate.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Getter
@@ -12,8 +13,9 @@ import lombok.Setter;
 public class UserProfile {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userID;
+    @GeneratedValue(generator = "custom-id-generator")
+    @GenericGenerator(name = "custom-id-generator", strategy = "com.example.demo.utils.CustomIdGenerator")
+    private String userID;
 
     @Column(unique = true, nullable = false)
     private String username;

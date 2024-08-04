@@ -70,12 +70,16 @@ public class AuthService {
         if (auth == null)
             throw new AuthException(ErrorCode.USER_NOT_EXIST);
 
+        if (auth.getRole() != authDto.getRole())
+            throw new AuthException(ErrorCode.UNAUTHENTICATED);
+
         if (!passwordEncoder.matches(authDto.getPassword(), auth.getPassword()))
             throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
-        String token = generateToken(auth.getUsername(), false);
-        String refreshToken = generateToken(auth.getUsername(), true);
+        String token = generateToken(auth.getUsername(), auth.getRole().toString(), false);
+        String refreshToken = generateToken(auth.getUsername(), auth.getRole().toString(), true);
         Session session = new Session();
+        session.setRole(auth.getRole());
         session.setAuth(auth);
         session.setRefreshToken(refreshToken);
         sessionRepository.save(session);
@@ -110,18 +114,18 @@ public class AuthService {
         boolean verified = verify(refreshDto.getRefreshToken());
         if(!verified) throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
-        String refreshToken = generateToken(refreshDto.getUsername(), true);
         Session session = sessionRepository.findOneByRefreshToken(refreshDto.getRefreshToken());
 
         if(session == null)
             throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
+        String refreshToken = generateToken(refreshDto.getUsername(), session.getRole().toString(), true);
         session.setRefreshToken(refreshToken);
         sessionRepository.save(session);
 
         return AuthResponse.builder()
                 .refreshToken(refreshToken)
-                .token(generateToken(refreshDto.getUsername(), false))
+                .token(generateToken(refreshDto.getUsername(), session.getRole().toString(), false))
                 .authorized(true)
                 .build();
     }
@@ -138,6 +142,7 @@ public class AuthService {
 
         // Create auth credential with "pending" state
         Auth auth = new Auth();
+        auth.setId(registerDto.getId());
         auth.setUsername(registerDto.getUsername());
         auth.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         auth.setRole(registerDto.getRole());
@@ -166,10 +171,11 @@ public class AuthService {
         authRepository.delete(auth);
     }
 
-    private String generateToken(String username, boolean isRefreshToken) {
+    private String generateToken(String username, String role, boolean isRefreshToken) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+                .claim("role", role)
                 .subject(username)
                 .issuer("vou.com")
                 .issueTime(new Date())
