@@ -1,6 +1,7 @@
 package com.example.GameService.service;
 
 // ItemService.java
+import com.example.GameService.dto.GetRandomItemTypeDTO;
 import com.example.GameService.entity.Item;
 import com.example.GameService.entity.ItemType;
 import com.example.GameService.repository.ItemRepository;
@@ -48,18 +49,21 @@ public class ItemService {
     public void deleteItem(String id) {
         itemRepository.deleteById(id);
     }
-    public ItemType getRandomItem(Long eventID, Long gameID) {
+    public ItemType getRandomItem(GetRandomItemTypeDTO getRandomItemTypeDTO) {
+        Long userID = getRandomItemTypeDTO.getUserID();
+        Long gameID = getRandomItemTypeDTO.getGameID();
+        Long eventID = getRandomItemTypeDTO.getEventID();
         List<ItemType> itemTypes = itemTypeRepository.findAll();
         int randomIdx = (int) (Math.random() * itemTypes.size());
         ItemType randomItem = itemTypes.get(randomIdx);
         // if user already had item type in that game and event, increase count
-        Item userItem = itemRepository.findByEventIDAndGameID(eventID, gameID);
+        Item userItem = itemRepository.findByEventIDAndGameIDAndItemTypeID(eventID, gameID, randomItem.getItemTypeID());
         if (userItem != null) {
             userItem.setQuantity(userItem.getQuantity() + 1);
         } else {
             userItem = new Item();
             userItem.setQuantity(1);
-            userItem.setUserID((long) 4); // need to get user id
+            userItem.setUserID(userID); // need to get user id
             userItem.setEventID(eventID);
             userItem.setGameID(gameID);
             userItem.setItemTypeID(randomItem.getItemTypeID());

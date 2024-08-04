@@ -10,5 +10,6 @@ public interface ItemRepository extends MongoRepository<Item, String> {
     List<Item> findByGameID(Long gameID);
     List<Item> findByUserID(Long userID);
     List<Item> findByItemTypeID(Long itemTypeID);
-    Item findByEventIDAndGameID(Long eventID, Long gameID);
+    Item findByEventIDAndGameIDAndItemTypeID(Long eventID, Long gameID, Long itemTypeID);
+
 }

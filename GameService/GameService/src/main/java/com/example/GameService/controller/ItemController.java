@@ -1,7 +1,9 @@
 package com.example.GameService.controller;
 
 // ItemController.java
+import com.example.GameService.dto.GetRandomItemTypeDTO;
 import com.example.GameService.entity.Item;
+import com.example.GameService.entity.ItemType;
 import com.example.GameService.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +54,11 @@ public class ItemController {
     @DeleteMapping("/{id}")
     public void deleteItem(@PathVariable String id) {
         itemService.deleteItem(id);
+    }
+
+    @PostMapping("/random_item_type")
+    public ItemType getRandomItemType(@RequestBody GetRandomItemTypeDTO getRandomItemTypeDTO) {
+        return itemService.getRandomItem(getRandomItemTypeDTO);
     }
 }
 
