@@ -60,7 +60,8 @@ public class UserProfileService {
         // Call auth API to create auth credential and perform OTP check
         WebClient webClient = webClientBuilder.build();
         String url = "http://localhost:8001/auth/register";
-        AuthRegisterRequest authRegisterRequest = new AuthRegisterRequest(userProfile.getUserID(), registerDto.getUsername(), registerDto.getPassword(), registerDto.getPhone(), Role.USER);
+        AuthRegisterRequest authRegisterRequest = new AuthRegisterRequest(userProfile.getUserID(), registerDto.getUsername(), registerDto.getPassword(), registerDto.getPhone(), registerDto.getRole());
+
         AuthRegisterResponse result = webClient.post()
                 .uri(url)
                 .body(Mono.just(authRegisterRequest), RegisterDto.class)
