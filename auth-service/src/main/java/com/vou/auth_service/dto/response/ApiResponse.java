@@ -1,4 +1,4 @@
-package com.vou.auth_service.dto;
+package com.vou.auth_service.dto.response;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;

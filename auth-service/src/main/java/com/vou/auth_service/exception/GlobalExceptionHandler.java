@@ -1,7 +1,7 @@
 package com.vou.auth_service.exception;
 
 
-import com.vou.auth_service.dto.ApiResponse;
+import com.vou.auth_service.dto.response.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
