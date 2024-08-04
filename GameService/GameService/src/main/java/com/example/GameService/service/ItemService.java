@@ -2,7 +2,9 @@ package com.example.GameService.service;
 
 // ItemService.java
 import com.example.GameService.entity.Item;
+import com.example.GameService.entity.ItemType;
 import com.example.GameService.repository.ItemRepository;
+import com.example.GameService.repository.ItemTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,8 @@ import java.util.List;
 public class ItemService {
     @Autowired
     private ItemRepository itemRepository;
+    @Autowired
+    private ItemTypeRepository itemTypeRepository;
 
     public List<Item> getAllItems() {
         return itemRepository.findAll();
@@ -43,6 +47,25 @@ public class ItemService {
 
     public void deleteItem(String id) {
         itemRepository.deleteById(id);
+    }
+    public ItemType getRandomItem(Long eventID, Long gameID) {
+        List<ItemType> itemTypes = itemTypeRepository.findAll();
+        int randomIdx = (int) (Math.random() * itemTypes.size());
+        ItemType randomItem = itemTypes.get(randomIdx);
+        // if user already had item type in that game and event, increase count
+        Item userItem = itemRepository.findByEventIDAndGameID(eventID, gameID);
+        if (userItem != null) {
+            userItem.setQuantity(userItem.getQuantity() + 1);
+        } else {
+            userItem = new Item();
+            userItem.setQuantity(1);
+            userItem.setUserID((long) 4); // need to get user id
+            userItem.setEventID(eventID);
+            userItem.setGameID(gameID);
+            userItem.setItemTypeID(randomItem.getItemTypeID());
+        }
+        itemRepository.save(userItem);
+        return randomItem;
     }
 }
 
