@@ -1,5 +1,6 @@
 package com.vou.auth_service.dto;
 
+import com.vou.auth_service.enumerate.Role;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,4 +14,6 @@ public class AuthDto {
     private String username;
     @NotNull(message = "Password is required")
     private String password;
+    @NotNull(message = "Role is required")
+    private Role role;
 }

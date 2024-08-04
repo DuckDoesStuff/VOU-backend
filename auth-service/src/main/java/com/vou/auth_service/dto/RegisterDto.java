@@ -12,6 +12,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class RegisterDto {
+    @NotNull(message = "Id is required")
+    private String id;
     @NotNull(message = "Username is required")
     private String username;
     @NotNull(message = "Password is required")

@@ -10,6 +10,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class AuthRegisterRequest {
+    @NotNull(message = "Id is required")
+    private String id;
     @NotNull(message = "Username is required")
     private String username;
     @NotNull(message = "Password is required")
