@@ -2,6 +2,7 @@ package com.vou.auth_service.controller;
 
 import com.vou.auth_service.dto.*;
 import com.vou.auth_service.dto.response.ApiResponse;
+import com.vou.auth_service.dto.response.AuthRegisterResponse;
 import com.vou.auth_service.dto.response.AuthResponse;
 import com.vou.auth_service.entity.Auth;
 import com.vou.auth_service.service.AuthService;
@@ -63,11 +64,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ApiResponse<Auth> register(@Valid @RequestBody RegisterDto registerDto) {
-        ApiResponse<Auth> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(authService.createAuth(registerDto));
-        apiResponse.setCode(200);
-        return apiResponse;
+    public AuthRegisterResponse register(@Valid @RequestBody RegisterDto registerDto) {
+        return authService.createAuth(registerDto);
     }
 
     // FOR DEBUGGING ONLY

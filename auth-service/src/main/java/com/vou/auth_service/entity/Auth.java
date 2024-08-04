@@ -16,9 +16,8 @@ import java.util.Set;
 @Entity
 public class Auth {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private String id;
 
     @Column(name = "username", nullable = false)
     private String username;

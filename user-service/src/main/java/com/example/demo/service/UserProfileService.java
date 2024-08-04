@@ -1,24 +1,23 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.ProfileStateDto;
-import com.example.demo.dto.RegisterAuthDto;
+import com.example.demo.dto.request.AuthRegisterRequest;
 import com.example.demo.dto.RegisterDto;
+import com.example.demo.dto.response.AuthRegisterResponse;
 import com.example.demo.entity.UserProfile;
 import com.example.demo.enumerate.ProfileState;
 import com.example.demo.enumerate.Role;
+import com.example.demo.exception.AuthException;
+import com.example.demo.exception.ErrorCode;
 import com.example.demo.repository.UserProfileRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserProfileService {
@@ -39,8 +38,14 @@ public class UserProfileService {
         return userProfileRepository.findById(id).orElse(null);
     }
 
-    public String createUser(RegisterDto registerDto) {
+    public AuthRegisterResponse createUser(RegisterDto registerDto) {
         // Check registration info for duplicate
+        if (userProfileRepository.findUserProfileByEmail(registerDto.getEmail()).isPresent())
+            throw new AuthException(ErrorCode.EMAIL_EXISTED);
+        if (userProfileRepository.findUserProfileByPhone(registerDto.getPhone()).isPresent())
+            throw new AuthException(ErrorCode.PHONE_EXISTED);
+        if (userProfileRepository.findUserProfileByUsername(registerDto.getUsername()).isPresent())
+            throw new AuthException(ErrorCode.USERNAME_EXISTED);
 
         // Create user profile with "pending" state
         UserProfile userProfile = new UserProfile();
@@ -54,22 +59,24 @@ public class UserProfileService {
         // Call auth API to create auth credential and perform OTP check
         WebClient webClient = webClientBuilder.build();
         String url = "http://localhost:8001/auth/register";
-        RegisterAuthDto registerAuthDto = new RegisterAuthDto(registerDto.getUsername(), registerDto.getPassword(), registerDto.getPhone(), Role.USER);
-        String result = webClient.post()
+        AuthRegisterRequest authRegisterRequest = new AuthRegisterRequest(userProfile.getUserID(), registerDto.getUsername(), registerDto.getPassword(), registerDto.getPhone(), Role.USER);
+        AuthRegisterResponse result = webClient.post()
                 .uri(url)
-                .body(Mono.just(registerAuthDto), RegisterDto.class)
+                .body(Mono.just(authRegisterRequest), RegisterDto.class)
                 .retrieve()
-                .bodyToMono(String.class).block();
+                .bodyToMono(AuthRegisterResponse.class)
+                .block();
 
         return result;
     }
 
     public UserProfile changeProfileState(String username, ProfileStateDto profileStateDto) {
-        UserProfile userProfile = userProfileRepository.findUserProfileByUsername(username);
+        Optional<UserProfile> userProfile = userProfileRepository.findUserProfileByUsername(username);
+        if(userProfile.isEmpty()) throw new AuthException(ErrorCode.USER_NOT_EXIST);
 
-        userProfile.setState(profileStateDto.getState());
-        userProfileRepository.save(userProfile);
-        return userProfile;
+        userProfile.get().setState(profileStateDto.getState());
+        userProfileRepository.save(userProfile.get());
+        return userProfile.get();
     }
 
     public UserProfile updateUser(Long id, UserProfile userProfileDetails) {

@@ -53,3 +53,6 @@
 127.0.0.1 - - [22/Jul/2024:22:54:13 +0700] "POST /api/auth/verify HTTP/1.1" 400 113 "-" "PostmanRuntime/7.40.0"
 127.0.0.1 - - [22/Jul/2024:22:54:55 +0700] "POST /api/auth/verify HTTP/1.1" 400 113 "-" "PostmanRuntime/7.40.0"
 127.0.0.1 - - [22/Jul/2024:22:55:17 +0700] "POST /api/auth/verify HTTP/1.1" 400 113 "-" "PostmanRuntime/7.40.0"
+127.0.0.1 - - [30/Jul/2024:23:11:18 +0700] "GET /api/auth HTTP/1.1" 200 178 "-" "HTTPie"
+127.0.0.1 - - [30/Jul/2024:23:11:34 +0700] "GET /api/users HTTP/1.1" 200 229 "-" "HTTPie"
+127.0.0.1 - - [30/Jul/2024:23:11:47 +0700] "GET /api/auth/test HTTP/1.1" 405 118 "-" "HTTPie"

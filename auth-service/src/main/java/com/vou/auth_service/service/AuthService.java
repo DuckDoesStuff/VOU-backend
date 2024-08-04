@@ -7,6 +7,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.vou.auth_service.dto.AuthDto;
 import com.vou.auth_service.dto.RegisterDto;
+import com.vou.auth_service.dto.response.AuthRegisterResponse;
 import com.vou.auth_service.dto.response.AuthResponse;
 import com.vou.auth_service.dto.LogoutDto;
 import com.vou.auth_service.dto.RefreshDto;
@@ -69,12 +70,16 @@ public class AuthService {
         if (auth == null)
             throw new AuthException(ErrorCode.USER_NOT_EXIST);
 
+        if (auth.getRole() != authDto.getRole())
+            throw new AuthException(ErrorCode.UNAUTHENTICATED);
+
         if (!passwordEncoder.matches(authDto.getPassword(), auth.getPassword()))
             throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
-        String token = generateToken(auth.getUsername(), false);
-        String refreshToken = generateToken(auth.getUsername(), true);
+        String token = generateToken(auth.getUsername(), auth.getRole().toString(), false);
+        String refreshToken = generateToken(auth.getUsername(), auth.getRole().toString(), true);
         Session session = new Session();
+        session.setRole(auth.getRole());
         session.setAuth(auth);
         session.setRefreshToken(refreshToken);
         sessionRepository.save(session);
@@ -109,18 +114,18 @@ public class AuthService {
         boolean verified = verify(refreshDto.getRefreshToken());
         if(!verified) throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
-        String refreshToken = generateToken(refreshDto.getUsername(), true);
         Session session = sessionRepository.findOneByRefreshToken(refreshDto.getRefreshToken());
 
         if(session == null)
             throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
+        String refreshToken = generateToken(refreshDto.getUsername(), session.getRole().toString(), true);
         session.setRefreshToken(refreshToken);
         sessionRepository.save(session);
 
         return AuthResponse.builder()
                 .refreshToken(refreshToken)
-                .token(generateToken(refreshDto.getUsername(), false))
+                .token(generateToken(refreshDto.getUsername(), session.getRole().toString(), false))
                 .authorized(true)
                 .build();
     }
@@ -130,13 +135,14 @@ public class AuthService {
         sessionRepository.delete(session);
     }
 
-    public Auth createAuth(RegisterDto registerDto) {
+    public AuthRegisterResponse createAuth(RegisterDto registerDto) {
         // Check duplicate info
         if (authRepository.findByUsername(registerDto.getUsername()) != null)
             throw new AuthException(ErrorCode.USER_EXISTED);
 
         // Create auth credential with "pending" state
         Auth auth = new Auth();
+        auth.setId(registerDto.getId());
         auth.setUsername(registerDto.getUsername());
         auth.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         auth.setRole(registerDto.getRole());
@@ -150,7 +156,13 @@ public class AuthService {
         // Call SMS Service
         // ??????
 
-        return savedAuth;
+        AuthRegisterResponse response = new AuthRegisterResponse();
+        response.setUsername(registerDto.getUsername());
+        response.setPhone(registerDto.getPhone());
+        response.setState(savedAuth.getProfileState());
+        response.setRole(savedAuth.getRole());
+
+        return response;
     }
 
     public void deleteAuth(String username) {
@@ -159,10 +171,11 @@ public class AuthService {
         authRepository.delete(auth);
     }
 
-    private String generateToken(String username, boolean isRefreshToken) {
+    private String generateToken(String username, String role, boolean isRefreshToken) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+                .claim("role", role)
                 .subject(username)
                 .issuer("vou.com")
                 .issueTime(new Date())
