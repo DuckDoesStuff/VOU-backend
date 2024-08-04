@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ProfileStateDto;
 import com.example.demo.dto.RegisterDto;
+import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.AuthRegisterResponse;
 import com.example.demo.entity.UserProfile;
 import com.example.demo.service.UserProfileService;
@@ -28,8 +29,12 @@ public class UserProfileController {
     }
 
     @PostMapping
-    public AuthRegisterResponse createUser(@RequestBody RegisterDto registerDto) {
-        return userProfileService.createUser(registerDto);
+    public ApiResponse<AuthRegisterResponse> createUser(@RequestBody RegisterDto registerDto) {
+        AuthRegisterResponse authRegisterResponse = userProfileService.createUser(registerDto);
+        ApiResponse<AuthRegisterResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setCode(200);
+        apiResponse.setResult(authRegisterResponse);
+        return apiResponse;
     }
 
     @PostMapping("/{username}")

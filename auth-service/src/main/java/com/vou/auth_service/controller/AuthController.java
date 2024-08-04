@@ -5,6 +5,7 @@ import com.vou.auth_service.dto.response.ApiResponse;
 import com.vou.auth_service.dto.response.AuthRegisterResponse;
 import com.vou.auth_service.dto.response.AuthResponse;
 import com.vou.auth_service.entity.Auth;
+import com.vou.auth_service.exception.AuthException;
 import com.vou.auth_service.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
