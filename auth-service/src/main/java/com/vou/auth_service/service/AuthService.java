@@ -70,7 +70,7 @@ public class AuthService {
         if (auth == null)
             throw new AuthException(ErrorCode.USER_NOT_EXIST);
 
-        if (auth.getRole() != authDto.getRole())
+        if (auth.getRole() == Role.USER && authDto.getRole() != Role.USER)
             throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
         if (!passwordEncoder.matches(authDto.getPassword(), auth.getPassword()))
@@ -136,7 +136,6 @@ public class AuthService {
     }
 
     public AuthRegisterResponse createAuth(RegisterDto registerDto) {
-        System.out.println(registerDto.getRole());
         // Check duplicate info
         if (authRepository.findByUsername(registerDto.getUsername()) != null)
             throw new AuthException(ErrorCode.USER_EXISTED);
