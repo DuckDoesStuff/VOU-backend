@@ -4,10 +4,11 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
-    USER_EXISTED(1001, "Username already exist"),
-    USER_NOT_EXIST(404, "This user doesn't exist"),
-    UNAUTHENTICATED(401, "Unauthenticated"),
-    INVALID_TOKEN(401, "Invalid token")
+    USERNAME_EXISTED(4001, "Username already exist"),
+    USER_NOT_EXIST(4040, "This username doesn't exist"),
+    UNAUTHENTICATED(4010, "Unauthenticated"),
+    INVALID_TOKEN(4011, "Invalid token"),
+    INVALID_OTP(4012, "Invalid OTP")
     ;
 
     ErrorCode(int code, String message) {

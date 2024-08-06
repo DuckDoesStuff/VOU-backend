@@ -26,29 +26,27 @@ public class AuthController {
 
     @GetMapping
     public ApiResponse<List<Auth>> getAuthList() {
-        ApiResponse<List<Auth>> authList = new ApiResponse<>();
-        authList.setResult(authService.getAuthList());
-        return authList;
+        return ApiResponse.<List<Auth>>builder()
+                .code(200)
+                .result(authService.getAuthList())
+                .build();
     }
 
     @PostMapping("/token")
     public ApiResponse<AuthResponse> getToken(@Valid @RequestBody AuthDto authDto) {
-        ApiResponse<AuthResponse> response = new ApiResponse<>();
-        AuthResponse authResponse = authService.authenticate(authDto);
-        response.setCode(200);
-        response.setMessage("Authorized");
-        response.setResult(authResponse);
-        return response;
+        return ApiResponse.<AuthResponse>builder()
+                .result(authService.authenticate(authDto))
+                .code(200)
+                .message("Authenticated")
+                .build();
     }
 
     @PostMapping("/refresh")
     public ApiResponse<AuthResponse> refreshToken(@Valid @RequestBody RefreshDto refreshDto) {
-        ApiResponse<AuthResponse> response = new ApiResponse<>();
-        AuthResponse authResponse = authService.refresh(refreshDto);
-        response.setCode(200);
-        response.setMessage("Authorized");
-        response.setResult(authResponse);
-        return response;
+        return ApiResponse.<AuthResponse>builder()
+                .result(authService.refresh(refreshDto))
+                .code(200)
+                .build();
     }
 
     @PostMapping("/verify")
@@ -56,10 +54,10 @@ public class AuthController {
         boolean verified = authService.verify(verifyDto.getToken());
         if (!verified)
             throw new AuthException(ErrorCode.INVALID_TOKEN);
-        ApiResponse<String> response = new ApiResponse<>();
-        response.setCode(200);
-        response.setMessage("Authorized");
-        return response;
+        return ApiResponse.<String>builder()
+                .code(200)
+                .message("Authorized")
+                .build();
     }
 
     @PostMapping("/logout")
@@ -68,33 +66,36 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public AuthRegisterResponse register(@Valid @RequestBody RegisterDto registerDto) {
-        return authService.createAuth(registerDto);
+    public ApiResponse<AuthRegisterResponse> register(@Valid @RequestBody RegisterDto registerDto) {
+        return ApiResponse.<AuthRegisterResponse>builder()
+                .result(authService.createAuth(registerDto))
+                .message("Successfully created new authentication credential")
+                .code(200)
+                .build();
     }
 
     // FOR DEBUGGING ONLY
     @DeleteMapping("/delete/{username}")
     public ApiResponse<String> delete(@PathVariable String username) {
-        ApiResponse<String> apiResponse = new ApiResponse<>();
-        authService.deleteAuth(username);
-        apiResponse.setCode(200);
-        apiResponse.setMessage("User deleted successfully");
-        return apiResponse;
+        return ApiResponse.<String>builder()
+                .code(200)
+                .message("Authentication deleted successfully")
+                .build();
     }
 
     @GetMapping("/protected")
     public ApiResponse<String> protectedRoute() {
-        ApiResponse<String> response = new ApiResponse<>();
-        response.setMessage("Hey there");
-        response.setCode(200);
-        return response;
+        return ApiResponse.<String>builder()
+                .message("Test protected route")
+                .code(200)
+                .build();
     }
 
     @PostMapping("/test")
     public ApiResponse<String> testRoute() {
-        ApiResponse<String> response = new ApiResponse<>();
-        response.setMessage("Testing 123");
-        response.setCode(200);
-        return response;
+        return ApiResponse.<String>builder()
+                .message("Test route")
+                .code(200)
+                .build();
     }
 }

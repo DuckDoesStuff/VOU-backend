@@ -1,24 +1,21 @@
-package com.example.demo.dto.request;
+package com.example.demo.dto;
 
 import com.example.demo.enumerate.Role;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.UUID;
-
-
 @Data
 @AllArgsConstructor
-public class AuthRegisterRequest {
-    @NotNull(message = "Id is required")
-    private UUID id;
-    @NotNull(message = "Username is required")
-    private String username;
+public class BrandRegisterDto {
+    @NotNull(message = "Login name is required")
+    private String brandname;
+    @NotNull(message = "Brand display name is required")
+    private String displayName;
     @NotNull(message = "Password is required")
     private String password;
     @NotNull(message = "Phone number is required")
     private String phone;
-    @NotNull(message = "Role is required")
-    private Role role;
+    @NotNull(message = "Email is required")
+    private String email;
 }

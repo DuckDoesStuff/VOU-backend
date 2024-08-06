@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthRegisterResponse {
-    private String username;
+    private String name;
     private String phone;
     private Role role;
     private ProfileState state;

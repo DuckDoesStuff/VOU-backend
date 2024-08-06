@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @AllArgsConstructor
-public class RegisterDto {
+public class UserRegisterDto {
     @NotNull(message = "Username is required")
     private String username;
     @NotNull(message = "Password is required")

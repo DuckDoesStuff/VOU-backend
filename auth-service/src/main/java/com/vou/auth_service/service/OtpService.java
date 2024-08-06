@@ -4,6 +4,9 @@ import com.vou.auth_service.dto.ProfileStateDto;
 import com.vou.auth_service.entity.Auth;
 import com.vou.auth_service.entity.Otp;
 import com.vou.auth_service.enumerate.ProfileState;
+import com.vou.auth_service.enumerate.Role;
+import com.vou.auth_service.exception.ErrorCode;
+import com.vou.auth_service.exception.OtpException;
 import com.vou.auth_service.repository.AuthRepository;
 import com.vou.auth_service.repository.OtpRepository;
 import org.slf4j.Logger;
@@ -55,17 +58,22 @@ public class OtpService {
         Otp verifiedOtp = verifyOtp(otpList, code);
 
         if (verifiedOtp == null)
-            return false;
+            throw new OtpException(ErrorCode.INVALID_OTP);
 
         Auth auth = verifiedOtp.getAuth();
         auth.setProfileState(ProfileState.VERIFIED);
         otpRepository.delete(verifiedOtp);
 
         // Call user service to verify user profile
-        String url = "http://localhost:8002/users/" + auth.getUsername();
+        String url = "";
+        switch(auth.getRole()) {
+            case USER -> url ="http://localhost:8002/users/";
+            case BRAND -> url = "http://localhost:8002/brands/";
+        }
+        url += auth.getUsername() ;
         WebClient webClient = webClientBuilder.build();
         webClient
-                .post()
+                .put()
                 .uri(url)
                 .body(Mono.just(new ProfileStateDto(ProfileState.VERIFIED)), ProfileStateDto.class)
                 .retrieve()
@@ -74,7 +82,7 @@ public class OtpService {
         return true;
     }
 
-    public Otp verifyOtp(List<Otp> otpList, String code) {
+    private Otp verifyOtp(List<Otp> otpList, String code) {
         for (Otp otp : otpList) {
             Date expiryDate = otp.getExpiryDate();
             String otpCode = otp.getOtp();

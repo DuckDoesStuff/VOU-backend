@@ -20,6 +20,7 @@ public class Session {
     private String refreshToken;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @ManyToOne(cascade = {CascadeType.REMOVE})

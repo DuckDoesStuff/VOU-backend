@@ -1,15 +1,17 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ProfileStateDto;
-import com.example.demo.dto.RegisterDto;
+import com.example.demo.dto.UserRegisterDto;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.AuthRegisterResponse;
 import com.example.demo.entity.UserProfile;
+import com.example.demo.enumerate.ProfileState;
 import com.example.demo.service.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -23,42 +25,32 @@ public class UserProfileController {
         return userProfileService.getAllUsers();
     }
 
+    @PostMapping
+    public ApiResponse<AuthRegisterResponse> createUser(@RequestBody UserRegisterDto userRegisterDto) {
+        AuthRegisterResponse authRegisterResponse = userProfileService.createUser(userRegisterDto);
+        return ApiResponse.<AuthRegisterResponse>builder()
+                .code(200)
+                .result(authRegisterResponse)
+                .build();
+    }
+
+    @PutMapping("/{username}")
+    public UserProfile verifyUser(@PathVariable String username) {
+        return userProfileService.verifyUser(username, ProfileState.VERIFIED);
+    }
+
     @GetMapping("/{id}")
-    public UserProfile getUserById(@PathVariable Long id) {
+    public UserProfile getUserById(@PathVariable UUID id) {
         return userProfileService.getUserById(id);
     }
 
-    @PostMapping
-    public ApiResponse<AuthRegisterResponse> createUser(@RequestBody RegisterDto registerDto) {
-        AuthRegisterResponse authRegisterResponse = userProfileService.createUser(registerDto);
-        ApiResponse<AuthRegisterResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setCode(200);
-        apiResponse.setResult(authRegisterResponse);
-        return apiResponse;
-    }
-
-    @PostMapping("/{username}")
-    public UserProfile changeProfileState(@PathVariable String username, @RequestBody ProfileStateDto profileStateDto) {
-        return userProfileService.changeProfileState(username, profileStateDto);
-    }
-
-    @PutMapping("/{id}")
-    public UserProfile updateUser(@PathVariable Long id, @RequestBody UserProfile userProfileDetails) {
-        return userProfileService.updateUser(id, userProfileDetails);
-    }
+//    @PutMapping("/{id}")
+//    public UserProfile updateUser(@PathVariable UUID id, @RequestBody UserProfile userProfileDetails) {
+//        return userProfileService.updateUser(id, userProfileDetails);
+//    }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    public void deleteUser(@PathVariable UUID id) {
         userProfileService.deleteUser(id);
     }
-
-//    @PutMapping("/{id}/activate")
-//    public UserProfile activateUser(@PathVariable Long id) {
-//        return userProfileService.activateUser(id);
-//    }
-//
-//    @PutMapping("/{id}/deactivate")
-//    public UserProfile deactivateUser(@PathVariable Long id) {
-//        return userProfileService.deactivateUser(id);
-//    }
 }

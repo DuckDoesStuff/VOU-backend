@@ -138,7 +138,7 @@ public class AuthService {
     public AuthRegisterResponse createAuth(RegisterDto registerDto) {
         // Check duplicate info
         if (authRepository.findByUsername(registerDto.getUsername()) != null)
-            throw new AuthException(ErrorCode.USER_EXISTED);
+            throw new AuthException(ErrorCode.USERNAME_EXISTED);
 
         // Create auth credential with "pending" state
         Auth auth = new Auth();
@@ -147,7 +147,6 @@ public class AuthService {
         auth.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         auth.setRole(registerDto.getRole());
         auth.setProfileState(ProfileState.PENDING);
-
         Auth savedAuth = authRepository.save(auth);
 
         // Generate OTP
@@ -157,7 +156,7 @@ public class AuthService {
         // ??????
 
         AuthRegisterResponse response = new AuthRegisterResponse();
-        response.setUsername(registerDto.getUsername());
+        response.setName(registerDto.getUsername());
         response.setPhone(registerDto.getPhone());
         response.setState(savedAuth.getProfileState());
         response.setRole(savedAuth.getRole());

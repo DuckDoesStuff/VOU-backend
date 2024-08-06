@@ -5,12 +5,13 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
-    USER_EXISTED(403, "This already exist"),
-    EMAIL_EXISTED(400, "This email already exist"),
-    PHONE_EXISTED(400, "This phone number already exist"),
-    USERNAME_EXISTED(400, "This username already used"),
-    USER_NOT_EXIST(404, "This user doesn't exist"),
-    UNAUTHENTICATED(401, "Unauthenticated")
+    EMAIL_EXISTED(4001, "This email already exist"),
+    PHONE_EXISTED(4002, "This phone number already exist"),
+    USERNAME_EXISTED(4003, "This username already used"),
+    BRANDNAME_EXISTED(4003, "This brandname already used"),
+    USER_NOT_EXIST(4040, "This user doesn't exist"),
+    UNAUTHENTICATED(4010, "Unauthenticated"),
+    INTERNAL(500, "Internal error")
     ;
 
     ErrorCode(int code, String message) {
