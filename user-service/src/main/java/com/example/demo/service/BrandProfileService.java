@@ -100,4 +100,8 @@ public class BrandProfileService {
     public BrandProfile getBrandById(UUID id) {
         return brandProfileRepository.findById(id).orElseThrow(() -> new ProfileException(ErrorCode.PROFILE_NOT_FOUND));
     }
+
+    public BrandProfile getBrandByBrandname(String brandname) {
+        return brandProfileRepository.findBrandProfileByBrandname(brandname).orElseThrow(() -> new ProfileException(ErrorCode.PROFILE_NOT_FOUND));
+    }
 }

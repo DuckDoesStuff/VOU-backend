@@ -9,6 +9,7 @@ import com.example.demo.entity.UserProfile;
 import com.example.demo.enumerate.ProfileState;
 import com.example.demo.exception.AuthException;
 import com.example.demo.exception.ErrorCode;
+import com.example.demo.exception.ProfileException;
 import com.example.demo.repository.UserProfileRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,11 @@ public class UserProfileService {
     }
 
     public UserProfile getUserById(UUID id) {
-        return userProfileRepository.findById(id).orElse(null);
+        return userProfileRepository.findById(id).orElseThrow(() -> new ProfileException(ErrorCode.PROFILE_NOT_FOUND));
+    }
+
+    public UserProfile getUserByUsername(String username) {
+        return userProfileRepository.findUserProfileByUsername(username).orElseThrow(() -> new ProfileException(ErrorCode.PROFILE_NOT_FOUND));
     }
 
     public AuthRegisterResponse createUser(UserRegisterDto userRegisterDto) {
