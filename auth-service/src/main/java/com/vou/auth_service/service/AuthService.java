@@ -87,6 +87,7 @@ public class AuthService {
         return AuthResponse.builder()
                 .authorized(true)
                 .token(token)
+                .profileID(auth.getId())
                 .refreshToken(refreshToken)
                 .build();
     }
@@ -126,6 +127,7 @@ public class AuthService {
         return AuthResponse.builder()
                 .refreshToken(refreshToken)
                 .token(generateToken(refreshDto.getUsername(), session.getRole().toString(), false))
+                .profileID(session.getAuth().getId())
                 .authorized(true)
                 .build();
     }
