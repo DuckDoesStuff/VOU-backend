@@ -11,6 +11,7 @@ import com.example.demo.enumerate.ProfileState;
 import com.example.demo.enumerate.Role;
 import com.example.demo.exception.AuthException;
 import com.example.demo.exception.ErrorCode;
+import com.example.demo.exception.ProfileException;
 import com.example.demo.repository.BrandProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -94,5 +95,9 @@ public class BrandProfileService {
         brandProfile.get().setState(profileState);
         brandProfileRepository.save(brandProfile.get());
         return brandProfile.get();
+    }
+
+    public BrandProfile getBrandById(UUID id) {
+        return brandProfileRepository.findById(id).orElseThrow(() -> new ProfileException(ErrorCode.PROFILE_NOT_FOUND));
     }
 }

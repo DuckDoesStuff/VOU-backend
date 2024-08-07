@@ -47,4 +47,25 @@ public class GlobalExceptionHandler {
             return ResponseEntity.status(e.getHttpStatus()).body(apiResponse);
         }
     }
+
+    @ExceptionHandler(ProfileException.class)
+    public ResponseEntity<ApiResponse<Object>>
+    handleAuthException(ProfileException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        ApiResponse<Object> apiResponse = ApiResponse.builder().build();
+        if (errorCode != null) {
+            if(errorCode.getCode() != 0)
+                apiResponse.setCode(errorCode.getCode());
+
+            apiResponse.setMessage(errorCode.getMessage());
+
+            return ResponseEntity.status(errorCode.getCode() / 10).body(apiResponse);
+        }
+        else {
+            apiResponse.setCode(e.getHttpStatus().value());
+            apiResponse.setMessage(e.getMessage());
+
+            return ResponseEntity.status(e.getHttpStatus()).body(apiResponse);
+        }
+    }
 }

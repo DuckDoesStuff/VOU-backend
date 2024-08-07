@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/profile/brand")
@@ -33,6 +34,14 @@ public class BrandProfileController {
         return ApiResponse.<AuthRegisterResponse>builder()
                 .result(brandProfileService.createBrand(brandRegisterDto))
                 .message("Successfully created brand profile")
+                .code(200)
+                .build();
+    }
+
+    @GetMapping("/{brandname}")
+    public ApiResponse<BrandProfile> getBrandById(@PathVariable UUID id) {
+        return ApiResponse.<BrandProfile>builder()
+                .result(brandProfileService.getBrandById(id))
                 .code(200)
                 .build();
     }
