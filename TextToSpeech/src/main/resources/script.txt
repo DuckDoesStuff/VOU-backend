@@ -1,0 +1,9 @@
+Good evening, ladies and gentlemen! Welcome to the ultimate quiz game show, 'Quiz Master Extravaganza!' I'm your host, Alex, and tonight, we have an exciting lineup of questions to challenge your knowledge and quick thinking. So, let’s get ready to dive into the fun and test your wits!
+PAUSE 3000
+Alright, contestants, let’s kick things off with Round 1: General Knowledge. Here’s your first question:
+PAUSE 2000
+Question 1: What is the capital city of France? A) Berlin B) Madrid C) Paris D) Rome
+Lock in your answers now!
+PAUSE 5000
+And the correct answer is… C) Paris! Well done to those who got it right.
+PAUSE 3000
