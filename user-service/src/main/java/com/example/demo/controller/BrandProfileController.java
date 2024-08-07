@@ -38,7 +38,7 @@ public class BrandProfileController {
                 .build();
     }
 
-    @GetMapping("/{brandname}")
+    @GetMapping("/{id}")
     public ApiResponse<BrandProfile> getBrandById(@PathVariable UUID id) {
         return ApiResponse.<BrandProfile>builder()
                 .result(brandProfileService.getBrandById(id))
