@@ -17,11 +17,11 @@ public class OtpController {
     }
 
     @PostMapping("/{phone}")
-    public ApiResponse<String> verifyPhone(@PathVariable String phone, @RequestBody OtpDto otpDto) {
-        ApiResponse<String> apiResponse = new ApiResponse<>();
-        boolean verified = otpService.verify(phone, otpDto.getOtp());
-        apiResponse.setCode(verified ? 200 : 400);
-        apiResponse.setMessage(verified ? "Otp verified successfully" : "Invalid Otp");
-        return apiResponse;
+    public ApiResponse<Boolean> verifyPhone(@PathVariable String phone, @RequestBody OtpDto otpDto) {
+        return ApiResponse.<Boolean>builder()
+                .result(otpService.verify(phone, otpDto.getOtp()))
+                .code(200)
+                .message("Otp verified successfully")
+                .build();
     }
 }
