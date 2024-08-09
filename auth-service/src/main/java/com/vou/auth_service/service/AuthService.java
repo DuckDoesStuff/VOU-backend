@@ -5,12 +5,9 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.vou.auth_service.dto.AuthDto;
-import com.vou.auth_service.dto.RegisterDto;
+import com.vou.auth_service.dto.*;
 import com.vou.auth_service.dto.response.AuthRegisterResponse;
 import com.vou.auth_service.dto.response.AuthResponse;
-import com.vou.auth_service.dto.LogoutDto;
-import com.vou.auth_service.dto.RefreshDto;
 import com.vou.auth_service.entity.Auth;
 import com.vou.auth_service.entity.Otp;
 import com.vou.auth_service.entity.Session;
@@ -21,6 +18,7 @@ import com.vou.auth_service.exception.ErrorCode;
 import com.vou.auth_service.repository.AuthRepository;
 import com.vou.auth_service.repository.SessionRepository;
 import lombok.experimental.NonFinal;
+import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +63,7 @@ public class AuthService {
         return authRepository.findAll();
     }
 
-    public AuthResponse authenticate(AuthDto authDto) {
+    public TokenDto authenticate(AuthDto authDto) {
         Auth auth = authRepository.findByUsername(authDto.getUsername());
         if (auth == null)
             throw new AuthException(ErrorCode.USER_NOT_EXIST);
@@ -84,12 +82,12 @@ public class AuthService {
         session.setRefreshToken(refreshToken);
         sessionRepository.save(session);
 
-        return AuthResponse.builder()
-                .authorized(true)
-                .token(token)
-                .profileID(auth.getId())
-                .refreshToken(refreshToken)
-                .build();
+        TokenDto tokenDto = new TokenDto();
+        tokenDto.setToken(token);
+        tokenDto.setRefreshToken(refreshToken);
+        tokenDto.setProfileID(auth.getId());
+        tokenDto.setRole(auth.getRole());
+        return tokenDto;
     }
 
     public boolean verify(String token) {
@@ -111,25 +109,28 @@ public class AuthService {
         return verified && expiryTime.after(new Date());
     }
 
-    public AuthResponse refresh(RefreshDto refreshDto) {
-        boolean verified = verify(refreshDto.getRefreshToken());
+    public TokenDto refresh(RefreshDto refreshDto, String rt) {
+        boolean verified = verify(rt);
         if(!verified) throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
-        Session session = sessionRepository.findOneByRefreshToken(refreshDto.getRefreshToken());
-
-        if(session == null)
+        Session session = sessionRepository.findOneByRefreshToken(rt);
+        if (session == null)
             throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
-        String refreshToken = generateToken(refreshDto.getUsername(), session.getRole().toString(), true);
-        session.setRefreshToken(refreshToken);
-        sessionRepository.save(session);
+        if (session.getRole() != refreshDto.getRole())
+            throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
-        return AuthResponse.builder()
-                .refreshToken(refreshToken)
-                .token(generateToken(refreshDto.getUsername(), session.getRole().toString(), false))
-                .profileID(session.getAuth().getId())
-                .authorized(true)
-                .build();
+        String newRefreshToken = generateToken(refreshDto.getUsername(), session.getRole().toString(), true);
+        session.setRefreshToken(newRefreshToken);
+        sessionRepository.save(session);
+        String newToken = generateToken(refreshDto.getUsername(), session.getRole().toString(), false);
+
+        TokenDto tokenDto = new TokenDto();
+        tokenDto.setToken(newToken);
+        tokenDto.setRefreshToken(newRefreshToken);
+        tokenDto.setProfileID(session.getAuth().getId());
+        tokenDto.setRole(session.getAuth().getRole());
+        return tokenDto;
     }
 
     public void logout(LogoutDto logoutDto) {

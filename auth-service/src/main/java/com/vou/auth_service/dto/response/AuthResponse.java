@@ -1,6 +1,7 @@
 package com.vou.auth_service.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,9 +12,9 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
+@AllArgsConstructor
 public class AuthResponse {
-    private String token;
     private String profileID;
-    private String refreshToken;
+    private String role;
     private Boolean authorized;
 }

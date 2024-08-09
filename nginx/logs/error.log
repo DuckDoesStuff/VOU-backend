@@ -48,3 +48,18 @@
 2024/07/30 23:03:14 [emerg] 30576#25864: CreateDirectory() "D:\Study\Courses\SoftwareArchitech\ProjectRepo\VOU-backend\nginx/temp/client_body_temp" failed (3: The system cannot find the path specified)
 2024/07/30 23:03:28 [emerg] 34444#10088: CreateDirectory() "D:\Study\Courses\SoftwareArchitech\ProjectRepo\VOU-backend\nginx/temp/client_body_temp" failed (3: The system cannot find the path specified)
 2024/07/30 23:03:53 [emerg] 8068#19380: CreateDirectory() "D:\Study\Courses\SoftwareArchitech\ProjectRepo\VOU-backend\nginx/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2024/08/09 08:42:30 [error] 2368#22896: *8 CreateFile() "D:\Study\Courses\SoftwareArchitech\ProjectRepo\VOU-backend\nginx/html/otp/55555" failed (3: The system cannot find the path specified), client: 127.0.0.1, server: , request: "POST /api/otp/55555 HTTP/1.1", host: "localhost:8000", referrer: "http://localhost:5173/"
+2024/08/09 08:42:48 [error] 2368#22896: *8 CreateFile() "D:\Study\Courses\SoftwareArchitech\ProjectRepo\VOU-backend\nginx/html/otp/55555" failed (3: The system cannot find the path specified), client: 127.0.0.1, server: , request: "POST /api/otp/55555 HTTP/1.1", host: "localhost:8000", referrer: "http://localhost:5173/"
+2024/08/09 08:44:52 [notice] 31800#30708: signal process started
+2024/08/09 09:01:32 [notice] 30804#12460: signal process started
+2024/08/09 23:49:17 [notice] 21740#7500: signal process started
+2024/08/09 23:49:22 [notice] 24640#25008: signal process started
+2024/08/09 23:50:08 [error] 5724#5384: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: , request: "POST /api/profile/brand HTTP/1.1", upstream: "http://[::1]:8002/profile/brand", host: "localhost:8000", referrer: "http://localhost:5173/"
+2024/08/09 23:50:11 [error] 5724#5384: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: , request: "POST /api/profile/brand HTTP/1.1", upstream: "http://127.0.0.1:8002/profile/brand", host: "localhost:8000", referrer: "http://localhost:5173/"
+2024/08/10 00:45:41 [notice] 29872#19840: signal process started
+2024/08/10 00:49:31 [notice] 28684#34172: signal process started
+2024/08/10 00:52:54 [notice] 20548#2940: signal process started
+2024/08/10 01:11:47 [notice] 21456#33640: signal process started
+2024/08/10 01:11:47 [error] 21456#33640: OpenEvent("Global\ngx_quit_16676") failed (2: The system cannot find the file specified)
+2024/08/10 01:11:55 [notice] 35000#5944: signal process started
+2024/08/10 01:11:55 [error] 35000#5944: OpenEvent("Global\ngx_quit_16676") failed (2: The system cannot find the file specified)

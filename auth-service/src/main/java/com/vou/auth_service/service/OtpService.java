@@ -67,8 +67,8 @@ public class OtpService {
         // Call user service to verify user profile
         String url = "";
         switch(auth.getRole()) {
-            case USER -> url ="http://localhost:8002/users/";
-            case BRAND -> url = "http://localhost:8002/brands/";
+            case USER -> url ="http://localhost:8002/profile/user/";
+            case BRAND -> url = "http://localhost:8002/profile/brand/";
         }
         url += auth.getUsername() ;
         WebClient webClient = webClientBuilder.build();

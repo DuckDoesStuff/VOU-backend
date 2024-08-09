@@ -1,5 +1,6 @@
 package com.vou.auth_service.dto;
 
+import com.vou.auth_service.enumerate.Role;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,6 @@ public class RefreshDto {
     @NotNull(message = "Username is required")
     private String username;
 
-    @NotNull(message = "Refresh token is required")
-    private String refreshToken;
+    @NotNull(message = "Role is required")
+    private Role role;
 }
