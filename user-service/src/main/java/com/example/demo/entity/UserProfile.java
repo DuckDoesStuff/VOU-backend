@@ -4,7 +4,6 @@ import com.example.demo.enumerate.ProfileState;
 import com.example.demo.enumerate.Role;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 

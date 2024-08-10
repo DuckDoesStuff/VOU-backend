@@ -1,9 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ProfileStateDto;
-import com.example.demo.dto.UserRegisterDto;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.AuthRegisterResponse;
+import com.example.demo.dto.user.UserRegisterDto;
+import com.example.demo.dto.user.UserUpdateDto;
 import com.example.demo.entity.UserProfile;
 import com.example.demo.enumerate.ProfileState;
 import com.example.demo.service.UserProfileService;
@@ -21,8 +21,11 @@ public class UserProfileController {
     private UserProfileService userProfileService;
 
     @GetMapping
-    public List<UserProfile> getAllUsers() {
-        return userProfileService.getAllUsers();
+    public ApiResponse<List<UserProfile>> getAllUsers() {
+        return ApiResponse.<List<UserProfile>>builder()
+                .code(200)
+                .result(userProfileService.getAllUsers())
+                .build();
     }
 
     @PostMapping
@@ -34,23 +37,24 @@ public class UserProfileController {
                 .build();
     }
 
-    @PutMapping("/{username}")
+    @GetMapping("/{id}")
+    public ApiResponse<UserProfile> getUserById(@PathVariable UUID id) {
+        return ApiResponse.<UserProfile>builder()
+                .code(200)
+                .result(userProfileService.getUserById(id))
+                .build();
+    }
+
+    @PatchMapping("/{username}")
     public UserProfile verifyUser(@PathVariable String username) {
         return userProfileService.verifyUser(username, ProfileState.VERIFIED);
     }
 
-    @GetMapping("/{id}")
-    public UserProfile getUserById(@PathVariable UUID id) {
-        return userProfileService.getUserById(id);
-    }
-
-//    @PutMapping("/{id}")
-//    public UserProfile updateUser(@PathVariable UUID id, @RequestBody UserProfile userProfileDetails) {
-//        return userProfileService.updateUser(id, userProfileDetails);
-//    }
-
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable UUID id) {
-        userProfileService.deleteUser(id);
+    @PutMapping("/{id}")
+    public ApiResponse<UserProfile> updateUserProfile(@RequestBody UserUpdateDto userUpdateDto, UUID id) {
+        return ApiResponse.<UserProfile>builder()
+                .code(200)
+                .result(userProfileService.updateUser(id, userUpdateDto))
+                .build();
     }
 }

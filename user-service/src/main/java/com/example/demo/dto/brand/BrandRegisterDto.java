@@ -1,6 +1,5 @@
-package com.example.demo.dto;
+package com.example.demo.dto.brand;
 
-import com.example.demo.enumerate.Role;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;

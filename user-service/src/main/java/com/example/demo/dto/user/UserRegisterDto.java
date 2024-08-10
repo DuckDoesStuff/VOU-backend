@@ -1,8 +1,10 @@
-package com.example.demo.dto;
+package com.example.demo.dto.user;
 
 import com.example.demo.enumerate.Role;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter

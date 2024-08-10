@@ -73,7 +73,7 @@ public class OtpService {
         url += auth.getUsername() ;
         WebClient webClient = webClientBuilder.build();
         webClient
-                .put()
+                .patch()
                 .uri(url)
                 .body(Mono.just(new ProfileStateDto(ProfileState.VERIFIED)), ProfileStateDto.class)
                 .retrieve()

@@ -1,10 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.ProfileStateDto;
 import com.example.demo.dto.request.AuthRegisterRequest;
-import com.example.demo.dto.UserRegisterDto;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.AuthRegisterResponse;
+import com.example.demo.dto.user.UserRegisterDto;
+import com.example.demo.dto.user.UserUpdateDto;
 import com.example.demo.entity.UserProfile;
 import com.example.demo.enumerate.ProfileState;
 import com.example.demo.exception.AuthException;
@@ -15,7 +15,6 @@ import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -108,21 +107,16 @@ public class UserProfileService {
         return userProfile.get();
     }
 
-    public UserProfile updateUser(UUID id, UserProfile userProfileDetails) {
-        UserProfile userProfile = userProfileRepository.findById(id).orElse(null);
+    public UserProfile updateUser(UUID id, UserUpdateDto userUpdateDto) {
+        UserProfile userProfile = userProfileRepository.findById(id)
+                .orElseThrow(() -> new ProfileException(ErrorCode.PROFILE_NOT_FOUND));
 
-        if (userProfile != null) {
-            userProfile.setDisplayName(userProfileDetails.getDisplayName());
-            userProfile.setEmail(userProfileDetails.getEmail());
-            userProfile.setPhone(userProfileDetails.getPhone());
-            userProfile.setRole(userProfileDetails.getRole());
-            userProfile.setBirthday(userProfileDetails.getBirthday());
-            userProfile.setAvatar(userProfileDetails.getAvatar());
-            userProfile.setGender(userProfileDetails.getGender());
-            userProfile.setFacebookAccount(userProfileDetails.getFacebookAccount());
-            return userProfileRepository.save(userProfile);
-        }
-        return null;
+        userUpdateDto.getDisplayName().ifPresent(userProfile::setDisplayName);
+        userUpdateDto.getPhone().ifPresent(userProfile::setPhone);
+        userUpdateDto.getEmail().ifPresent(userProfile::setEmail);
+        userUpdateDto.getAvatar().ifPresent(userProfile::setAvatar);
+
+        return userProfileRepository.save(userProfile);
     }
 
     public void deleteUser(UUID id) {

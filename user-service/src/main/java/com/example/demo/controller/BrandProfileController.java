@@ -1,11 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.BrandRegisterDto;
-import com.example.demo.dto.ProfileStateDto;
+import com.example.demo.dto.brand.BrandRegisterDto;
+import com.example.demo.dto.brand.BrandUpdateDto;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.AuthRegisterResponse;
 import com.example.demo.entity.BrandProfile;
-import com.example.demo.entity.UserProfile;
 import com.example.demo.enumerate.ProfileState;
 import com.example.demo.service.BrandProfileService;
 import jakarta.validation.Valid;
@@ -46,8 +45,16 @@ public class BrandProfileController {
                 .build();
     }
 
-    @PutMapping("/{brandname}")
+    @PatchMapping("/{brandname}")
     public BrandProfile verifyBrand(@PathVariable String brandname) {
         return brandProfileService.verifyBrand(brandname, ProfileState.VERIFIED);
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<BrandProfile> updateBrandProfile(@RequestBody BrandUpdateDto brandUpdateDto, @PathVariable UUID id) {
+        return ApiResponse.<BrandProfile>builder()
+                .code(200)
+                .result(brandProfileService.updateBrand(id, brandUpdateDto))
+                .build();
     }
 }

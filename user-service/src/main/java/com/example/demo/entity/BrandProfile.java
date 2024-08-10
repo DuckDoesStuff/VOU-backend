@@ -4,7 +4,6 @@ package com.example.demo.entity;
 import com.example.demo.enumerate.ProfileState;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
@@ -12,7 +11,6 @@ import java.util.UUID;
 @Data
 public class BrandProfile {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
     private UUID brandID;
 
@@ -26,6 +24,7 @@ public class BrandProfile {
     private String displayName;
     private String domain;
     private String address;
+    private String avatar;
     private Double lat;
     private Double lng;
 
