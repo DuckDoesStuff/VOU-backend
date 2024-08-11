@@ -7,9 +7,12 @@ import com.example.GameService.dto.GetRandomItemTypeDTO;
 import com.example.GameService.entity.ExchangeHistory;
 import com.example.GameService.entity.Item;
 import com.example.GameService.entity.ItemType;
+import com.example.GameService.entity.Participant;
 import com.example.GameService.repository.ExchangeHistoryRepository;
 import com.example.GameService.repository.ItemRepository;
 import com.example.GameService.repository.ItemTypeRepository;
+import com.example.GameService.repository.ParticipantRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -17,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ItemService {
@@ -26,6 +30,8 @@ public class ItemService {
     private ItemTypeRepository itemTypeRepository;
     @Autowired
     private ExchangeHistoryRepository exchangeHistoryRepository;
+    @Autowired
+    private ParticipantRepository participantRepository;
 
     public List<Item> getAllItems() {
         return itemRepository.findAll();
@@ -60,11 +66,16 @@ public class ItemService {
     }
     public ItemType getRandomItem(GetRandomItemTypeDTO getRandomItemTypeDTO) {
         Long userID = getRandomItemTypeDTO.getUserID();
-        Long gameID = getRandomItemTypeDTO.getGameID();
+        ObjectId gameID = getRandomItemTypeDTO.getGameID();
         Long eventID = getRandomItemTypeDTO.getEventID();
         List<ItemType> itemTypes = itemTypeRepository.findAll();
         int randomIdx = (int) (Math.random() * itemTypes.size());
         ItemType randomItem = itemTypes.get(randomIdx);
+        Optional<Participant> participant = participantRepository.findParticipantByEventGameAndUser(
+                eventID,
+                gameID,
+                userID
+        );
         // if user already had item type in that game and event, increase count
         Item userItem = itemRepository.findByEventIDAndGameIDAndItemTypeIDAndUserID(eventID, gameID, randomItem.getItemTypeID(), userID);
         if (userItem != null) {
@@ -78,11 +89,13 @@ public class ItemService {
             userItem.setItemTypeID(randomItem.getItemTypeID());
         }
         itemRepository.save(userItem);
+        // Decrement user turnLeft by 1
+
         return randomItem;
     }
     public ResponseEntity<ApiResponse<String>> exchangeItemsBetweenUsers(ExchangeItemsRequest exchangeItemsRequest) {
         Long eventID = exchangeItemsRequest.getItemA().getEventID();
-        Long gameID = exchangeItemsRequest.getItemA().getGameID();
+        ObjectId gameID = exchangeItemsRequest.getItemA().getGameID();
         Long itemTypeIDA = exchangeItemsRequest.getItemA().getItemTypeID();
         Long userIDA = exchangeItemsRequest.getItemA().getUserID();
         Long userIDB = exchangeItemsRequest.getItemB().getUserID();
@@ -95,7 +108,6 @@ public class ItemService {
                             "User does not have this item to exchange", null),
                     HttpStatus.BAD_REQUEST);
         }
-
         // Update item user A and item user B
         itemA.setQuantity(itemA.getQuantity() - 1);
         itemB.setQuantity(itemB.getQuantity() + 1);

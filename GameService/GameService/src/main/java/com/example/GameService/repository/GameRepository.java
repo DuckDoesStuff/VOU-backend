@@ -12,5 +12,7 @@ public interface GameRepository extends MongoRepository<Game, String> {
     List<Game> findByEventIDAndGameID(Long eventID, ObjectId gameID);
     @Query(value="{ 'gameID': ?0, 'eventID': ?1 }", delete = true)
     long deleteByGameIDAndEventID(ObjectId gameID, Long eventID);
-
+    Game findByGameID(ObjectId gameID);
+    @Query("{ 'eventID': { $in: ?0 } }")
+    List<Game> findGamesByEventIDs(List<Long> eventIDs);
 }
