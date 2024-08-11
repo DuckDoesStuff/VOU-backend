@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/events")
+@RequestMapping("/events")
 public class PromotionalEventController {
 
     @Autowired
     private PromotionalEventService service;
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<PromotionalEvent> createEvent(@RequestBody PromotionalEvent event) {
         PromotionalEvent createdEvent = service.createEvent(event);
         return ResponseEntity.ok(createdEvent);

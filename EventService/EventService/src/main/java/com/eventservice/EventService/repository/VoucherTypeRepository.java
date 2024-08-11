@@ -1,4 +1,4 @@
-package com.eventservice.EventService.service;
+package com.eventservice.EventService.repository;
 
 import com.eventservice.EventService.entity.VoucherType;
 import org.springframework.data.jpa.repository.JpaRepository;

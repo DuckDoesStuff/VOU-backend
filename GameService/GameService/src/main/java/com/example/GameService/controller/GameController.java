@@ -1,9 +1,13 @@
 package com.example.GameService.controller;
 
 // GameController.java
+import com.example.GameService.dto.ApiResponse;
+import com.example.GameService.dto.GetGameRequestDTO;
 import com.example.GameService.entity.Game;
 import com.example.GameService.service.GameService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,19 +23,18 @@ public class GameController {
         return gameService.getAllGames();
     }
 
-    @GetMapping("/{eventID}/{gameID}")
-    public Game getGame(@PathVariable Long eventID, @PathVariable Long gameID) {
-        return gameService.getGame(eventID, gameID);
+    @GetMapping("/game/event")
+    public ResponseEntity<ApiResponse<Game>> getGame(@RequestBody GetGameRequestDTO gameRequestDTO) {
+        return gameService.getGame(gameRequestDTO);
     }
 
     @PostMapping
-    public Game saveGame(@RequestBody Game game) {
-        System.out.println(game.toString());
-        return gameService.saveGame(game);
+    public ResponseEntity<ApiResponse<Game>> createGame(@RequestBody Game game) {
+        return gameService.createGame(game);
     }
 
-    @DeleteMapping("/{eventID}/{gameID}")
-    public void deleteGame(@PathVariable Long eventID, @PathVariable Long gameID) {
-        gameService.deleteGame(eventID, gameID);
+    @DeleteMapping("/game/event")
+    public ResponseEntity<ApiResponse<String>> deleteGame(@RequestBody GetGameRequestDTO gameRequestDTO) {
+        return gameService.deleteGame(gameRequestDTO);
     }
 }

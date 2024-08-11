@@ -1,12 +1,19 @@
 package com.example.GameService.service;
 
 // ItemService.java
+import com.example.GameService.dto.ApiResponse;
+import com.example.GameService.dto.ExchangeItemsRequest;
 import com.example.GameService.dto.GetRandomItemTypeDTO;
+import com.example.GameService.entity.ExchangeHistory;
 import com.example.GameService.entity.Item;
 import com.example.GameService.entity.ItemType;
+import com.example.GameService.repository.ExchangeHistoryRepository;
 import com.example.GameService.repository.ItemRepository;
 import com.example.GameService.repository.ItemTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +24,8 @@ public class ItemService {
     private ItemRepository itemRepository;
     @Autowired
     private ItemTypeRepository itemTypeRepository;
+    @Autowired
+    private ExchangeHistoryRepository exchangeHistoryRepository;
 
     public List<Item> getAllItems() {
         return itemRepository.findAll();
@@ -57,7 +66,7 @@ public class ItemService {
         int randomIdx = (int) (Math.random() * itemTypes.size());
         ItemType randomItem = itemTypes.get(randomIdx);
         // if user already had item type in that game and event, increase count
-        Item userItem = itemRepository.findByEventIDAndGameIDAndItemTypeID(eventID, gameID, randomItem.getItemTypeID());
+        Item userItem = itemRepository.findByEventIDAndGameIDAndItemTypeIDAndUserID(eventID, gameID, randomItem.getItemTypeID(), userID);
         if (userItem != null) {
             userItem.setQuantity(userItem.getQuantity() + 1);
         } else {
@@ -70,6 +79,44 @@ public class ItemService {
         }
         itemRepository.save(userItem);
         return randomItem;
+    }
+    public ResponseEntity<ApiResponse<String>> exchangeItemsBetweenUsers(ExchangeItemsRequest exchangeItemsRequest) {
+        Long eventID = exchangeItemsRequest.getItemA().getEventID();
+        Long gameID = exchangeItemsRequest.getItemA().getGameID();
+        Long itemTypeIDA = exchangeItemsRequest.getItemA().getItemTypeID();
+        Long userIDA = exchangeItemsRequest.getItemA().getUserID();
+        Long userIDB = exchangeItemsRequest.getItemB().getUserID();
+        Item itemA = itemRepository.findByEventIDAndGameIDAndItemTypeIDAndUserID(eventID, gameID, itemTypeIDA, userIDA);
+        Item itemB = itemRepository.findByEventIDAndGameIDAndItemTypeIDAndUserID(eventID, gameID, itemTypeIDA, userIDB);
+
+        if (itemA == null || itemB == null || itemA.getQuantity() < 1 || itemB.getQuantity() < 1) {
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.BAD_REQUEST.value(),
+                            "User does not have this item to exchange", null),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        // Update item user A and item user B
+        itemA.setQuantity(itemA.getQuantity() - 1);
+        itemB.setQuantity(itemB.getQuantity() + 1);
+        itemRepository.save(itemA);
+        itemRepository.save(itemB);
+
+        // Save history
+        String currentTime = String.valueOf(System.currentTimeMillis());
+        ExchangeHistory history = new ExchangeHistory();
+        history.setItemTypeID(itemTypeIDA);
+        history.setPresenterID(userIDA);
+        history.setReceiverID(userIDB);
+        history.setTimeSent(currentTime);
+        history.setGameID(gameID);
+        history.setEventID(eventID);
+        exchangeHistoryRepository.save(history);
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.OK.value(),
+                        "Exchange successfully", null),
+                HttpStatus.OK
+        );
     }
 }
 
