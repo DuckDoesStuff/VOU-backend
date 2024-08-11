@@ -1,4 +1,4 @@
-
+version: '3.8'
 
 services:
   pgadmin:
@@ -13,7 +13,7 @@ services:
       - user-network
     volumes:
       - pgadmin-data:/var/lib/pgadmin
-      
+
   auth-db:
     image: postgres
     ports:
@@ -40,13 +40,41 @@ services:
     volumes:
       - user-data:/var/lib/postgresql/data
 
+  event-db:
+    image: postgres
+    ports: 
+     - "5433:5432"
+    networks:
+      - event-network
+    environment:
+      POSTGRES_USER: vou
+      POSTGRES_PASSWORD: vouadmin123
+      POSTGRES_DB: event_service
+    volumes:
+      - event-data:/var/lib/postgresql/data
+  
+  game-db:
+    image: mongo:latest
+    container_name: game-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+  
+
 networks:
   auth-network:
     driver: bridge
   user-network:
+    driver: bridge
+  event-network:
+    driver: bridge
+  mongo-network:
     driver: bridge
 
 volumes:
   auth-data:
   user-data:
   pgadmin-data:
+  mongo-data:
+  event-data:
