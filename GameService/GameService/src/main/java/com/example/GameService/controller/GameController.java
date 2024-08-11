@@ -9,6 +9,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -27,6 +28,10 @@ public class GameController {
     public ResponseEntity<ApiResponse<Game>> getGame(@RequestBody GetGameRequestDTO gameRequestDTO) {
         return gameService.getGame(gameRequestDTO);
     }
+    @GetMapping("/brand/{brandID}")
+    public ResponseEntity<ApiResponse<List<Game>>> getGame(@PathVariable Long brandID) {
+        return gameService.getGamesByBrandID(brandID);
+    }
 
     @PostMapping
     public ResponseEntity<ApiResponse<Game>> createGame(@RequestBody Game game) {
@@ -36,5 +41,11 @@ public class GameController {
     @DeleteMapping("/game/event")
     public ResponseEntity<ApiResponse<String>> deleteGame(@RequestBody GetGameRequestDTO gameRequestDTO) {
         return gameService.deleteGame(gameRequestDTO);
+    }
+    @PutMapping("/game/{gameID}")
+    public ResponseEntity<ApiResponse<Game>> updateGame(
+            @PathVariable String gameID,
+            @RequestBody Game updatedGameDetails) {
+        return gameService.updateGame(new ObjectId(gameID), updatedGameDetails);
     }
 }

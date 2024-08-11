@@ -1,5 +1,6 @@
 package com.eventservice.EventService.controller;
 
+import com.eventservice.EventService.dto.ApiResponse;
 import com.eventservice.EventService.entity.PromotionalEvent;
 import com.eventservice.EventService.service.PromotionalEventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,35 +15,43 @@ import java.util.Optional;
 public class PromotionalEventController {
 
     @Autowired
-    private PromotionalEventService service;
+    private PromotionalEventService promotionalEventService;
 
     @PostMapping()
-    public ResponseEntity<PromotionalEvent> createEvent(@RequestBody PromotionalEvent event) {
-        PromotionalEvent createdEvent = service.createEvent(event);
-        return ResponseEntity.ok(createdEvent);
+    public ResponseEntity<ApiResponse<PromotionalEvent>> createEvent(@RequestBody PromotionalEvent event) {
+       return promotionalEventService.createEvent(event);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<PromotionalEvent> updateEvent(@PathVariable Long id, @RequestBody PromotionalEvent eventDetails) {
-        PromotionalEvent updatedEvent = service.updateEvent(id, eventDetails);
+        PromotionalEvent updatedEvent = promotionalEventService.updateEvent(id, eventDetails);
         return ResponseEntity.ok(updatedEvent);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
-        service.deleteEvent(id);
+        promotionalEventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<PromotionalEvent>> getAllEvents() {
-        List<PromotionalEvent> events = service.getAllEvents();
-        return ResponseEntity.ok(events);
+    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> getAllEvents() {
+        return promotionalEventService.getAllEvents();
     }
+//    @GetMapping("/brand/{brandID}")
+//    public ResponseEntity<ApiResponse<List<Long>>> getAllEvents(@PathVariable Long brandID) {
+//        return promotionalEventService.getEventsByBrandID(brandID);
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<PromotionalEvent> getEventById(@PathVariable Long id) {
-        Optional<PromotionalEvent> event = service.getEventById(id);
+        Optional<PromotionalEvent> event = promotionalEventService.getEventById(id);
         return event.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/brand/{brandID}")
+    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> getPromotionalEventsByBrandID(@PathVariable Long brandID) {
+        return promotionalEventService.getPromotionalEventsByBrandID(brandID);
+    }
+
 }

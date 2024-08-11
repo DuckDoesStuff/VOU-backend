@@ -1,9 +1,13 @@
 package com.example.GameService.controller;
 
 // ParticipantController.java
+import com.example.GameService.dto.AddParticipantRequest;
+import com.example.GameService.dto.ApiResponse;
 import com.example.GameService.entity.Participant;
 import com.example.GameService.service.ParticipantService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +24,7 @@ public class ParticipantController {
     }
 
     @GetMapping("/{id}")
-    public Participant getParticipant(@PathVariable String id) {
+    public Participant getParticipant(@PathVariable ObjectId id) {
         return participantService.getParticipant(id);
     }
 
@@ -39,9 +43,9 @@ public class ParticipantController {
         return participantService.getParticipantsByGameID(gameID);
     }
 
-    @PostMapping
-    public Participant saveParticipant(@RequestBody Participant participant) {
-        return participantService.saveParticipant(participant);
+    @PostMapping("/participant")
+    public ResponseEntity<ApiResponse<Participant>> addParticipantToGame(@RequestBody AddParticipantRequest addParticipantRequest) {
+        return participantService.addParticipantToGame(addParticipantRequest);
     }
 
     @DeleteMapping("/{id}")

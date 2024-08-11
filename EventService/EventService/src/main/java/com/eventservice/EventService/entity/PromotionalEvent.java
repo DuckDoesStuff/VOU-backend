@@ -18,5 +18,4 @@ public class PromotionalEvent {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private long brandID;
-    private long gameID;
 }

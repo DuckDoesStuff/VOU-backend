@@ -7,10 +7,12 @@ import com.example.GameService.entity.Game;
 import com.example.GameService.repository.GameRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -18,6 +20,13 @@ import java.util.List;
 public class GameService {
     @Autowired
     private GameRepository gameRepository;
+
+    private final RestTemplate restTemplate;
+
+    public GameService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
 
     public List<Game> getAllGames() {
         return gameRepository.findAll();
@@ -43,6 +52,44 @@ public class GameService {
         return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 
+    public ResponseEntity<ApiResponse<List<Game>>> getGamesByBrandID(Long brandID) {
+        String url = "http://localhost:8003/events/brand/" + brandID;
+        ResponseEntity<ApiResponse<List<Long>>> responseEntity = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<ApiResponse<List<Long>>>() {}
+        );
+        ApiResponse<List<Game>> response;
+        if (responseEntity.getBody() == null) {
+            response = new ApiResponse<>(
+                    HttpStatus.NO_CONTENT.value(),
+                    "No games found for the given brandID",
+                    null
+            );
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        }
+        List<Long> eventIDs = responseEntity.getBody().getResult();
+        List<Game> games = gameRepository.findGamesByEventIDs(eventIDs);
+
+        if (!games.isEmpty()) {
+            response = new ApiResponse<>(
+                    HttpStatus.OK.value(),
+                    "Games retrieved successfully",
+                    games
+            );
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            response = new ApiResponse<>(
+                    HttpStatus.NO_CONTENT.value(),
+                    "No games found for the given brandID",
+                    null
+            );
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        }
+    }
+
+
     public ResponseEntity<ApiResponse<Game>> createGame(Game game) {
         if (game.getGameID() == null) {
             game.setGameID(new ObjectId());
@@ -57,7 +104,31 @@ public class GameService {
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    public ResponseEntity<ApiResponse<Game>> updateGame(ObjectId gameID, Game updatedGameDetails) {
+        Game existingGame = gameRepository.findByGameID(gameID);
+        ApiResponse<Game> response = new ApiResponse<>();
 
+        if (existingGame != null) {
+            existingGame.setNameOfGame(updatedGameDetails.getNameOfGame());
+            existingGame.setPicture(updatedGameDetails.getPicture());
+            existingGame.setType(updatedGameDetails.getType());
+            existingGame.setInstruction(updatedGameDetails.getInstruction());
+            existingGame.setDefaultFreeTurn(updatedGameDetails.getDefaultFreeTurn());
+            existingGame.setStartTime(updatedGameDetails.getStartTime());
+            existingGame.setEndTime(updatedGameDetails.getEndTime());
+
+            Game savedGame = gameRepository.save(existingGame);
+
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Game updated successfully");
+            response.setResult(savedGame);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            response.setMessage("Game not found");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
     public ResponseEntity<ApiResponse<String>> deleteGame(GetGameRequestDTO getGameRequestDTO) {
         long count = gameRepository.deleteByGameIDAndEventID(
                 getGameRequestDTO.getGameID(),
