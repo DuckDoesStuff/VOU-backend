@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -16,6 +17,5 @@ import java.util.List;
 public class SubscribeTopicRequest {
     @NonNull
     String userID;
-    String topic;
-    String typeSubscribe;
+    List<UserSubscribe.SubscribeItem> subscribeList;
 }

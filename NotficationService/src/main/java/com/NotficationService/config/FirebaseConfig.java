@@ -22,17 +22,23 @@ public class FirebaseConfig {
     private  final FirebaseProperties firebaseProperties;
 
     @Bean
-    FirebaseMessaging firebaseMessaging() throws IOException {
-        GoogleCredentials googleCredentials=GoogleCredentials
+    public FirebaseApp firebaseApp() throws IOException {
+        GoogleCredentials googleCredentials = GoogleCredentials
                 .fromStream(new ClassPathResource(firebaseProperties.getFirebaseCredentialFile()).getInputStream());
         FirebaseOptions firebaseOptions = FirebaseOptions
                 .builder()
                 .setCredentials(googleCredentials)
                 .build();
+
+        // Initialize FirebaseApp if not already initialized
         if (FirebaseApp.getApps().isEmpty()) {
-            FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions,"VOU-notification");
-            return FirebaseMessaging.getInstance(app);
+            return FirebaseApp.initializeApp(firebaseOptions, "VOU-notification");
         }
-        return FirebaseMessaging.getInstance();
+        return FirebaseApp.getInstance("VOU-notification");
+    }
+
+    @Bean
+    FirebaseMessaging firebaseMessaging(FirebaseApp firebaseApp) throws IOException {
+        return FirebaseMessaging.getInstance(firebaseApp);
     }
 }

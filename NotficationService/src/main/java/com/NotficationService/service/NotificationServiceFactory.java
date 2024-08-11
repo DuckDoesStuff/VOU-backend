@@ -11,6 +11,7 @@ import java.util.Map;
 public class NotificationServiceFactory {
     private final Map<String, NotificationServiceType> notificationServices = new HashMap<>();
 
+    @Autowired
     public void NotificationServiceFactory(PushService pushService) {
         notificationServices.put(NotificationType.PushNotification.getNotificationType(), pushService);
     }

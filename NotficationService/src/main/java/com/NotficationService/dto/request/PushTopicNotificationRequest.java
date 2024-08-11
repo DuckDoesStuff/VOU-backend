@@ -13,6 +13,6 @@ import lombok.experimental.FieldDefaults;
 public class PushTopicNotificationRequest {
     String topic;
     @Size(max = 20, message = "INVALID_TITLE")
-    String tittle;
-    String message;
+    String title;
+    String content;
 }

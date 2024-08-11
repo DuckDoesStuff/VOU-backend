@@ -1,7 +1,7 @@
 server:
   port: 8005
-  servlet:
-    context-path: /notification
+#  servlet:
+#    context-path: /notification
 spring:
   application:
     name: NotficationService

@@ -20,8 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -38,11 +40,12 @@ public class NotificationService {
     UserSubscribeMapper userSubscribeMapper;
 
     public String sendGeneralPushNotification(PushTopicNotificationRequest notificationRequest) {
-        NotificationServiceType notificationService = notificationFactory.getNotificationService(NotificationType.PushNotification.getNotificationType());
+        NotificationServiceType pushService = notificationFactory.getNotificationService(NotificationType.PushNotification.getNotificationType());
         Notification notification = notificationMapper.toNotification(notificationRequest);
         notification.setDate(LocalDate.now());
+        notification.setNotificationType(NotificationType.PushNotification.getNotificationType());
         try {
-            notificationService.sendTopicNotification(notification);
+            pushService.sendTopicNotification(notification);
         } catch(AppException e) {
             throw new AppException(ErrorCode.CANNOT_SEND_PUSHMESSAGE);
         }
@@ -50,39 +53,86 @@ public class NotificationService {
         return "Successfully sent push notification";
     }
 
-    public void subscribeToNewTopic(SubscribeTopicRequest subscribeTopicRequest) {
-        // Tìm người dùng theo userId
+    public String subscribeToNewTopic(SubscribeTopicRequest subscribeTopicRequest) {
+        // Thêm ngày subscribe cho người dùng
         UserSubscribe newUserSubscribe = userSubscribeMapper.toUserSubscribe(subscribeTopicRequest);
-        UserSubscribe currentUserSubscribe = userSubscribeRepository.findById(newUserSubscribe.getUserID()).orElse(new UserSubscribe());
+        newUserSubscribe.getSubscribeList().forEach(item -> item.setDateSubscribe(LocalDate.now()));
 
-        // Nếu chưa có danh sách subcribeList, khởi tạo nó
-        if (currentUserSubscribe.getSubscribeList() == null) {
-            currentUserSubscribe.setSubscribeList(new ArrayList<>());
+        Optional<UserSubscribe> currentUserSubscribe = userSubscribeRepository.findById(newUserSubscribe.getUserID());
+        UserSubscribe userSubscribe =  newUserSubscribe;
+        if (currentUserSubscribe.isPresent()) {
+            userSubscribe = currentUserSubscribe.get();
+            userSubscribe.getSubscribeList().addAll(newUserSubscribe.getSubscribeList());
         }
-        List<UserSubscribe.SubscribeItem> subscribeItemsCanBeAdded = newUserSubscribe.getSubscribeList().stream()
-//                .filter(subscribeItem -> ())
-                .collect(Collectors.toList());
 
-        // Thêm SubscribeItem mới vào danh sách
-       currentUserSubscribe.getSubscribeList().addAll(subscribeItemsCanBeAdded);
-
-        // Lưu lại đối tượng UserSubscribe
-        userSubscribeRepository.save(currentUserSubscribe);
+        try {
+            userSubscribeRepository.save(userSubscribe);
+        } catch(Exception e) {
+            throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+        return "Successfully subscribed";
     }
 
+    public String unSubcribeToTopic(SubscribeTopicRequest unsubcribeTopicRequest) {
+        UserSubscribe newUnsubcribe = userSubscribeMapper.toUserSubscribe(unsubcribeTopicRequest);
+        newUnsubcribe.getSubscribeList().forEach(item -> item.setDateUnsubscribe(LocalDate.now()));
+        Optional<UserSubscribe> currentUserSubscribe = userSubscribeRepository.findById(newUnsubcribe.getUserID());
+        if (currentUserSubscribe.isEmpty()) return "No subscribed topics found";
+
+        currentUserSubscribe.get().getSubscribeList().forEach(item -> {
+            int index = newUnsubcribe.getSubscribeList().indexOf(item);
+            if (index!= -1) {
+                currentUserSubscribe.get().getSubscribeList().get(index).setDateUnsubscribe(LocalDate.now());
+            }
+        });
+        userSubscribeRepository.save(currentUserSubscribe.get());
+
+        return "Successfully unsubscribed";
+    }
+
+    public List<UserSubscribe.SubscribeItem> getPushTopicOfUser(String userID) {
+        Optional<UserSubscribe> currentUserSubscribe = userSubscribeRepository.findById(userID);
+        if (currentUserSubscribe.isEmpty()) return new ArrayList<>();
+        List<UserSubscribe.SubscribeItem> subscribeItems = currentUserSubscribe.get().getSubscribeList()
+                .stream()
+                .filter(item -> item.getDateUnsubscribe() == null)
+                .toList();
+        return  subscribeItems;
+    }
 
     public ArrayList<Notification> getPushNotificationOfUser(String userID){
-        ArrayList<Notification> notifications = new ArrayList<>();
         Optional<UserSubscribe> optionalUserSubscribe = userSubscribeRepository.findByUserID(userID);
-        if (optionalUserSubscribe.isPresent()) {
-            UserSubscribe userSubscribe = optionalUserSubscribe.get();
-            List<String> subscribedTopics = userSubscribe.getSubscribeList().stream()
+        if (optionalUserSubscribe.isEmpty()) return null;
+        ArrayList<Notification> notifications = new ArrayList<>();
+
+        List<UserSubscribe.SubscribeItem> userSubscribeList = optionalUserSubscribe.get().getSubscribeList().stream()
                     .filter(subscribeItem -> NotificationType.PushNotification.getNotificationType().equals(subscribeItem.getTypeSubscribe()))
-                    .map(UserSubscribe.SubscribeItem::getTopic)
-                    .collect(Collectors.toList());
-            notifications.addAll(notificationRepository.findByTopicIn(subscribedTopics));
-        }
-        notifications.addAll(notificationRepository.findByReceiverContaining(userID));
+                    .toList();
+
+        Map<String, UserSubscribe.SubscribeItem> subscribeItem = userSubscribeList.stream()
+                .collect(Collectors.toMap(UserSubscribe.SubscribeItem::getTopic, item -> item));
+
+        //List topic thôi
+        List<String> subscribedTopics = userSubscribeList.stream()
+                .map(UserSubscribe.SubscribeItem::getTopic)
+                .collect(Collectors.toList());
+
+
+
+        // Truy vấn tất cả các thông báo của các topic này một lần
+        List<Notification> allNotifications = notificationRepository.findByTopicIn(subscribedTopics);
+
+        //Lọc thông báo theo ngày giờ người dùng subscribe
+        notifications.addAll(allNotifications.stream()
+                .filter(notification -> {
+                    LocalDate notificationDate = notification.getDate();
+                    LocalDate subscribeStart = subscribeItem.get(notification.getTopic()).getDateSubscribe(); // Thời gian bắt đầu đăng ký
+                    LocalDate subscribeEnd = subscribeItem.get(notification.getTopic()).getDateUnsubscribe(); // Thời gian kết thúc đăng ký
+                    return (subscribeStart == null || !notificationDate.isBefore(subscribeStart)) &&
+                            (subscribeEnd == null || !notificationDate.isAfter(subscribeEnd));
+                }).toList());
+
+//        notifications.addAll(notificationRepository.findByReceiverContaining(userID));
         return notifications;
     }
 

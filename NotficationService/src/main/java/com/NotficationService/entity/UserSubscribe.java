@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Document("UserSubscribe")
@@ -21,6 +22,8 @@ public class UserSubscribe {
     public static class SubscribeItem {
         String topic;
         String typeSubscribe;
+        LocalDate dateSubscribe;
+        LocalDate dateUnsubscribe;
     }
 }
 

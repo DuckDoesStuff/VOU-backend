@@ -12,6 +12,6 @@ import java.util.ArrayList;
 @Data
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ClientResponse {
+public class UserNotificationReponse {
     ArrayList<Notification> notifications;
 }

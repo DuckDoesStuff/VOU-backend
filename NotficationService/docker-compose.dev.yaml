@@ -1,0 +1,12 @@
+
+
+services:
+   db:
+    image: bitnami/mongodb:7.0.11
+    ports:
+      - "5435:27017"
+    environment:
+      MONGODB_ROOT_USER: root
+      MONGODB_ROOT_PASSWORD: root
+
+#    docker run -d --name mongodb-7.0.11 -p 5435:27017 -e MONGODB_ROOT_USER=root -e MONGODB_ROOT_PASSWORD=root bitnami/mongodb:7.0.11

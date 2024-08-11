@@ -8,7 +8,7 @@ public enum NotificationType {
     EmailNotification("EmailNotification"),
     SmsNotification("SmsNotification");
 
-    NotificationType(String type) {
+    private NotificationType(String type) {
         this.NotificationType = type;
     }
     private String NotificationType;
