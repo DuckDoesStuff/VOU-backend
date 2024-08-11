@@ -7,6 +7,7 @@ import com.example.demo.dto.user.UserUpdateDto;
 import com.example.demo.entity.UserProfile;
 import com.example.demo.enumerate.ProfileState;
 import com.example.demo.service.UserProfileService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class UserProfileController {
     }
 
     @PostMapping
-    public ApiResponse<AuthRegisterResponse> createUser(@RequestBody UserRegisterDto userRegisterDto) {
+    public ApiResponse<AuthRegisterResponse> createUser(@Valid @RequestBody UserRegisterDto userRegisterDto) {
         AuthRegisterResponse authRegisterResponse = userProfileService.createUser(userRegisterDto);
         return ApiResponse.<AuthRegisterResponse>builder()
                 .code(200)

@@ -9,7 +9,6 @@ import com.vou.auth_service.exception.AuthException;
 import com.vou.auth_service.exception.ErrorCode;
 import com.vou.auth_service.service.AuthService;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.experimental.NonFinal;
@@ -46,16 +45,17 @@ public class AuthController {
     }
 
     @PostMapping("/token")
-    public ApiResponse<AuthResponse> getToken(@Valid @RequestBody AuthDto authDto, HttpServletResponse response) {
+    public ApiResponse<AuthResponse> getToken(@RequestParam(name="mobile", defaultValue = "false") String mobile, @Valid @RequestBody AuthDto authDto, HttpServletResponse response) {
         TokenDto result = authService.authenticate(authDto);
 
+        boolean isHttpOnly = !mobile.equalsIgnoreCase("true");
         Cookie at = new Cookie("at", result.getToken());
-        at.setHttpOnly(true);
+        at.setHttpOnly(isHttpOnly);
         at.setMaxAge(validDuration); // expires after 1 hour
         at.setPath("/");
 
         Cookie rt = new Cookie("rt", result.getRefreshToken());
-        rt.setHttpOnly(true);
+        rt.setHttpOnly(isHttpOnly);
         rt.setMaxAge(refreshableDuration); // expires in 10 hours
         rt.setPath("/");
 
@@ -72,16 +72,17 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ApiResponse<AuthResponse> refreshToken(@Valid @RequestBody RefreshDto refreshDto, @CookieValue("rt") String refreshToken, HttpServletResponse response) {
+    public ApiResponse<AuthResponse> refreshToken(@RequestParam(name="mobile", defaultValue = "false") String mobile, @Valid @RequestBody RefreshDto refreshDto, @CookieValue("rt") String refreshToken, HttpServletResponse response) {
         TokenDto result = authService.refresh(refreshDto, refreshToken);
 
+        boolean isHttpOnly = !mobile.equalsIgnoreCase("true");
         Cookie at = new Cookie("at", result.getToken());
-        at.setHttpOnly(true);
+        at.setHttpOnly(isHttpOnly);
         at.setMaxAge(validDuration); // expires after 1 hour
         at.setPath("/");
 
         Cookie rt = new Cookie("rt", result.getRefreshToken());
-        rt.setHttpOnly(true);
+        rt.setHttpOnly(isHttpOnly);
         rt.setMaxAge(refreshableDuration); // expires in 10 hours
         rt.setPath("/");
 

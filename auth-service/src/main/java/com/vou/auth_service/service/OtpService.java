@@ -4,7 +4,6 @@ import com.vou.auth_service.dto.ProfileStateDto;
 import com.vou.auth_service.entity.Auth;
 import com.vou.auth_service.entity.Otp;
 import com.vou.auth_service.enumerate.ProfileState;
-import com.vou.auth_service.enumerate.Role;
 import com.vou.auth_service.exception.ErrorCode;
 import com.vou.auth_service.exception.OtpException;
 import com.vou.auth_service.repository.AuthRepository;

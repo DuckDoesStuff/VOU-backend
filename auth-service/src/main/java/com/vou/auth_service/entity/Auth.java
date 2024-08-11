@@ -4,7 +4,6 @@ import com.vou.auth_service.enumerate.ProfileState;
 import com.vou.auth_service.enumerate.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

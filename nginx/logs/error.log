@@ -63,3 +63,25 @@
 2024/08/10 01:11:47 [error] 21456#33640: OpenEvent("Global\ngx_quit_16676") failed (2: The system cannot find the file specified)
 2024/08/10 01:11:55 [notice] 35000#5944: signal process started
 2024/08/10 01:11:55 [error] 35000#5944: OpenEvent("Global\ngx_quit_16676") failed (2: The system cannot find the file specified)
+2024/08/10 01:31:31 [notice] 35772#21004: signal process started
+2024/08/10 17:26:37 [error] 25528#15080: *3 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: , request: "POST /api/auth/token HTTP/1.1", upstream: "http://[::1]:8001/auth/token", host: "localhost:8000", referrer: "http://localhost:5173/"
+2024/08/10 17:26:39 [error] 25528#15080: *3 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: , request: "POST /api/auth/token HTTP/1.1", upstream: "http://127.0.0.1:8001/auth/token", host: "localhost:8000", referrer: "http://localhost:5173/"
+2024/08/10 17:26:47 [error] 25528#15080: *3 no live upstreams while connecting to upstream, client: 127.0.0.1, server: , request: "POST /api/auth/token HTTP/1.1", upstream: "http://authentication/auth/token", host: "localhost:8000", referrer: "http://localhost:5173/"
+2024/08/10 18:55:33 [notice] 15400#2120: signal process started
+2024/08/10 19:31:11 [notice] 35144#31984: signal process started
+2024/08/10 22:59:56 [notice] 27624#11356: signal process started
+2024/08/10 23:00:00 [notice] 5584#25392: signal process started
+2024/08/10 23:01:14 [notice] 28160#11300: signal process started
+2024/08/10 23:01:18 [notice] 31048#24904: signal process started
+2024/08/11 00:06:13 [notice] 22080#10680: signal process started
+2024/08/11 12:27:45 [notice] 18192#2456: signal process started
+2024/08/11 16:28:08 [notice] 16740#27316: signal process started
+2024/08/11 16:35:22 [notice] 15172#18528: signal process started
+2024/08/11 16:35:27 [notice] 15484#10620: signal process started
+2024/08/11 16:39:16 [notice] 24924#27340: signal process started
+2024/08/11 16:40:03 [notice] 24104#14280: signal process started
+2024/08/11 16:41:23 [notice] 17380#24144: signal process started
+2024/08/11 16:46:28 [notice] 35728#8748: signal process started
+2024/08/11 16:47:05 [notice] 21196#31372: signal process started
+2024/08/12 00:16:59 [notice] 8012#16452: signal process started
+2024/08/12 00:20:06 [notice] 22736#15632: signal process started
