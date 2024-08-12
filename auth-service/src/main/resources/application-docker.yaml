@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: "auth-service"
+  datasource:
+    url: "jdbc:postgresql://auth-db:5432/auth_service"
+    username: vou
+    password: vouadmin123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true # Remember to remove this otherwise sql gets logged
+
+server:
+  port: 8001
+
+jwt:
+  signerKey: "REPLACETHISWITHSOMETHINGELSEPLEASE"
+  valid-duration: 3600
+  refreshable-duration: 36000

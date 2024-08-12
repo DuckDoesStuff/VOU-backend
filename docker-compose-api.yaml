@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8001:8001"
+    networks:
+      - auth-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+networks:
+  auth-network:
+    driver: bridge
