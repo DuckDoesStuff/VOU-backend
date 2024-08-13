@@ -85,3 +85,9 @@
 2024/08/11 16:47:05 [notice] 21196#31372: signal process started
 2024/08/12 00:16:59 [notice] 8012#16452: signal process started
 2024/08/12 00:20:06 [notice] 22736#15632: signal process started
+2024/08/13 02:46:22 [notice] 30672#19068: signal process started
+2024/08/13 11:22:24 [error] 20332#14972: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: , request: "GET /api/profile/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c HTTP/1.1", upstream: "http://[::1]:8002/profile/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c", host: "localhost:8000", referrer: "http://localhost:5173/"
+2024/08/13 11:22:26 [error] 20332#14972: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: , request: "GET /api/profile/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c HTTP/1.1", upstream: "http://127.0.0.1:8002/profile/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c", host: "localhost:8000", referrer: "http://localhost:5173/"
+2024/08/13 11:22:26 [error] 20332#14972: *3 no live upstreams while connecting to upstream, client: 127.0.0.1, server: , request: "GET /api/profile/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c HTTP/1.1", upstream: "http://userService/profile/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c", host: "localhost:8000", referrer: "http://localhost:5173/"
+2024/08/13 11:22:26 [error] 20332#14972: *3 no live upstreams while connecting to upstream, client: 127.0.0.1, server: , request: "GET /api/profile/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c HTTP/1.1", upstream: "http://userService/profile/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c", host: "localhost:8000", referrer: "http://localhost:5173/"
+2024/08/13 16:20:22 [notice] 26396#27456: signal process started
