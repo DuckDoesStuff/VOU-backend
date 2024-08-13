@@ -28,8 +28,27 @@ public class GameService {
     }
 
 
-    public List<Game> getAllGames() {
-        return gameRepository.findAll();
+    public ResponseEntity<ApiResponse<List<Game>>> getAllGames() {
+        List<Game> games = gameRepository.findAll();
+        ApiResponse<List<Game>> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "",
+                games
+        );
+//        if (games.isEmpty()) {
+//            response.setStatus(HttpStatus.NOT_FOUND.value());
+//            response.setMessage("Cannot find games");
+//            response.setResult(null);
+//            return new ResponseEntity<>(
+//                    response,
+//                    HttpStatus.NOT_FOUND
+//            );
+//        }
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.OK
+        );
     }
 
     public ResponseEntity<ApiResponse<Game>> getGame(GetGameRequestDTO gameRequestDTO) {
