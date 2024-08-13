@@ -33,7 +33,7 @@ public class GameController {
         return gameService.getGamesByBrandID(brandID);
     }
 
-    @PostMapping
+    @PostMapping("/game")
     public ResponseEntity<ApiResponse<Game>> createGame(@RequestBody Game game) {
         return gameService.createGame(game);
     }
