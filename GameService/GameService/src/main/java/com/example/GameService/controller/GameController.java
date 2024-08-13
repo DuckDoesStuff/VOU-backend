@@ -14,13 +14,13 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/games")
+@RequestMapping()
 public class GameController {
     @Autowired
     private GameService gameService;
 
     @GetMapping
-    public List<Game> getAllGames() {
+    public ResponseEntity<ApiResponse<List<Game>>> getAllGames() {
         return gameService.getAllGames();
     }
 

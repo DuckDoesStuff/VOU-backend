@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
 
-public interface GameRepository extends MongoRepository<Game, String> {
+public interface GameRepository extends MongoRepository<Game, ObjectId> {
     List<Game> findByEventIDAndGameID(Long eventID, ObjectId gameID);
     @Query(value="{ 'gameID': ?0, 'eventID': ?1 }", delete = true)
     long deleteByGameIDAndEventID(ObjectId gameID, Long eventID);
