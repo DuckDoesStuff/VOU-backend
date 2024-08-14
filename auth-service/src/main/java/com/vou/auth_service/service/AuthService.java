@@ -3,7 +3,9 @@ package com.vou.auth_service.service;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
+import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.SignedJWT;
 import com.vou.auth_service.dto.*;
 import com.vou.auth_service.dto.response.AuthRegisterResponse;
@@ -29,6 +31,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class AuthService {
@@ -72,13 +75,13 @@ public class AuthService {
         if (!passwordEncoder.matches(authDto.getPassword(), auth.getPassword()))
             throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
-        String token = generateToken(auth.getUsername(), auth.getRole().toString(), false);
-        String refreshToken = generateToken(auth.getUsername(), auth.getRole().toString(), true);
-        Session session = new Session();
-        session.setRole(auth.getRole());
-        session.setAuth(auth);
-        session.setRefreshToken(refreshToken);
-        sessionRepository.save(session);
+        String token = generateToken(auth.getUsername(), auth.getRole().toString(), auth.getId(), false);
+        String refreshToken = generateToken(auth.getUsername(), auth.getRole().toString(), auth.getId(), true);
+//        Session session = new Session();
+//        session.setRole(auth.getRole());
+//        session.setAuth(auth);
+//        session.setRefreshToken(refreshToken);
+//        sessionRepository.save(session);
 
         TokenDto tokenDto = new TokenDto();
         tokenDto.setToken(token);
@@ -111,29 +114,56 @@ public class AuthService {
         boolean verified = verify(rt);
         if(!verified) throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
-        Session session = sessionRepository.findOneByRefreshToken(rt);
-        if (session == null)
+//        Session session = sessionRepository.findOneByRefreshToken(rt);
+//        if (session == null)
+//            throw new AuthException(ErrorCode.UNAUTHENTICATED);
+//
+//        if (session.getRole() != refreshDto.getRole())
+//            throw new AuthException(ErrorCode.UNAUTHENTICATED);
+//
+//        String newRefreshToken = generateToken(refreshDto.getUsername(), session.getRole().toString(), true);
+//        session.setRefreshToken(newRefreshToken);
+//        sessionRepository.save(session);
+//        String newToken = generateToken(refreshDto.getUsername(), session.getRole().toString(), false);
+//
+//        TokenDto tokenDto = new TokenDto();
+//        tokenDto.setToken(newToken);
+//        tokenDto.setRefreshToken(newRefreshToken);
+//        tokenDto.setProfileID(session.getAuth().getId());
+//        tokenDto.setRole(session.getAuth().getRole());
+        JWT jwt;
+        JWTClaimsSet jwtClaimsSet = null;
+        String role, profileID;
+        try {
+            jwt = JWTParser.parse(rt);
+            if (jwt instanceof SignedJWT signedJWT) {
+                jwtClaimsSet = signedJWT.getJWTClaimsSet();
+            }
+            assert jwtClaimsSet != null;
+            role = jwtClaimsSet.getStringClaim("role");
+            profileID = jwtClaimsSet.getStringClaim("profileID");
+        } catch (ParseException e) {
+            throw new AuthException(ErrorCode.INVALID_TOKEN);
+        }
+
+        if (!Objects.equals(role, refreshDto.getRole().toString()))
             throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
-        if (session.getRole() != refreshDto.getRole())
-            throw new AuthException(ErrorCode.UNAUTHENTICATED);
-
-        String newRefreshToken = generateToken(refreshDto.getUsername(), session.getRole().toString(), true);
-        session.setRefreshToken(newRefreshToken);
-        sessionRepository.save(session);
-        String newToken = generateToken(refreshDto.getUsername(), session.getRole().toString(), false);
+        String newRefreshToken = generateToken(refreshDto.getUsername(), role, profileID, true);
+        String newToken = generateToken(refreshDto.getUsername(), role, profileID, false);
 
         TokenDto tokenDto = new TokenDto();
         tokenDto.setToken(newToken);
         tokenDto.setRefreshToken(newRefreshToken);
-        tokenDto.setProfileID(session.getAuth().getId());
-        tokenDto.setRole(session.getAuth().getRole());
+        tokenDto.setProfileID(profileID);
+        tokenDto.setRole(Role.valueOf(role));
+
         return tokenDto;
     }
 
     public void logout(LogoutDto logoutDto) {
-        Session session = sessionRepository.findOneByRefreshToken(logoutDto.getRefreshToken());
-        sessionRepository.delete(session);
+//        Session session = sessionRepository.findOneByRefreshToken(logoutDto.getRefreshToken());
+//        sessionRepository.delete(session);
     }
 
     public AuthRegisterResponse createAuth(RegisterDto registerDto) {
@@ -171,11 +201,12 @@ public class AuthService {
         authRepository.delete(auth);
     }
 
-    private String generateToken(String username, String role, boolean isRefreshToken) {
+    private String generateToken(String username, String role, String profileID, boolean isRefreshToken) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .claim("role", role)
+                .claim("profileID", profileID)
                 .subject(username)
                 .issuer("vou.com")
                 .issueTime(new Date())
