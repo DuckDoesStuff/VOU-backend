@@ -25,6 +25,7 @@ public class BrandProfile {
     private String domain;
     private String address;
     private String avatar;
+    private String banner;
     private Double lat;
     private Double lng;
 

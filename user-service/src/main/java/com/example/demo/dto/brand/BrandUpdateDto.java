@@ -15,4 +15,5 @@ public class BrandUpdateDto {
     private Optional<String> email = Optional.empty();
     private Optional<String> avatar = Optional.empty();
     private Optional<String> address = Optional.empty();
+    private Optional<String> banner = Optional.empty();
 }

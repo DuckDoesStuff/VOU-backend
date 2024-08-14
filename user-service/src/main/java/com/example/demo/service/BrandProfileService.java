@@ -105,6 +105,7 @@ public class BrandProfileService {
         brandUpdateDto.getEmail().ifPresent(brandProfile::setEmail);
         brandUpdateDto.getAvatar().ifPresent(brandProfile::setAvatar);
         brandUpdateDto.getAddress().ifPresent(brandProfile::setAddress);
+        brandUpdateDto.getBanner().ifPresent(brandProfile::setBanner);
 
         return brandProfileRepository.save(brandProfile);
     }
