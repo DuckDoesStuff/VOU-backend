@@ -26,8 +26,8 @@ public class FriendController {
     }
 
     @GetMapping("/{username}")
-    public ApiResponse<List<UserProfile>> getFriends(@PathVariable String username) {
-        return ApiResponse.<List<UserProfile>>builder()
+    public ApiResponse<List<Friend>> getFriends(@PathVariable String username) {
+        return ApiResponse.<List<Friend>>builder()
                 .result(friendService.getFriends(username))
                 .code(200)
                 .build();

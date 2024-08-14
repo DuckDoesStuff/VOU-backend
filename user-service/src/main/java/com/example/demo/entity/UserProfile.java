@@ -2,10 +2,13 @@ package com.example.demo.entity;
 
 import com.example.demo.enumerate.ProfileState;
 import com.example.demo.enumerate.Role;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -35,7 +38,4 @@ public class UserProfile {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProfileState state;
-
-    @OneToMany(mappedBy = "friend")
-    private Set<Friend> friends;
 }
