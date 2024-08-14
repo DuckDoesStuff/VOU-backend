@@ -96,7 +96,7 @@ public class ItemService {
     public ResponseEntity<ApiResponse<String>> exchangeItemsBetweenUsers(ExchangeItemsRequest exchangeItemsRequest) {
         Long eventID = exchangeItemsRequest.getItemA().getEventID();
         ObjectId gameID = exchangeItemsRequest.getItemA().getGameID();
-        Long itemTypeIDA = exchangeItemsRequest.getItemA().getItemTypeID();
+        ObjectId itemTypeIDA = exchangeItemsRequest.getItemA().getItemTypeID();
         Long userIDA = exchangeItemsRequest.getItemA().getUserID();
         Long userIDB = exchangeItemsRequest.getItemB().getUserID();
         Item itemA = itemRepository.findByEventIDAndGameIDAndItemTypeIDAndUserID(eventID, gameID, itemTypeIDA, userIDA);

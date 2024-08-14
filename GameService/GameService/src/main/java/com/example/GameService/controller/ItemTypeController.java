@@ -1,9 +1,13 @@
 package com.example.GameService.controller;
 
 // ItemTypeController.java
+import com.example.GameService.dto.ApiResponse;
 import com.example.GameService.entity.ItemType;
+import com.example.GameService.repository.ItemTypeRepository;
 import com.example.GameService.service.ItemTypeService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +24,7 @@ public class ItemTypeController {
     }
 
     @GetMapping("/{id}")
-    public ItemType getItemType(@PathVariable String id) {
+    public ItemType getItemType(@PathVariable ObjectId id) {
         return itemTypeService.getItemType(id);
     }
 
@@ -30,7 +34,7 @@ public class ItemTypeController {
     }
 
     @GetMapping("/game/{gameID}")
-    public List<ItemType> getItemTypesByGameID(@PathVariable Long gameID) {
+    public List<ItemType> getItemTypesByGameID(@PathVariable ObjectId gameID) {
         return itemTypeService.getItemTypesByGameID(gameID);
     }
 
@@ -39,13 +43,13 @@ public class ItemTypeController {
         return itemTypeService.getItemTypesByType(type);
     }
 
-    @PostMapping
-    public ItemType saveItemType(@RequestBody ItemType itemType) {
+    @PostMapping("/item_type")
+    public ResponseEntity<ApiResponse<ItemType>> saveItemType(@RequestBody ItemType itemType) {
         return itemTypeService.saveItemType(itemType);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteItemType(@PathVariable String id) {
+    public void deleteItemType(@PathVariable ObjectId id) {
         itemTypeService.deleteItemType(id);
     }
 }

@@ -51,10 +51,10 @@ public class GameService {
         );
     }
 
-    public ResponseEntity<ApiResponse<Game>> getGame(GetGameRequestDTO gameRequestDTO) {
+    public ResponseEntity<ApiResponse<Game>> getGame(ObjectId gameID, Long eventID) {
         List<Game> games = gameRepository.findByEventIDAndGameID(
-                gameRequestDTO.getEventID(),
-                gameRequestDTO.getGameID());
+                eventID,
+                gameID);
         if (!games.isEmpty()) {
             ApiResponse<Game> response = new ApiResponse<>(
                     HttpStatus.OK.value(),
@@ -148,10 +148,10 @@ public class GameService {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
-    public ResponseEntity<ApiResponse<String>> deleteGame(GetGameRequestDTO getGameRequestDTO) {
+    public ResponseEntity<ApiResponse<String>> deleteGame(ObjectId gameID, Long eventID) {
         long count = gameRepository.deleteByGameIDAndEventID(
-                getGameRequestDTO.getGameID(),
-                getGameRequestDTO.getEventID()
+                gameID,
+                eventID
         );
         ApiResponse<String> response = new ApiResponse<>();
         if (count == 0) {

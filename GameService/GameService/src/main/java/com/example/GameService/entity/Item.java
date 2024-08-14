@@ -17,7 +17,7 @@ public class Item {
     private Long eventID;
     @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId gameID;
-    private Long itemTypeID;
+    private ObjectId itemTypeID;
     private Long userID;
     private int quantity;
 }
