@@ -5,6 +5,8 @@ import com.example.demo.enumerate.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -33,4 +35,7 @@ public class UserProfile {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProfileState state;
+
+    @OneToMany(mappedBy = "friend")
+    private Set<Friend> friends;
 }

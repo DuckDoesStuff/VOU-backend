@@ -23,7 +23,7 @@ public class Session {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @ManyToOne(cascade = {CascadeType.REMOVE})
-    @JoinColumn(name = "auth")
+    @ManyToOne(cascade = {CascadeType.REMOVE}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "auth_id", nullable = false)
     private Auth auth;
 }

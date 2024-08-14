@@ -31,8 +31,4 @@ public class Auth {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'PENDING'")
     private ProfileState profileState;
-
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @Column(name = "session_id")
-    private Set<Session> sessions;
 }
