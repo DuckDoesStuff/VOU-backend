@@ -6,12 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @Repository
-public interface PromotionalEventRepository extends JpaRepository<PromotionalEvent, Long> {
+public interface PromotionalEventRepository extends JpaRepository<PromotionalEvent, UUID> {
     @Query(value = "SELECT eventID FROM promotional_event WHERE brandID = :brandID", nativeQuery = true)
-    List<Long> getEventsIDByBrandID(Long brandID);
+    List<Long> getEventsIDByBrandID(UUID brandID);
 
-    List<PromotionalEvent> findByBrandID(Long brandID);
+    List<PromotionalEvent> findByBrandID(UUID brandID);
 }

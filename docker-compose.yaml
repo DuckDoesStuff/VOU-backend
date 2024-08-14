@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   pgadmin:
     image: dpage/pgadmin4
@@ -11,6 +9,8 @@ services:
     networks:
       - auth-network
       - user-network
+      - event-network
+      - mongo-network
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 
@@ -60,6 +60,27 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+
+  # API SERVICES
+  # TO RUN USE: docker compose up --build --profile API
+  auth-service:
+    profiles: [API]
+    build: ./auth-service
+    ports:
+      - "8001:8001"
+    networks:
+      - auth-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+  user-service:
+    profiles: [API]
+    build: ./user-service
+    ports:
+      - "8002:8002"
+    networks:
+      - user-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
   
 
 networks:

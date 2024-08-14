@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/events")
@@ -23,13 +24,13 @@ public class PromotionalEventController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PromotionalEvent> updateEvent(@PathVariable Long id, @RequestBody PromotionalEvent eventDetails) {
+    public ResponseEntity<PromotionalEvent> updateEvent(@PathVariable UUID id, @RequestBody PromotionalEvent eventDetails) {
         PromotionalEvent updatedEvent = promotionalEventService.updateEvent(id, eventDetails);
         return ResponseEntity.ok(updatedEvent);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteEvent(@PathVariable UUID id) {
         promotionalEventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
     }
@@ -44,13 +45,13 @@ public class PromotionalEventController {
 //    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PromotionalEvent> getEventById(@PathVariable Long id) {
+    public ResponseEntity<PromotionalEvent> getEventById(@PathVariable UUID id) {
         Optional<PromotionalEvent> event = promotionalEventService.getEventById(id);
         return event.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/brand/{brandID}")
-    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> getPromotionalEventsByBrandID(@PathVariable Long brandID) {
+    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> getPromotionalEventsByBrandID(@PathVariable UUID brandID) {
         return promotionalEventService.getPromotionalEventsByBrandID(brandID);
     }
 

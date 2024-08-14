@@ -4,18 +4,32 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity
 @Table(name = "promotional_event")
 public class PromotionalEvent {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long eventID;
+    @Column
+    private UUID eventID;
 
+    @Column(nullable = false)
+    private UUID brandID;
+
+    @Column(nullable = false)
     private String nameOfEvent;
-    private int numberOfVoucher;
+
+    @Column(nullable = false)
+    private String eventBanner;
+
+    @Column(nullable = false)
     private LocalDateTime startTime;
+
+    @Column(nullable = false)
     private LocalDateTime endTime;
-    private long brandID;
+
+    @OneToMany(mappedBy = "event")
+    private Set<VoucherType> vouchers;
 }
