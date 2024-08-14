@@ -69,7 +69,7 @@ public class OtpService {
             case USER -> url ="http://localhost:8002/profile/user/";
             case BRAND -> url = "http://localhost:8002/profile/brand/";
         }
-        url += auth.getUsername() ;
+        url += auth.getUsername();
         WebClient webClient = webClientBuilder.build();
         webClient
                 .patch()

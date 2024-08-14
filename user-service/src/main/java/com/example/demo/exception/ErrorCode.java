@@ -11,7 +11,8 @@ public enum ErrorCode {
     USER_NOT_EXIST(4040, "This user doesn't exist"),
     UNAUTHENTICATED(4010, "Unauthenticated"),
     INTERNAL(500, "Internal error"),
-    PROFILE_NOT_FOUND(4041, "This profile doesn't exist");
+    PROFILE_NOT_FOUND(4041, "This profile doesn't exist"),
+    ALREADY_FRIEND(4000, "Already friend with this profile")
     ;
 
     ErrorCode(int code, String message) {
