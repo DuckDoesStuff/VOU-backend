@@ -45,15 +45,22 @@ public class ItemService {
         return itemRepository.findByEventID(eventID);
     }
 
-    public List<Item> getItemsByGameID(Long gameID) {
+    public List<Item> getItemsByGameID(ObjectId gameID) {
         return itemRepository.findByGameID(gameID);
     }
 
-    public List<Item> getItemsByUserID(Long userID) {
-        return itemRepository.findByUserID(userID);
+    public ResponseEntity<ApiResponse<List<Item>>> getItemsByUserID(Long userID) {
+        ApiResponse<List<Item>> response = new ApiResponse<>();
+        List<Item> items = itemRepository.findByUserID(userID);
+        response.setStatus(HttpStatus.OK.value());
+        response.setResult(items);
+        return new ResponseEntity<>(
+            response,
+            HttpStatus.OK
+        );
     }
 
-    public List<Item> getItemsByItemTypeID(Long itemTypeID) {
+    public List<Item> getItemsByItemTypeID(ObjectId itemTypeID) {
         return itemRepository.findByItemTypeID(itemTypeID);
     }
 
@@ -64,11 +71,13 @@ public class ItemService {
     public void deleteItem(String id) {
         itemRepository.deleteById(id);
     }
-    public ItemType getRandomItem(GetRandomItemTypeDTO getRandomItemTypeDTO) {
+    public ResponseEntity<ApiResponse<ItemType>> getRandomItem(GetRandomItemTypeDTO getRandomItemTypeDTO) {
         Long userID = getRandomItemTypeDTO.getUserID();
         ObjectId gameID = getRandomItemTypeDTO.getGameID();
         Long eventID = getRandomItemTypeDTO.getEventID();
+        ApiResponse<ItemType> response = new ApiResponse<>();
         List<ItemType> itemTypes = itemTypeRepository.findAll();
+        System.out.println("itemTypes: " + itemTypes.size());
         int randomIdx = (int) (Math.random() * itemTypes.size());
         ItemType randomItem = itemTypes.get(randomIdx);
         Optional<Participant> participant = participantRepository.findParticipantByEventGameAndUser(
@@ -76,6 +85,7 @@ public class ItemService {
                 gameID,
                 userID
         );
+
         // if user already had item type in that game and event, increase count
         Item userItem = itemRepository.findByEventIDAndGameIDAndItemTypeIDAndUserID(eventID, gameID, randomItem.getItemTypeID(), userID);
         if (userItem != null) {
@@ -90,8 +100,18 @@ public class ItemService {
         }
         itemRepository.save(userItem);
         // Decrement user turnLeft by 1
+        if (participant.isPresent()) {
+            participant.get().setTurnLeft(participant.get().getTurnLeft() - 1);
+            participantRepository.save(participant.get());
+        }
 
-        return randomItem;
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage("You just achieved an item");
+        response.setResult(randomItem);
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.OK
+        );
     }
     public ResponseEntity<ApiResponse<String>> exchangeItemsBetweenUsers(ExchangeItemsRequest exchangeItemsRequest) {
         Long eventID = exchangeItemsRequest.getItemA().getEventID();

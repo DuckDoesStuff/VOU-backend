@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface ItemRepository extends MongoRepository<Item, String> {
     List<Item> findByEventID(Long eventID);
-    List<Item> findByGameID(Long gameID);
+    List<Item> findByGameID(ObjectId gameID);
     List<Item> findByUserID(Long userID);
-    List<Item> findByItemTypeID(Long itemTypeID);
+    List<Item> findByItemTypeID(ObjectId itemTypeID);
     Item findByEventIDAndGameIDAndItemTypeIDAndUserID(Long eventID, ObjectId gameID, ObjectId itemTypeID, Long userID);
 }

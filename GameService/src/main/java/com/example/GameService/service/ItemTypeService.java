@@ -2,8 +2,10 @@ package com.example.GameService.service;
 
 // ItemTypeService.java
 import com.example.GameService.dto.ApiResponse;
+import com.example.GameService.entity.Item;
 import com.example.GameService.entity.ItemType;
 import com.example.GameService.repository.ItemTypeRepository;
+import org.apache.coyote.Response;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +20,15 @@ public class ItemTypeService {
     @Autowired
     private ItemTypeRepository itemTypeRepository;
 
-    public List<ItemType> getAllItemTypes() {
-        return itemTypeRepository.findAll();
+    public ResponseEntity<ApiResponse<List<ItemType>>> getAllItemTypes() {
+        ApiResponse<List<ItemType>> response = new ApiResponse<>();
+        List<ItemType> itemTypes = itemTypeRepository.findAll();
+        response.setStatus(HttpStatus.OK.value());
+        response.setResult(itemTypes);
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.OK
+        );
     }
 
     public ItemType getItemType(ObjectId id) {
@@ -30,8 +39,15 @@ public class ItemTypeService {
         return itemTypeRepository.findByEventID(eventID);
     }
 
-    public List<ItemType> getItemTypesByGameID(ObjectId gameID) {
-        return itemTypeRepository.findByGameID(gameID);
+    public ResponseEntity<ApiResponse<List<ItemType>>> getItemTypesByGameID(ObjectId gameID) {
+        List<ItemType> itemTypes =  itemTypeRepository.findByGameID(gameID);
+        ApiResponse<List<ItemType>> response = new ApiResponse<>();
+        response.setStatus(HttpStatus.OK.value());
+        response.setResult(itemTypes);
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.OK
+        );
     }
 
     public List<ItemType> getItemTypesByType(String type) {
@@ -50,7 +66,14 @@ public class ItemTypeService {
         );
     }
 
-    public void deleteItemType(ObjectId id) {
+    public ResponseEntity<ApiResponse<String>> deleteItemType(ObjectId id) {
         itemTypeRepository.deleteById(id);
+        ApiResponse<String> response = new ApiResponse<>();
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage("Item type deleted successfully");
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.OK
+        );
     }
 }
