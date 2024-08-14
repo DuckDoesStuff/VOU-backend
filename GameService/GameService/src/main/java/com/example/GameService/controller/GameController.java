@@ -23,10 +23,10 @@ public class GameController {
     public ResponseEntity<ApiResponse<List<Game>>> getAllGames() {
         return gameService.getAllGames();
     }
-
-    @GetMapping("/game/event")
-    public ResponseEntity<ApiResponse<Game>> getGame(@RequestBody GetGameRequestDTO gameRequestDTO) {
-        return gameService.getGame(gameRequestDTO);
+    // Delete by url not by id
+    @GetMapping("/game/event/{gameID}/{eventID}")
+    public ResponseEntity<ApiResponse<Game>> getGame(@PathVariable ObjectId gameID, @PathVariable Long eventID) {
+        return gameService.getGame(gameID, eventID);
     }
     @GetMapping("/brand/{brandID}")
     public ResponseEntity<ApiResponse<List<Game>>> getGame(@PathVariable Long brandID) {
@@ -38,9 +38,9 @@ public class GameController {
         return gameService.createGame(game);
     }
 
-    @DeleteMapping("/game/event")
-    public ResponseEntity<ApiResponse<String>> deleteGame(@RequestBody GetGameRequestDTO gameRequestDTO) {
-        return gameService.deleteGame(gameRequestDTO);
+    @DeleteMapping("/game/event/{gameID}/{eventID}")
+    public ResponseEntity<ApiResponse<String>> deleteGame(@PathVariable ObjectId gameID, @PathVariable Long eventID) {
+        return gameService.deleteGame(gameID, eventID);
     }
     @PutMapping("/game/{gameID}")
     public ResponseEntity<ApiResponse<Game>> updateGame(

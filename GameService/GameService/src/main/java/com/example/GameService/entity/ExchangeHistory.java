@@ -12,11 +12,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 public class ExchangeHistory {
     @Id
+    @JsonSerialize(using = ObjectIdSerializer.class)
     private String id;
     private Long presenterID;
     private Long receiverID;
     private String timeSent;
-    private Long itemTypeID;
+    @JsonSerialize(using = ObjectIdSerializer.class)
+    private ObjectId itemTypeID;
     private Long eventID;
     @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId gameID;
