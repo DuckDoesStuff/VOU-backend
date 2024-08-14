@@ -7,6 +7,7 @@ import com.example.GameService.dto.GetRandomItemTypeDTO;
 import com.example.GameService.entity.Item;
 import com.example.GameService.entity.ItemType;
 import com.example.GameService.service.ItemService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,17 +36,17 @@ public class ItemController {
     }
 
     @GetMapping("/game/{gameID}")
-    public List<Item> getItemsByGameID(@PathVariable Long gameID) {
+    public List<Item> getItemsByGameID(@PathVariable ObjectId gameID) {
         return itemService.getItemsByGameID(gameID);
     }
 
     @GetMapping("/user/{userID}")
-    public List<Item> getItemsByUserID(@PathVariable Long userID) {
+    public ResponseEntity<ApiResponse<List<Item>>> getItemsByUserID(@PathVariable Long userID) {
         return itemService.getItemsByUserID(userID);
     }
 
     @GetMapping("/itemType/{itemTypeID}")
-    public List<Item> getItemsByItemTypeID(@PathVariable Long itemTypeID) {
+    public List<Item> getItemsByItemTypeID(@PathVariable ObjectId itemTypeID) {
         return itemService.getItemsByItemTypeID(itemTypeID);
     }
 
@@ -59,8 +60,9 @@ public class ItemController {
         itemService.deleteItem(id);
     }
 
-    @PostMapping("/random_item_type")
-    public ItemType getRandomItemType(@RequestBody GetRandomItemTypeDTO getRandomItemTypeDTO) {
+        @PostMapping("/random_item_type")
+    public ResponseEntity<ApiResponse<ItemType>> getRandomItemType(@RequestBody GetRandomItemTypeDTO getRandomItemTypeDTO) {
+//        System.out.println(getRandomItemTypeDTO.toString());
         return itemService.getRandomItem(getRandomItemTypeDTO);
     }
     @PostMapping("/exchange")
