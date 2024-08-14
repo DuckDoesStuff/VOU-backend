@@ -1,9 +1,14 @@
 package com.example.GameService.service;
 
 // ItemTypeService.java
+import com.example.GameService.dto.ApiResponse;
 import com.example.GameService.entity.ItemType;
 import com.example.GameService.repository.ItemTypeRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +22,7 @@ public class ItemTypeService {
         return itemTypeRepository.findAll();
     }
 
-    public ItemType getItemType(String id) {
+    public ItemType getItemType(ObjectId id) {
         return itemTypeRepository.findById(id).orElse(null);
     }
 
@@ -25,7 +30,7 @@ public class ItemTypeService {
         return itemTypeRepository.findByEventID(eventID);
     }
 
-    public List<ItemType> getItemTypesByGameID(Long gameID) {
+    public List<ItemType> getItemTypesByGameID(ObjectId gameID) {
         return itemTypeRepository.findByGameID(gameID);
     }
 
@@ -33,11 +38,19 @@ public class ItemTypeService {
         return itemTypeRepository.findByType(type);
     }
 
-    public ItemType saveItemType(ItemType itemType) {
-        return itemTypeRepository.save(itemType);
+    public ResponseEntity<ApiResponse<ItemType>> saveItemType(ItemType itemType) {
+        ItemType newItemType =  itemTypeRepository.save(itemType);
+        ApiResponse<ItemType> response = new ApiResponse<>();
+        response.setResult(newItemType);
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage("Item Type created successfully");
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.OK
+        );
     }
 
-    public void deleteItemType(String id) {
+    public void deleteItemType(ObjectId id) {
         itemTypeRepository.deleteById(id);
     }
 }
