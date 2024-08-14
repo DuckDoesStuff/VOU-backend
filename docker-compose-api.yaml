@@ -9,7 +9,17 @@ services:
       - auth-network
     environment:
       SPRING_PROFILES_ACTIVE: docker
+  user-service:
+    build: ./user-service
+    ports:
+      - "8002:8002"
+    networks:
+      - user-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
 
 networks:
   auth-network:
+    driver: bridge
+  user-network:
     driver: bridge
