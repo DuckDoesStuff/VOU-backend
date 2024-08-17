@@ -1,6 +1,7 @@
 package com.eventservice.EventService.service;
 
 import com.eventservice.EventService.dto.ApiResponse;
+import com.eventservice.EventService.dto.EventDto;
 import com.eventservice.EventService.repository.PromotionalEventRepository;
 import com.eventservice.EventService.entity.PromotionalEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ public class PromotionalEventService {
                 HttpStatus.OK
         );
     }
+
     public PromotionalEvent updateEvent(UUID eventId, PromotionalEvent eventDetails) {
         Optional<PromotionalEvent> optionalEvent = repository.findById(eventId);
         if (optionalEvent.isPresent()) {
@@ -42,10 +44,10 @@ public class PromotionalEventService {
             throw new RuntimeException("Event not found with id " + eventId);
         }
     }
+
     public void deleteEvent(UUID eventId) {
         repository.deleteById(eventId);
     }
-
 
     public ResponseEntity<ApiResponse<List<PromotionalEvent>>> getAllEvents() {
         List<PromotionalEvent> promotionalEvent = repository.findAll();
@@ -58,6 +60,8 @@ public class PromotionalEventService {
                 HttpStatus.OK
         );
     }
+
+    // Subject to change
     public ResponseEntity<ApiResponse<List<Long>>> getEventsByBrandID(UUID brandID) {
         List<Long> eventIDs = repository.getEventsIDByBrandID(brandID);
         ApiResponse<List<Long>> response = new ApiResponse<>();
@@ -105,7 +109,6 @@ public class PromotionalEventService {
                 HttpStatus.OK
         );
     }
-
 
     public Optional<PromotionalEvent> getEventById(UUID eventId) {
         return repository.findById(eventId);

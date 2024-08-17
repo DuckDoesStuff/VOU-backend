@@ -12,6 +12,7 @@ import java.util.UUID;
 @Table(name = "promotional_event")
 public class PromotionalEvent {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
     private UUID eventID;
 
@@ -23,6 +24,9 @@ public class PromotionalEvent {
 
     @Column(nullable = false)
     private String eventBanner;
+
+    @Column(nullable = false)
+    private String description;
 
     @Column(nullable = false)
     private LocalDateTime startTime;

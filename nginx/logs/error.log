@@ -91,3 +91,8 @@
 2024/08/13 11:22:26 [error] 20332#14972: *3 no live upstreams while connecting to upstream, client: 127.0.0.1, server: , request: "GET /api/profile/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c HTTP/1.1", upstream: "http://userService/profile/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c", host: "localhost:8000", referrer: "http://localhost:5173/"
 2024/08/13 11:22:26 [error] 20332#14972: *3 no live upstreams while connecting to upstream, client: 127.0.0.1, server: , request: "GET /api/profile/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c HTTP/1.1", upstream: "http://userService/profile/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c", host: "localhost:8000", referrer: "http://localhost:5173/"
 2024/08/13 16:20:22 [notice] 26396#27456: signal process started
+2024/08/14 21:53:45 [error] 14952#8508: *71 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: , request: "GET /api/profile/friend/tienduc4 HTTP/1.1", upstream: "http://[::1]:8002/profile/friend/tienduc4", host: "localhost:8000"
+2024/08/14 21:53:47 [error] 14952#8508: *71 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: , request: "GET /api/profile/friend/tienduc4 HTTP/1.1", upstream: "http://127.0.0.1:8002/profile/friend/tienduc4", host: "localhost:8000"
+2024/08/15 03:15:59 [notice] 26064#21664: signal process started
+2024/08/15 23:51:53 [notice] 12824#9884: signal process started
+2024/08/17 00:53:39 [notice] 26352#25328: signal process started

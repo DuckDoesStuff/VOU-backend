@@ -1,8 +1,10 @@
 package com.eventservice.EventService.controller;
 
 import com.eventservice.EventService.dto.ApiResponse;
+import com.eventservice.EventService.dto.EventDto;
 import com.eventservice.EventService.entity.PromotionalEvent;
 import com.eventservice.EventService.service.PromotionalEventService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/events")
+@RequestMapping("/event")
 public class PromotionalEventController {
 
     @Autowired
