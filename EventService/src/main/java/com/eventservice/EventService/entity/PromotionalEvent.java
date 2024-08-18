@@ -12,9 +12,9 @@ import java.util.UUID;
 @Table(name = "promotional_event")
 public class PromotionalEvent {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private UUID eventID;
+    private Long eventID;
 
     @Column(nullable = false)
     private UUID brandID;
@@ -25,7 +25,7 @@ public class PromotionalEvent {
     @Column(nullable = false)
     private String eventBanner;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2500, columnDefinition = "TEXT")
     private String description;
 
     @Column(nullable = false)

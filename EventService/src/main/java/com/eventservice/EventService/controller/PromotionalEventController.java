@@ -1,10 +1,8 @@
 package com.eventservice.EventService.controller;
 
 import com.eventservice.EventService.dto.ApiResponse;
-import com.eventservice.EventService.dto.EventDto;
 import com.eventservice.EventService.entity.PromotionalEvent;
 import com.eventservice.EventService.service.PromotionalEventService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +24,13 @@ public class PromotionalEventController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PromotionalEvent> updateEvent(@PathVariable UUID id, @RequestBody PromotionalEvent eventDetails) {
+    public ResponseEntity<PromotionalEvent> updateEvent(@PathVariable Long id, @RequestBody PromotionalEvent eventDetails) {
         PromotionalEvent updatedEvent = promotionalEventService.updateEvent(id, eventDetails);
         return ResponseEntity.ok(updatedEvent);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         promotionalEventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
     }
@@ -47,7 +45,7 @@ public class PromotionalEventController {
 //    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PromotionalEvent> getEventById(@PathVariable UUID id) {
+    public ResponseEntity<PromotionalEvent> getEventById(@PathVariable Long id) {
         Optional<PromotionalEvent> event = promotionalEventService.getEventById(id);
         return event.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }

@@ -11,19 +11,21 @@ import java.util.UUID;
 @Entity
 public class VoucherType {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    public UUID voucherTypeID;
+    public Long voucherTypeID;
 
     @ManyToOne
     @JoinColumn
     public PromotionalEvent event;
-    public long gameID;
 
     public int totalQuantity;
     public int inStock;
     public LocalDateTime expiryDay;
 
+    public String nameOfVoucher;
     public String picture;
+    @Column(columnDefinition = "TEXT")
     public String description;
     public String value;
 }

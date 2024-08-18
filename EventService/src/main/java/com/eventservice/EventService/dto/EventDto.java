@@ -6,6 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+// Remove this?
 @Data
 public class EventDto {
     @NotNull(message = "Brand UUID is required")

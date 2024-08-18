@@ -10,7 +10,7 @@ import java.util.UUID;
 
 
 @Repository
-public interface PromotionalEventRepository extends JpaRepository<PromotionalEvent, UUID> {
+public interface PromotionalEventRepository extends JpaRepository<PromotionalEvent, Long> {
     @Query(value = "SELECT eventID FROM promotional_event WHERE brandID = :brandID", nativeQuery = true)
     List<Long> getEventsIDByBrandID(UUID brandID);
 

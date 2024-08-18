@@ -1,9 +1,8 @@
 package com.eventservice.EventService.service;
 
 import com.eventservice.EventService.dto.ApiResponse;
-import com.eventservice.EventService.dto.EventDto;
-import com.eventservice.EventService.repository.PromotionalEventRepository;
 import com.eventservice.EventService.entity.PromotionalEvent;
+import com.eventservice.EventService.repository.PromotionalEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +29,7 @@ public class PromotionalEventService {
         );
     }
 
-    public PromotionalEvent updateEvent(UUID eventId, PromotionalEvent eventDetails) {
+    public PromotionalEvent updateEvent(Long eventId, PromotionalEvent eventDetails) {
         Optional<PromotionalEvent> optionalEvent = repository.findById(eventId);
         if (optionalEvent.isPresent()) {
             PromotionalEvent event = optionalEvent.get();
@@ -45,7 +44,7 @@ public class PromotionalEventService {
         }
     }
 
-    public void deleteEvent(UUID eventId) {
+    public void deleteEvent(Long eventId) {
         repository.deleteById(eventId);
     }
 
@@ -110,7 +109,7 @@ public class PromotionalEventService {
         );
     }
 
-    public Optional<PromotionalEvent> getEventById(UUID eventId) {
+    public Optional<PromotionalEvent> getEventById(Long eventId) {
         return repository.findById(eventId);
     }
 }
