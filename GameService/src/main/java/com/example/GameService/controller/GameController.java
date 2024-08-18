@@ -38,9 +38,9 @@ public class GameController {
         return gameService.createGame(game);
     }
 
-    @DeleteMapping("/game/event/{gameID}/{eventID}")
-    public ResponseEntity<ApiResponse<String>> deleteGame(@PathVariable ObjectId gameID, @PathVariable Long eventID) {
-        return gameService.deleteGame(gameID, eventID);
+    @GetMapping("/game/event/{eventID}")
+    public ResponseEntity<ApiResponse<List<Game>>> getGamesByEventID(@PathVariable Long eventID) {
+        return gameService.getGameByEventID(eventID);
     }
     @PutMapping("/game/{gameID}")
     public ResponseEntity<ApiResponse<Game>> updateGame(
