@@ -1,4 +1,4 @@
-package com.vou.user_service;
+package com.vou.api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
