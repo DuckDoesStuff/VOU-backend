@@ -148,19 +148,19 @@ public class GameService {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
-    public ResponseEntity<ApiResponse<String>> deleteGame(ObjectId gameID, Long eventID) {
-        long count = gameRepository.deleteByGameIDAndEventID(
-                gameID,
+    public ResponseEntity<ApiResponse<List<Game>>> getGameByEventID(Long eventID) {
+        List<Game> games = gameRepository.findGamesByEventID(
                 eventID
         );
-        ApiResponse<String> response = new ApiResponse<>();
-        if (count == 0) {
-            response.setStatus(HttpStatus.NOT_FOUND.value());
-            response.setMessage("Cannot delete this game");
-            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
-        }
+        ApiResponse<List<Game>> response = new ApiResponse<>();
+//        if (count == 0) {
+//            response.setStatus(HttpStatus.NOT_FOUND.value());
+//            response.setMessage("Cannot delete this game");
+//            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+//        }
         response.setStatus(HttpStatus.OK.value());
-        response.setMessage("Deleted successfully");
+        response.setMessage("Get successfully");
+        response.setResult(games);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
