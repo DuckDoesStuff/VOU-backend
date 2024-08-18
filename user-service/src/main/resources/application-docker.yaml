@@ -8,6 +8,18 @@ spring:
     url: jdbc:postgresql://user-db:5432/user_service
     username: vou
     password: vouadmin123
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: user-service-group
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: 'com.example.demo.dto.request.ActivateProfileRequest'
   jpa:
     hibernate:
       ddl-auto: update

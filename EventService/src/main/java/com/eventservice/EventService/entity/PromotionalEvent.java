@@ -34,6 +34,6 @@ public class PromotionalEvent {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "promotionalEvent")
     private Set<VoucherType> vouchers;
 }

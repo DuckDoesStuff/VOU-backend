@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -114,12 +115,17 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ApiResponse<AuthRegisterResponse> register(@Valid @RequestBody RegisterDto registerDto) {
+    public ApiResponse<AuthRegisterResponse> register(@Valid @RequestBody AuthRegisterDto authRegisterDto) {
         return ApiResponse.<AuthRegisterResponse>builder()
-                .result(authService.createAuth(registerDto))
+                .result(authService.createAuth(authRegisterDto))
                 .message("Successfully created new authentication credential")
                 .code(200)
                 .build();
+    }
+
+    @KafkaListener(topics = "auth-create-topic")
+    public void authCreateListener(AuthRegisterDto authRegisterDto) {
+        authService.createAuth(authRegisterDto);
     }
 
     // FOR DEBUGGING ONLY

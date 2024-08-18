@@ -20,14 +20,19 @@ public class VoucherService {
 
     public VoucherType createVoucherForEvent(Long eventID, VoucherDto voucherDto) {
         PromotionalEvent event = promotionalEventRepository.getReferenceById(eventID);
-
-        return null;
+        VoucherType voucherType = VoucherType.builder()
+                .promotionalEvent(event)
+                .totalQuantity(voucherDto.getTotalQuantity())
+                .inStock(voucherDto.getTotalQuantity())
+                .nameOfVoucher(voucherDto.getNameOfVoucher())
+                .value(voucherDto.getValue())
+                .build();
+        return voucherRepository.save(voucherType);
     }
 
     public List<VoucherType> getVoucherFromEventID(Long eventID) {
         PromotionalEvent event = promotionalEventRepository.getReferenceById(eventID);
 
-//        return voucherRepository.findAllVoucherFromEvent(event);
-        return null;
+        return voucherRepository.findByPromotionalEvent(event);
     }
 }

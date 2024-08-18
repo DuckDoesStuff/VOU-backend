@@ -1,9 +1,11 @@
 package com.vou.auth_service.service;
 
 import com.vou.auth_service.dto.ProfileStateDto;
+import com.vou.auth_service.dto.request.ActivateProfileRequest;
 import com.vou.auth_service.entity.Auth;
 import com.vou.auth_service.entity.Otp;
 import com.vou.auth_service.enumerate.ProfileState;
+import com.vou.auth_service.enumerate.Role;
 import com.vou.auth_service.exception.ErrorCode;
 import com.vou.auth_service.exception.OtpException;
 import com.vou.auth_service.repository.AuthRepository;
@@ -32,6 +34,9 @@ public class OtpService {
 
     @Autowired
     WebClient.Builder webClientBuilder;
+
+    @Autowired
+    KafkaService<ActivateProfileRequest> kafkaActivateProfileService;
 
     private void validateAuthCredential(String phone) {
 
@@ -64,20 +69,12 @@ public class OtpService {
         otpRepository.delete(verifiedOtp);
 
         // Call user service to verify user profile
-        String url = "";
-        switch(auth.getRole()) {
-            case USER -> url ="http://localhost:8002/profile/user/";
-            case BRAND -> url = "http://localhost:8002/profile/brand/";
+        ActivateProfileRequest activateProfileRequest = new ActivateProfileRequest(auth.getUsername(), ProfileState.VERIFIED);
+        if(auth.getRole() == Role.USER)
+            kafkaActivateProfileService.send("user-profile-topic", activateProfileRequest);
+        else if (auth.getRole() == Role.BRAND) {
+            kafkaActivateProfileService.send("brand-profile-topic", activateProfileRequest);
         }
-        url += auth.getUsername();
-        WebClient webClient = webClientBuilder.build();
-        webClient
-                .patch()
-                .uri(url)
-                .body(Mono.just(new ProfileStateDto(ProfileState.VERIFIED)), ProfileStateDto.class)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
         return true;
     }
 

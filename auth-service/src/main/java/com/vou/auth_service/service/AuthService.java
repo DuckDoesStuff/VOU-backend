@@ -11,7 +11,6 @@ import com.vou.auth_service.dto.*;
 import com.vou.auth_service.dto.response.AuthRegisterResponse;
 import com.vou.auth_service.entity.Auth;
 import com.vou.auth_service.entity.Otp;
-import com.vou.auth_service.entity.Session;
 import com.vou.auth_service.enumerate.ProfileState;
 import com.vou.auth_service.enumerate.Role;
 import com.vou.auth_service.exception.AuthException;
@@ -166,29 +165,29 @@ public class AuthService {
 //        sessionRepository.delete(session);
     }
 
-    public AuthRegisterResponse createAuth(RegisterDto registerDto) {
+    public AuthRegisterResponse createAuth(AuthRegisterDto authRegisterDto) {
         // Check duplicate info
-        if (authRepository.findByUsername(registerDto.getUsername()) != null)
+        if (authRepository.findByUsername(authRegisterDto.getUsername()) != null)
             throw new AuthException(ErrorCode.USERNAME_EXISTED);
 
         // Create auth credential with "pending" state
         Auth auth = new Auth();
-        auth.setId(registerDto.getId());
-        auth.setUsername(registerDto.getUsername());
-        auth.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        auth.setRole(registerDto.getRole());
+        auth.setId(authRegisterDto.getId());
+        auth.setUsername(authRegisterDto.getUsername());
+        auth.setPassword(passwordEncoder.encode(authRegisterDto.getPassword()));
+        auth.setRole(authRegisterDto.getRole());
         auth.setProfileState(ProfileState.PENDING);
         Auth savedAuth = authRepository.save(auth);
 
         // Generate OTP
-        Otp otp = otpService.createOtp(registerDto.getPhone(), savedAuth);
+        Otp otp = otpService.createOtp(authRegisterDto.getPhone(), savedAuth);
 
         // Call SMS Service
         // ??????
 
         AuthRegisterResponse response = new AuthRegisterResponse();
-        response.setName(registerDto.getUsername());
-        response.setPhone(registerDto.getPhone());
+        response.setName(authRegisterDto.getUsername());
+        response.setPhone(authRegisterDto.getPhone());
         response.setState(savedAuth.getProfileState());
         response.setRole(savedAuth.getRole());
 

@@ -1,6 +1,7 @@
 package com.eventservice.EventService.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -8,24 +9,25 @@ import java.util.UUID;
 
 @Data
 @Table(name = "voucher_type")
+@Builder
 @Entity
 public class VoucherType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    public Long voucherTypeID;
+    private Long voucherTypeID;
 
     @ManyToOne
-    @JoinColumn
-    public PromotionalEvent event;
+    @JoinColumn(name = "promotional_event_id")
+    private PromotionalEvent promotionalEvent;
 
-    public int totalQuantity;
-    public int inStock;
-    public LocalDateTime expiryDay;
+    private int totalQuantity;
+    private int inStock;
+    private LocalDateTime expiryDay;
 
-    public String nameOfVoucher;
-    public String picture;
+    private String nameOfVoucher;
+    private String picture;
     @Column(columnDefinition = "TEXT")
-    public String description;
-    public String value;
+    private String description;
+    private String value;
 }
