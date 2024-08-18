@@ -3,7 +3,7 @@
     <envs>
       <env name="SPRING_PROFILES_ACTIVE" value="local" />
     </envs>
-    <option name="MAIN_CLASS_NAME" value="com.vou.auth_service.AuthServiceApplication" />
+    <option name="MAIN_CLASS_NAME" value="com.vou.api.AuthServiceApplication" />
     <module name="auth-service.main" />
     <method v="2">
       <option name="Make" enabled="true" />
