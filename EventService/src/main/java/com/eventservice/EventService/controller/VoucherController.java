@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/event/vouchers")
+@RequestMapping("/event/voucher")
 public class VoucherController {
     @Autowired
     VoucherService voucherService;
@@ -29,7 +29,7 @@ public class VoucherController {
         return voucherService.getVouchersByEvent(eventID);
     }
 
-    @PostMapping("/voucher")
+    @PostMapping
     public ResponseEntity<ApiResponse<VoucherDto>> createVoucher(@RequestBody @Valid VoucherDto voucherDto) {
         return voucherService.createVoucherForEvent(voucherDto);
     }
