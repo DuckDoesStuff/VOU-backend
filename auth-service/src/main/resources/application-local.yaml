@@ -20,7 +20,7 @@ spring:
       group-id: auth-service-group
       auto-offset-reset: earliest
       properties:
-        spring.json.trusted.packages: 'com.vou.auth_service.dto.RegisterDTO'
+        spring.json.trusted.packages: 'com.vou.api.dto'
 server:
   port: 8001
 

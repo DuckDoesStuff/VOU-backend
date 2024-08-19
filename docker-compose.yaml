@@ -46,7 +46,6 @@ services:
       - "5433:5432"
     networks:
       - event-network
-      - kafka-network
     environment:
       POSTGRES_USER: vou
       POSTGRES_PASSWORD: vouadmin123
@@ -91,8 +90,10 @@ services:
       - "8001:8001"
     networks:
       - auth-network
+      - kafka-network
     environment:
       SPRING_PROFILES_ACTIVE: docker
+
   user-service:
     depends_on:
       - user-db

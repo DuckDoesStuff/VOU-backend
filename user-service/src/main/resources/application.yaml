@@ -24,4 +24,4 @@ spring:
       group-id: user-service-group
       auto-offset-reset: earliest
       properties:
-        spring.json.trusted.packages: 'com.vou.user_service.dto.AuthRegisterDto'
+        spring.json.trusted.packages: 'com.vou.api.dto.request'
