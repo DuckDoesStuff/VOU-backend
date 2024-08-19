@@ -1,13 +1,19 @@
 package com.eventservice.EventService.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor // This adds a public no-argument constructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "promotional_event")
 public class PromotionalEvent {
@@ -34,6 +40,6 @@ public class PromotionalEvent {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
-    @OneToMany(mappedBy = "promotionalEvent")
+    @OneToMany(mappedBy = "promotionalEvent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<VoucherType> vouchers;
 }

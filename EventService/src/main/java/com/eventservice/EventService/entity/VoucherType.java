@@ -1,13 +1,17 @@
 package com.eventservice.EventService.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "voucher_type")
 @Builder
 @Entity
@@ -17,7 +21,7 @@ public class VoucherType {
     @Column
     private Long voucherTypeID;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "promotional_event_id")
     private PromotionalEvent promotionalEvent;
 
@@ -29,5 +33,6 @@ public class VoucherType {
     private String picture;
     @Column(columnDefinition = "TEXT")
     private String description;
+
     private String value;
 }
