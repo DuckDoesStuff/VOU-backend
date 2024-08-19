@@ -20,6 +20,6 @@ public class VoucherDto {
     public String nameOfVoucher;
     public String picture;
     public String description;
-    @NotNull(message = "Voucher value is requried")
+    @NotNull(message = "Voucher value is required")
     public String value;
 }

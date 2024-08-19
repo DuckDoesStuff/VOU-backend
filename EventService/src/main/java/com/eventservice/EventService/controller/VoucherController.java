@@ -24,6 +24,6 @@ public class VoucherController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<VoucherType>> createVoucher(@RequestBody @Valid VoucherDto voucherDto) {
-
+        return null;
     }
 }
