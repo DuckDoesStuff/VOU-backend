@@ -25,7 +25,7 @@ public class VoucherController {
     }
 
     @GetMapping("/{eventID}")
-    public ResponseEntity<ApiResponse<List<VoucherDto>>> getAllVouchersOfAnEvent(@PathVariable Long eventID) {
+    public ResponseEntity<ApiResponse<List<VoucherType>>> getAllVouchersOfAnEvent(@PathVariable Long eventID) {
         return voucherService.getVouchersByEvent(eventID);
     }
 

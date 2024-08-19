@@ -22,19 +22,15 @@ public class VoucherService {
     @Autowired
     PromotionalEventRepository promotionalEventRepository;
 
-    public ResponseEntity<ApiResponse<List<VoucherDto>>> getVouchersByEvent(Long eventID) {
+    public ResponseEntity<ApiResponse<List<VoucherType>>> getVouchersByEvent(Long eventID) {
         PromotionalEvent event = promotionalEventRepository.getReferenceById(eventID);
 
         List<VoucherType> vouchers = voucherRepository.findByPromotionalEvent(event);
 
-        List<VoucherDto> voucherDtos = vouchers.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-
-        ApiResponse<List<VoucherDto>> response = new ApiResponse<>();
+        ApiResponse<List<VoucherType>> response = new ApiResponse<>();
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Vouchers fetched successfully");
-        response.setResult(voucherDtos);
+        response.setResult(vouchers);
 
         // Return the response entity
         return new ResponseEntity<>(response, HttpStatus.OK);

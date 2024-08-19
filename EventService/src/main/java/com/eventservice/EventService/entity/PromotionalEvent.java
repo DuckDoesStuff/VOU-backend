@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,6 +41,6 @@ public class PromotionalEvent {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
-    @OneToMany(mappedBy = "promotionalEvent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<VoucherType> vouchers;
+    @OneToMany(mappedBy = "promotionalEvent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<VoucherType> vouchers;
 }

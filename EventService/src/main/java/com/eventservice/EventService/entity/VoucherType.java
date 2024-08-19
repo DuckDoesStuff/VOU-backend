@@ -22,6 +22,7 @@ public class VoucherType {
     private Long voucherTypeID;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "promotional_event_id")
     private PromotionalEvent promotionalEvent;
 
