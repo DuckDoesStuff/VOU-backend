@@ -20,6 +20,6 @@ public interface GameRepository extends MongoRepository<Game, ObjectId> {
     @Query("{ 'eventID': { $in: ?0 } }")
     List<Game> findGamesByEventIDs(List<Long> eventIDs);
 
-    @Query("SELECT g FROM Game g WHERE g.eventID = :eventID")
+    @Query("{ 'eventID': ?0 }")
     List<Game> findGamesByEventID(@Param("eventID") Long eventID);
 }

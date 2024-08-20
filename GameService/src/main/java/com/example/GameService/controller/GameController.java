@@ -23,11 +23,12 @@ public class GameController {
     public ResponseEntity<ApiResponse<List<Game>>> getAllGames() {
         return gameService.getAllGames();
     }
-    // Delete by url not by id
+
     @GetMapping("/game/event/{gameID}/{eventID}")
     public ResponseEntity<ApiResponse<Game>> getGame(@PathVariable ObjectId gameID, @PathVariable Long eventID) {
         return gameService.getGame(gameID, eventID);
     }
+
     @GetMapping("/brand/{brandID}")
     public ResponseEntity<ApiResponse<List<Game>>> getGame(@PathVariable Long brandID) {
         return gameService.getGamesByBrandID(brandID);
