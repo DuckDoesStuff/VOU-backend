@@ -1,5 +1,7 @@
 package MCService.controller;
 
+import MCService.dto.request.InfoForStream;
+import MCService.service.StreamService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -16,13 +18,9 @@ public class StreamManageController {
     @Autowired
     PropertyChangeListener streamService;
 
-    @KafkaListener(topics = "startStream-Request")
-    public void listenNotificationDelivery(NotificationEvent message) {
-        log.info("Message received: {}", message);
-        emailService.sendEmail(SendEmailRequest.builder()
-                .to(Recipient.builder().email(message.getRecipient()).build())
-                .subject(message.getSubject())
-                .htmlContent(message.getBody())
-                .build());
+    @KafkaListener(topics = "startStream")
+    public void listenStartStreamRequest(InfoForStream message) {
+        log.info("InfoForStream: {}", message);
+        ((StreamService)streamService).startStream(message);
     }
 }
