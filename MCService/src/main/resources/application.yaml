@@ -1,0 +1,30 @@
+server:
+  port: 8006
+  servlet:
+    context-path: /mc
+
+spring:
+  application:
+    name: MCService
+  kafka:
+    bootstrap-servers: localhost:9094
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: stream-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+socket:
+  host: 0.0.0.0
+  port: 8000
+
+rtmp:
+  server: rtmp://localhost/live
+  maxConnects: 1500
+  pathToFFprobe: ffprobe
+  pathToFFmpeg: ffmpeg
