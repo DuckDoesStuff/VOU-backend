@@ -1,15 +1,18 @@
 package MCService.service;
 
 import MCService.dto.request.InfoForStream;
+import MCService.dto.response.GameScore;
 import MCService.dto.response.OnlineStreams;
 import MCService.dto.socket.ServerSocketInformation;
-import MCService.dto.stream.Question;
 import MCService.dto.stream.StreamInfo;
 import MCService.entity.UserInfo;
+import MCService.entity.UserScore;
 import MCService.mapper.StreamInfoMapper;
 import MCService.socket.manage.SocketHandler;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,17 +21,21 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 //@Scheduled()
 @Service
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class StreamService implements PropertyChangeListener {
     FFmpegService ffmpegService;
     SocketHandler socketHandler;
     StreamInfoMapper streamInforMapper;
     Map<String,StreamInfo> streams = new HashMap<>();
     KafkaTemplate<String, Object> kafkaTemplate;
+
+    int numberTopUser = 10;
 
     public void startStream(InfoForStream infoForStream) {
         StreamInfo streamInfo = streamInforMapper.infoForStreamToStreamInfo(infoForStream);
@@ -51,12 +58,15 @@ public class StreamService implements PropertyChangeListener {
         StreamInfo streamInfo = streams.get(streamKey);
         int order = streamInfo .getOrder();
         if (order == 0) {
+            //Video Gioi Thieu
             return;
         }
         if (order == -2) {
             //endstream
+            endStream(streamKey);
+            return;
         }
-        if (order%2 == 0 ) {
+        if (order%2 != 0 ) {
             socketHandler.sendRoomMessage(streamKey,"Question",streamInfo.getQuestions().get(order-1));
         } else {
             socketHandler.sendRoomMessage(streamKey,"Answer",streamInfo.getQuestions().get(order-1).getAnswer());
@@ -64,8 +74,40 @@ public class StreamService implements PropertyChangeListener {
     }
 
     public void endStream(String streamKey) {
+        StreamInfo streamInfo = streams.get(streamKey);
+        //disconnect users
+        socketHandler.disconnectRoom(streamKey);
+        //save participants history
         List<UserInfo> streamHistory = ServerSocketInformation.getHistory().get(streamKey);
         kafkaTemplate.send("SaveGameHistory", streamHistory);
+
+        //Process UserScore
+        List<UserScore> sortedUserScoreList =  ServerSocketInformation.getUserScore().get(streamKey).entrySet()
+                .stream()
+                .map(entry -> UserScore.builder()
+                        .userID(entry.getKey())
+                        .score(entry.getValue())
+                        .build())
+                        .sorted((u1, u2) -> Integer.compare(u2.getScore(), u1.getScore()))
+                .collect(Collectors.toList());
+
+        //Calculate Top User
+        int maxIndex = numberTopUser;
+        while (maxIndex < sortedUserScoreList.size() &&
+                sortedUserScoreList.get(maxIndex).getScore() == sortedUserScoreList.get(maxIndex - 1).getScore()) {
+            maxIndex++;
+        }
+        List<UserScore> topUserScores = sortedUserScoreList.subList(0, maxIndex);
+
+        //Save UserScore
+        kafkaTemplate.send("SaveGameScore", GameScore.builder()
+                .gameID(streamKey)
+                .eventID(streamInfo.getEventID())
+                .userScores(sortedUserScoreList.subList(0, maxIndex)));
+
+        //Clean Resource
+        cleanResouce(streamKey);
+
     }
 
     public StreamInfo getStreamInfo(String streamKey) {
@@ -78,6 +120,11 @@ public class StreamService implements PropertyChangeListener {
         return OnlineStreams.builder()
                 .rooms(rooms)
                 .build();
+    }
+
+    void cleanResouce(String streamKey) {
+        streams.remove(streamKey);
+        socketHandler.cleanRoom(streamKey);
     }
 
 //    @PostConstruct

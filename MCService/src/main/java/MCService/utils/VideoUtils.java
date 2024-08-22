@@ -17,7 +17,6 @@ public class VideoUtils {
     public static int getCurrentVideoIndex(double[] cumulativeDurations, double currentPlaybackTime) {
         int low = 0;
         int high = cumulativeDurations.length - 1;
-
         while (low <= high) {
             int mid = (low + high) / 2;
             if (currentPlaybackTime < cumulativeDurations[mid]) {

@@ -1,7 +1,7 @@
 package MCService.socket.listener;
 
 import MCService.dto.socket.ServerSocketInformation;
-import MCService.dto.socket.UserAnswer;
+import MCService.dto.request.UserAnswer;
 import MCService.dto.stream.StreamInfo;
 import MCService.entity.UserInfo;
 import MCService.service.StreamService;
@@ -38,7 +38,7 @@ public class GeneralListener {
     static final Map<String, UserInfo> users = ServerSocketInformation.getUsers();
     static final Map<String, List<String>> rooms = ServerSocketInformation.getRooms();
     static final Map<String, List<UserInfo>> history = ServerSocketInformation.getHistory();
-    static final Map<String,Integer> userScore = ServerSocketInformation.getUserScore();
+    static final Map<String,Map<String,Integer>> userScore = ServerSocketInformation.getUserScore();
     @Value("${rtmp.maxConnects}")
     int MAX_CONNECTS;
 
@@ -84,12 +84,12 @@ public class GeneralListener {
 
     @OnEvent("Answer")
     public void onAnswer(SocketIOClient client, UserAnswer userAnswer) {
-        Integer score = userScore.get(userAnswer.getUserID());
+        Integer score = userScore.get(userAnswer.getRoomID()).get(userAnswer.getUserID());
         String streamKey = users.get(client.getSessionId().toString()).getGameID();
         StreamInfo streamInfo = ((StreamService)streamService).getStreamInfo(streamKey);
         if (score == null) {
             score = 0;
-            userScore.put(userAnswer.getUserID(), score);
+            userScore.get(userAnswer.getRoomID()).put(userAnswer.getUserID(), score);
         }
         int questionId = userAnswer.getQuestionId();
         if (userAnswer.getAnswer() ==  streamInfo.getQuestions().get(questionId).getCorrectAnswer()) {

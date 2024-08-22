@@ -41,4 +41,10 @@ public class SocketHandler {
         server.getRoomOperations(room).sendEvent("disconnect");
         server.getRoomOperations(room).disconnect();
     }
+
+    public void cleanRoom(String room) {
+        ServerSocketInformation.getRooms().remove(room);
+        ServerSocketInformation.getHistory().remove(room);
+        ServerSocketInformation.getUserScore().remove(room);
+    }
 }

@@ -24,7 +24,7 @@ public class ServerSocketInformation {
     //room,List<UserInfo>
     @Getter
     static final Map<String, List<UserInfo>> history = new HashMap<>();
-    //userID, score
+    //room, <userID, score>
     @Getter
-    static final Map<String,Integer> userScore = new HashMap<>();
+    static final Map<String,Map<String,Integer>> userScore = new HashMap<>();
 }
