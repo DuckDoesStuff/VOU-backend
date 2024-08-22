@@ -108,6 +108,20 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
 
+  event-service:
+    depends_on:
+      - event-db
+      - kafka
+    profiles: [API]
+    build: ./EventService
+    ports:
+      - "8003:8003"
+    networks:
+      - event-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
 networks:
   kafka-network:
     driver: bridge

@@ -22,4 +22,7 @@ public interface GameRepository extends MongoRepository<Game, ObjectId> {
 
     @Query("{ 'eventID': ?0 }")
     List<Game> findGamesByEventID(@Param("eventID") Long eventID);
+
+    @Query("{ 'questions.videoStatus': ?0 }")
+    List<Game> findGamesByVideoStatus(@Param("status") String status);
 }

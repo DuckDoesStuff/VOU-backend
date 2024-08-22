@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: EventService
+  datasource:
+    url: jdbc:postgresql://event-db:5432/event_service
+    username: vou
+    password: vouadmin123
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8003

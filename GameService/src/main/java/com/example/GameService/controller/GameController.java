@@ -1,15 +1,14 @@
 package com.example.GameService.controller;
 
 // GameController.java
+
 import com.example.GameService.dto.ApiResponse;
-import com.example.GameService.dto.GetGameRequestDTO;
 import com.example.GameService.entity.Game;
 import com.example.GameService.service.GameService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -43,10 +42,16 @@ public class GameController {
     public ResponseEntity<ApiResponse<List<Game>>> getGamesByEventID(@PathVariable Long eventID) {
         return gameService.getGameByEventID(eventID);
     }
+
     @PutMapping("/game/{gameID}")
     public ResponseEntity<ApiResponse<Game>> updateGame(
             @PathVariable String gameID,
             @RequestBody Game updatedGameDetails) {
         return gameService.updateGame(new ObjectId(gameID), updatedGameDetails);
+    }
+
+    @PostMapping("/game/question")
+    public ResponseEntity<ApiResponse<Game>> addGameQuestion(@RequestParam String gameID, @RequestBody Game.Question questionDto) {
+        return gameService.addGameQuestion(new ObjectId(gameID), questionDto);
     }
 }

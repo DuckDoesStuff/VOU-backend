@@ -1,8 +1,8 @@
 package com.example.GameService.service;
 
 // GameService.java
+
 import com.example.GameService.dto.ApiResponse;
-import com.example.GameService.dto.GetGameRequestDTO;
 import com.example.GameService.entity.Game;
 import com.example.GameService.repository.GameRepository;
 import org.bson.types.ObjectId;
@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,7 +27,6 @@ public class GameService {
     public GameService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
-
 
     public ResponseEntity<ApiResponse<List<Game>>> getAllGames() {
         List<Game> games = gameRepository.findAll();
@@ -66,7 +66,7 @@ public class GameService {
         ApiResponse<Game> response = new ApiResponse<>(
                 HttpStatus.NO_CONTENT.value(),
                 "Cannot get game",
-            null
+                null
         );
         return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
@@ -77,7 +77,8 @@ public class GameService {
                 url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<ApiResponse<List<Long>>>() {}
+                new ParameterizedTypeReference<ApiResponse<List<Long>>>() {
+                }
         );
         ApiResponse<List<Game>> response;
         if (responseEntity.getBody() == null) {
@@ -108,12 +109,12 @@ public class GameService {
         }
     }
 
-
     public ResponseEntity<ApiResponse<Game>> createGame(Game game) {
         if (game.getGameID() == null) {
             game.setGameID(new ObjectId());
         }
 
+        if(game.getType().equals("QUIZ")) game.setQuestions(new ArrayList<>());
         Game savedGame = gameRepository.save(game);
 
         ApiResponse<Game> response = new ApiResponse<>(
@@ -123,6 +124,7 @@ public class GameService {
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     public ResponseEntity<ApiResponse<Game>> updateGame(ObjectId gameID, Game updatedGameDetails) {
         Game existingGame = gameRepository.findByGameID(gameID);
         ApiResponse<Game> response = new ApiResponse<>();
@@ -148,6 +150,7 @@ public class GameService {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+
     public ResponseEntity<ApiResponse<List<Game>>> getGameByEventID(Long eventID) {
         List<Game> games = gameRepository.findGamesByEventID(
                 eventID
@@ -162,6 +165,26 @@ public class GameService {
         response.setMessage("Get successfully");
         response.setResult(games);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public ResponseEntity<ApiResponse<Game>> addGameQuestion(ObjectId gameID, Game.Question question) {
+        Game game = gameRepository.findByGameID(gameID);
+        List<Game.Question> questions = game.getQuestions();
+        if (questions == null) questions = new ArrayList<>();
+
+
+
+        questions.add(question);
+        game.setQuestions(questions);
+        gameRepository.save(game);
+        ApiResponse<Game> response = new ApiResponse<>();
+        response.setMessage("Successfully added a new question");
+        response.setStatus(200);
+        response.setResult(game);
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.OK
+        );
     }
 }
 
