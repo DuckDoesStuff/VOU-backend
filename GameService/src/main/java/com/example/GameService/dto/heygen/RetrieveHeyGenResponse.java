@@ -3,7 +3,7 @@ package com.example.GameService.dto.heygen;
 import lombok.Data;
 
 @Data
-public class RetrieveHeyGen {
+public class RetrieveHeyGenResponse {
     private int code;
     private Result data;
 

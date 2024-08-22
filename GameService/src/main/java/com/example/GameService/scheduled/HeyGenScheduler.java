@@ -20,15 +20,14 @@ public class HeyGenScheduler {
     @Autowired
     HeyGenAPI heyGenAPI;
 
-    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    @Scheduled(fixedDelay = 60 * 1000)
     public void getAllGames() {
         List<Game> quizGames = gameRepository.findGamesByVideoStatus("processing");
-
         boolean updated = false;
+        int count = 0;
         for (Game game : quizGames) {
             for (Game.Question question : game.getQuestions()) {
                 if(Objects.equals(question.getVideoStatus(), "processing")) {
-                    log.info(String.valueOf(game.getEventID()));
                     String url = heyGenAPI.getVideoIfCompleted(question.getVideo());
                     if (url != null) {
                         question.setVideo(url);
@@ -39,10 +38,12 @@ public class HeyGenScheduler {
             }
 
             if (updated) {
+                count++;
                 gameRepository.save(game);
                 updated = false;
             }
         }
+        log.info("HeyGenScheduler scanned and updated {} videos", count);
     }
 
 }

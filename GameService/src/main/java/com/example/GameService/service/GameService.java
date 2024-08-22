@@ -2,6 +2,7 @@ package com.example.GameService.service;
 
 // GameService.java
 
+import com.example.GameService.custom.HeyGenAPI;
 import com.example.GameService.dto.ApiResponse;
 import com.example.GameService.entity.Game;
 import com.example.GameService.repository.GameRepository;
@@ -21,6 +22,9 @@ import java.util.List;
 public class GameService {
     @Autowired
     private GameRepository gameRepository;
+
+    @Autowired
+    HeyGenAPI heyGenAPI;
 
     private final RestTemplate restTemplate;
 
@@ -172,7 +176,9 @@ public class GameService {
         List<Game.Question> questions = game.getQuestions();
         if (questions == null) questions = new ArrayList<>();
 
-
+        String videoID = heyGenAPI.generateVideo(question.getQuestion(), game.getEventID().toString(), gameID.toString(), String.valueOf(questions.size()));
+        question.setVideoStatus("processing");
+        question.setVideo(videoID);
 
         questions.add(question);
         game.setQuestions(questions);

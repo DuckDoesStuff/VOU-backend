@@ -5,7 +5,7 @@ import lombok.Data;
 
 
 @Data
-public class CreateHeyGen {
+public class GenerateHeyGenResponse {
     private String error;
     private VideoData data;
 
