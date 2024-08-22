@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 //@FieldDefaults(level= AccessLevel.PRIVATE)
 @Data
 public class ServerSocketInformation {

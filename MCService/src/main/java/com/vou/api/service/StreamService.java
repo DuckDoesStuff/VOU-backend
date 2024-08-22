@@ -39,7 +39,8 @@ public class StreamService implements PropertyChangeListener {
 
     public void startStream(InfoForStream infoForStream) {
         StreamInfo streamInfo = streamInforMapper.infoForStreamToStreamInfo(infoForStream);
-        ServerSocketInformation.getHistory().put(streamInfo.getStreamKey(),new ArrayList<>());
+        socketHandler.initRoom(streamInfo.getStreamKey());
+        //Them Listener
         streamInfo.addPropertyChangeListener(this);
         streams.put(streamInfo.getStreamKey(), streamInfo);
         try {

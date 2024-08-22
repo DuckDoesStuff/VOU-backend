@@ -84,16 +84,12 @@ public class GeneralListener {
 
     @OnEvent("Answer")
     public void onAnswer(SocketIOClient client, UserAnswer userAnswer) {
-        Integer score = userScore.get(userAnswer.getRoomID()).get(userAnswer.getUserID());
         String streamKey = users.get(client.getSessionId().toString()).getGameID();
         StreamInfo streamInfo = ((StreamService)streamService).getStreamInfo(streamKey);
-        if (score == null) {
-            score = 0;
-            userScore.get(userAnswer.getRoomID()).put(userAnswer.getUserID(), score);
-        }
         int questionId = userAnswer.getQuestionId();
+
         if (userAnswer.getAnswer() ==  streamInfo.getQuestions().get(questionId).getCorrectAnswer()) {
-            score +=1;
+            userScore.get(userAnswer.getRoomID()).merge(userAnswer.getUserID(), 1, Integer::sum);
         }
     }
 

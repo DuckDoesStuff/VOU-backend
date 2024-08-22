@@ -11,6 +11,9 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SocketHandler {
@@ -46,5 +49,11 @@ public class SocketHandler {
         ServerSocketInformation.getRooms().remove(room);
         ServerSocketInformation.getHistory().remove(room);
         ServerSocketInformation.getUserScore().remove(room);
+    }
+
+    public void initRoom(String room) {
+        ServerSocketInformation.getRooms().put(room, new ArrayList<>());
+        ServerSocketInformation.getHistory().put(room, new ArrayList<>());
+        ServerSocketInformation.getUserScore().put(room, new HashMap<>());
     }
 }
