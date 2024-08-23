@@ -17,7 +17,7 @@ public class Participant {
     @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId id;
     private Long eventID;
-    private Long userID;
+    private String userID;
     @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId gameID;
     private int turnLeft;

@@ -8,14 +8,16 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.UUID;
+
 @Document(collection = "exchange_history")
 @Data
 public class ExchangeHistory {
     @Id
     @JsonSerialize(using = ObjectIdSerializer.class)
     private String id;
-    private Long presenterID;
-    private Long receiverID;
+    private String presenterID;
+    private String receiverID;
     private String timeSent;
     @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId itemTypeID;

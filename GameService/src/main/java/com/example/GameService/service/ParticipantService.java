@@ -55,7 +55,7 @@ public class ParticipantService {
 
         participant.setGameID(addParticipantRequest.getGameID());
         participant.setEventID(addParticipantRequest.getEventID());
-        participant.setUserID(addParticipantRequest.getEventID());
+        participant.setUserID(addParticipantRequest.getUserID());
         Game game = gameRepository.findByGameID(addParticipantRequest.getGameID());
         participant.setTurnLeft(game.getDefaultFreeTurn());
 

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ItemService {
@@ -37,7 +38,7 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
-    public Item getItem(String id) {
+    public Item getItem(ObjectId id) {
         return itemRepository.findById(id).orElse(null);
     }
 
@@ -49,7 +50,7 @@ public class ItemService {
         return itemRepository.findByGameID(gameID);
     }
 
-    public ResponseEntity<ApiResponse<List<Item>>> getItemsByUserID(Long userID) {
+    public ResponseEntity<ApiResponse<List<Item>>> getItemsByUserID(String userID) {
         ApiResponse<List<Item>> response = new ApiResponse<>();
         List<Item> items = itemRepository.findByUserID(userID);
         response.setStatus(HttpStatus.OK.value());
@@ -68,11 +69,11 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
-    public void deleteItem(String id) {
+    public void deleteItem(ObjectId id) {
         itemRepository.deleteById(id);
     }
     public ResponseEntity<ApiResponse<ItemType>> getRandomItem(GetRandomItemTypeDTO getRandomItemTypeDTO) {
-        Long userID = getRandomItemTypeDTO.getUserID();
+        String userID = getRandomItemTypeDTO.getUserID();
         ObjectId gameID = getRandomItemTypeDTO.getGameID();
         Long eventID = getRandomItemTypeDTO.getEventID();
         ApiResponse<ItemType> response = new ApiResponse<>();
@@ -117,8 +118,8 @@ public class ItemService {
         Long eventID = exchangeItemsRequest.getItemA().getEventID();
         ObjectId gameID = exchangeItemsRequest.getItemA().getGameID();
         ObjectId itemTypeIDA = exchangeItemsRequest.getItemA().getItemTypeID();
-        Long userIDA = exchangeItemsRequest.getItemA().getUserID();
-        Long userIDB = exchangeItemsRequest.getItemB().getUserID();
+        String userIDA = exchangeItemsRequest.getItemA().getUserID();
+        String userIDB = exchangeItemsRequest.getItemB().getUserID();
         Item itemA = itemRepository.findByEventIDAndGameIDAndItemTypeIDAndUserID(eventID, gameID, itemTypeIDA, userIDA);
         Item itemB = itemRepository.findByEventIDAndGameIDAndItemTypeIDAndUserID(eventID, gameID, itemTypeIDA, userIDB);
 

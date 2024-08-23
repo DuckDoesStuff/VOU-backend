@@ -91,6 +91,16 @@ public class VoucherService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    public ResponseEntity<ApiResponse<String>> decreaseTotalQuantity(Long voucherTypeID, int totalDecreased) {
+        VoucherType voucherType = voucherRepository.findByVoucherTypeID(voucherTypeID);
+        voucherType.setInStock(voucherType.getInStock() - totalDecreased);
+        voucherRepository.save(voucherType);
+        ApiResponse<String> response = new ApiResponse<>();
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage("Decreased voucher quantity successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     // Conversion method from VoucherType to VoucherDto
     private VoucherDto convertToDto(VoucherType voucherType) {
         VoucherDto dto = new VoucherDto();

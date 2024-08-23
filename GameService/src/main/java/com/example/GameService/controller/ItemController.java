@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/items")
@@ -26,7 +27,7 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public Item getItem(@PathVariable String id) {
+    public Item getItem(@PathVariable ObjectId id) {
         return itemService.getItem(id);
     }
 
@@ -41,7 +42,7 @@ public class ItemController {
     }
 
     @GetMapping("/user/{userID}")
-    public ResponseEntity<ApiResponse<List<Item>>> getItemsByUserID(@PathVariable Long userID) {
+    public ResponseEntity<ApiResponse<List<Item>>> getItemsByUserID(@PathVariable String userID) {
         return itemService.getItemsByUserID(userID);
     }
 
@@ -56,7 +57,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteItem(@PathVariable String id) {
+    public void deleteItem(@PathVariable ObjectId id) {
         itemService.deleteItem(id);
     }
 

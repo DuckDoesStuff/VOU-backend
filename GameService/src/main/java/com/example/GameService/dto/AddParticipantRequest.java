@@ -7,5 +7,5 @@ import org.bson.types.ObjectId;
 public class AddParticipantRequest {
     public Long eventID;
     public ObjectId gameID;
-    public Long userID;
+    public String userID;
 }

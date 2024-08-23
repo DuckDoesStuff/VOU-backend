@@ -1,9 +1,13 @@
 package com.example.GameService.controller;
 
 // ExchangeRateController.java
+import com.example.GameService.dto.ApiResponse;
+import com.example.GameService.dto.CreateExchangeRateDTO;
+import com.example.GameService.dto.ExchangeForVoucherDTO;
 import com.example.GameService.entity.ExchangeRate;
 import com.example.GameService.service.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +29,7 @@ public class ExchangeRateController {
     }
 
     @GetMapping("/event/{eventID}")
-    public List<ExchangeRate> getExchangeRatesByEventID(@PathVariable Long eventID) {
+    public ResponseEntity<ApiResponse<List<CreateExchangeRateDTO>>> getExchangeRatesByEventID(@PathVariable Long eventID) {
         return exchangeRateService.getExchangeRatesByEventID(eventID);
     }
 
@@ -44,13 +48,18 @@ public class ExchangeRateController {
         return exchangeRateService.getExchangeRatesByVoucherTypeID(voucherTypeID);
     }
 
-    @PostMapping
-    public ExchangeRate saveExchangeRate(@RequestBody ExchangeRate exchangeRate) {
+    @PostMapping("/exchange_rate")
+    public ResponseEntity<ApiResponse<CreateExchangeRateDTO>> saveExchangeRate(@RequestBody CreateExchangeRateDTO exchangeRate) {
         return exchangeRateService.saveExchangeRate(exchangeRate);
+    }
+    @PostMapping("/exchange_rate/voucher")
+    public ResponseEntity<ApiResponse<String>> exchangeForVoucher(@RequestBody ExchangeForVoucherDTO exchangeForVoucherDTO) {
+        return exchangeRateService.exchangeForVoucher(exchangeForVoucherDTO);
     }
 
     @DeleteMapping("/{id}")
     public void deleteExchangeRate(@PathVariable String id) {
 //        exchangeRateService.deleteExchangeRate(id);
     }
+
 }

@@ -1,6 +1,7 @@
 package com.eventservice.EventService.controller;
 
 import com.eventservice.EventService.dto.ApiResponse;
+import com.eventservice.EventService.dto.DecreaseVoucherDTO;
 import com.eventservice.EventService.dto.VoucherDto;
 import com.eventservice.EventService.entity.VoucherType;
 import com.eventservice.EventService.service.VoucherService;
@@ -32,5 +33,9 @@ public class VoucherController {
     @PostMapping
     public ResponseEntity<ApiResponse<VoucherDto>> createVoucher(@RequestBody @Valid VoucherDto voucherDto) {
         return voucherService.createVoucherForEvent(voucherDto);
+    }
+    @PostMapping("decrease_quantity")
+    public ResponseEntity<ApiResponse<String>> decreaseVoucherType(@RequestBody DecreaseVoucherDTO dto) {
+        return voucherService.decreaseTotalQuantity(dto.getVoucherTypeID(), dto.getTotalDecreased());
     }
 }

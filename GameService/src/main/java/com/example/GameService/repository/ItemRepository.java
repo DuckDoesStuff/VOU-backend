@@ -4,12 +4,17 @@ package com.example.GameService.repository;
 import com.example.GameService.entity.Item;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import java.util.List;
+import org.springframework.data.mongodb.repository.Query;
 
-public interface ItemRepository extends MongoRepository<Item, String> {
+import java.util.List;
+import java.util.UUID;
+
+public interface ItemRepository extends MongoRepository<Item, ObjectId> {
     List<Item> findByEventID(Long eventID);
     List<Item> findByGameID(ObjectId gameID);
-    List<Item> findByUserID(Long userID);
+    List<Item> findByUserID(String userID);
     List<Item> findByItemTypeID(ObjectId itemTypeID);
-    Item findByEventIDAndGameIDAndItemTypeIDAndUserID(Long eventID, ObjectId gameID, ObjectId itemTypeID, Long userID);
+    @Query("{ 'itemTypeID': ?0, 'userID': ?1 }")
+    Item findByItemTypeIDAndUserID(ObjectId itemTypeID, String userID);
+    Item findByEventIDAndGameIDAndItemTypeIDAndUserID(Long eventID, ObjectId gameID, ObjectId itemTypeID, String userID);
 }

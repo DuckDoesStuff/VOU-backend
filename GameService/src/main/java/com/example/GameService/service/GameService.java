@@ -29,7 +29,7 @@ public class GameService {
     private final RestTemplate restTemplate;
 
     public GameService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+        this.restTemplate   = restTemplate;
     }
 
     public ResponseEntity<ApiResponse<List<Game>>> getAllGames() {

@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface VoucherRepository extends JpaRepository<VoucherType, Long> {
     List<VoucherType> findByPromotionalEvent(PromotionalEvent promotionalEvent);
+    VoucherType findByVoucherTypeID(Long voucherTypeID);
 }
