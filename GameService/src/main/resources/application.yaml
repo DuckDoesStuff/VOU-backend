@@ -1,30 +1,22 @@
-server:
-  port: 8006
-  servlet:
-    context-path: /mc
-
 spring:
   application:
-    name: MCService
+    name: GameService
+  data:
+    mongodb.uri: mongodb://localhost:27017/game_db
   kafka:
     bootstrap-servers: localhost:9094
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
-      group-id: stream-group
-      auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: game-service-group
+      auto-offset-reset: earliest
       properties:
-        spring.json.trusted.packages: "*"
+        spring.json.trusted.packages: 'com.vou.api.dto'
 
-socket:
-  host: 0.0.0.0
-  port: 8100
+server:
+  port: 8004
 
-rtmp:
-  server: rtmp://localhost/live
-  maxConnects: 1500
-  pathToFFprobe: ffprobe
-  pathToFFmpeg: ffmpeg
+heygen.api_key: Nzc0N2I3YzBiZjUxNDNiZDhkYzU5OWUyMGZjNTYyMTEtMTcyNDE1MTUyMg==
