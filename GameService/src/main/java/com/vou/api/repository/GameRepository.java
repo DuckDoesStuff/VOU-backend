@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface GameRepository extends MongoRepository<Game, ObjectId> {
@@ -26,4 +27,6 @@ public interface GameRepository extends MongoRepository<Game, ObjectId> {
     @Query("{ 'questions.videoStatus': ?0 }")
     List<Game> findGamesByVideoStatus(@Param("status") String status);
 
+    @Query("{ 'quizState': 'READY', 'startTime': { $lte: ?0 }, 'endTime': { $gte: ?0 } }")
+    List<Game> findGamesReadyToStream(@Param("currentTime") LocalDateTime currentTime);
 }

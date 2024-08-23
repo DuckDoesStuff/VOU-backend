@@ -118,9 +118,11 @@ public class GameService {
             game.setGameID(new ObjectId());
         }
 
-        game.setGameState("soon");
 
-        if(game.getType().equals("QUIZ")) game.setQuestions(new ArrayList<>());
+        if (game.getType().equals("QUIZ")) {
+            game.setQuestions(new ArrayList<>());
+            game.setQuizState("PREPARING");
+        }
         Game savedGame = gameRepository.save(game);
 
         ApiResponse<Game> response = new ApiResponse<>(
@@ -184,6 +186,7 @@ public class GameService {
 
         questions.add(question);
         game.setQuestions(questions);
+        game.setQuizState("PREPARING");
         gameRepository.save(game);
         ApiResponse<Game> response = new ApiResponse<>();
         response.setMessage("Successfully added a new question");

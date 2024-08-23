@@ -39,11 +39,24 @@ public class HeyGenScheduler {
 
             if (updated) {
                 count++;
+                game.setQuizState(allQuizAreReady(game.getQuestions()) ? "READY" : "PREPARING");
                 gameRepository.save(game);
                 updated = false;
             }
         }
-        log.info("HeyGenScheduler scanned and updated {} videos", count);
+        if (count != 0)
+            log.info("HeyGenScheduler updated {} quizzes", count);
     }
 
+    private boolean allQuizAreReady(List<Game.Question> questions) {
+        boolean flag = true;
+        for(Game.Question question: questions) {
+            if(!Objects.equals(question.getVideoStatus(), "completed")) {
+                flag = false;
+                break;
+            }
+        }
+
+        return flag;
+    }
 }
