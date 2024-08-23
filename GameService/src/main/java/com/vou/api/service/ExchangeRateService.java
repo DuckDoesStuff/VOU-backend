@@ -1,11 +1,19 @@
-package com.example.GameService.service;
+package com.vou.api.service;
 
 // ExchangeRateService.java
-import com.example.GameService.dto.*;
-import com.example.GameService.entity.ExchangeRate;
-import com.example.GameService.entity.Item;
-import com.example.GameService.repository.ExchangeRateRepository;
-import com.example.GameService.repository.ItemRepository;
+import com.vou.api.dto.*;
+import com.vou.api.entity.ExchangeRate;
+import com.vou.api.entity.Item;
+import com.vou.api.repository.ExchangeRateRepository;
+import com.vou.api.repository.ItemRepository;
+import com.vou.api.dto.ApiResponse;
+import com.vou.api.dto.CreateExchangeRateDTO;
+import com.vou.api.dto.DecreaseQuantityDTO;
+import com.vou.api.dto.ExchangeForVoucherDTO;
+import com.vou.api.entity.ExchangeRate;
+import com.vou.api.entity.Item;
+import com.vou.api.repository.ExchangeRateRepository;
+import com.vou.api.repository.ItemRepository;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

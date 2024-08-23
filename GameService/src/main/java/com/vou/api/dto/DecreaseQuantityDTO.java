@@ -1,4 +1,4 @@
-package com.example.GameService.dto;
+package com.vou.api.dto;
 
 import lombok.Data;
 

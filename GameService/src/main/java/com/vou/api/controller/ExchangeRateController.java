@@ -1,11 +1,11 @@
-package com.example.GameService.controller;
+package com.vou.api.controller;
 
 // ExchangeRateController.java
-import com.example.GameService.dto.ApiResponse;
-import com.example.GameService.dto.CreateExchangeRateDTO;
-import com.example.GameService.dto.ExchangeForVoucherDTO;
-import com.example.GameService.entity.ExchangeRate;
-import com.example.GameService.service.ExchangeRateService;
+import com.vou.api.dto.ApiResponse;
+import com.vou.api.dto.CreateExchangeRateDTO;
+import com.vou.api.dto.ExchangeForVoucherDTO;
+import com.vou.api.entity.ExchangeRate;
+import com.vou.api.service.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

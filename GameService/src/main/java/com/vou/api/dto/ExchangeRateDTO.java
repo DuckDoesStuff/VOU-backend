@@ -1,7 +1,8 @@
 package com.example.GameService.dto;
 
-import com.example.GameService.custom.ObjectIdSerializer;
+import com.vou.api.custom.ObjectIdSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.vou.api.custom.ObjectIdSerializer;
 import lombok.Builder;
 import lombok.Data;
 import org.bson.types.ObjectId;
