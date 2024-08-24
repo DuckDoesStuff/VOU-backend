@@ -20,7 +20,7 @@ public class Otp {
     @Column(nullable = false)
     private String otp;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(referencedColumnName = "id", name = "auth_id")
     private Auth auth;
 

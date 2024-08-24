@@ -5,6 +5,8 @@ import com.vou.api.dto.response.ApiResponse;
 import com.vou.api.dto.response.AuthRegisterResponse;
 import com.vou.api.dto.response.AuthResponse;
 import com.vou.api.entity.Auth;
+import com.vou.api.enumerate.ProfileState;
+import com.vou.api.enumerate.Role;
 import com.vou.api.exception.AuthException;
 import com.vou.api.exception.ErrorCode;
 import com.vou.api.service.AuthService;
@@ -12,13 +14,16 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -126,6 +131,18 @@ public class AuthController {
     @KafkaListener(topics = "auth-create-topic")
     public void authCreateListener(AuthRegisterDto authRegisterDto) {
         authService.createAuth(authRegisterDto);
+    }
+
+    @KafkaListener(topics = "auth-update")
+    public void authUpdateRole(String message) {
+        String[] split = message.split("_");
+        log.info(message);
+        authService.updateAuth(split[0], Role.valueOf(split[1]), ProfileState.valueOf(split[2]));
+    }
+
+    @KafkaListener(topics = "auth-delete")
+    public void authDelete(String message) {
+        authService.deleteAuth(message);
     }
 
     // FOR DEBUGGING ONLY

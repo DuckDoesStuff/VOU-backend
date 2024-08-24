@@ -28,9 +28,7 @@ import org.springframework.stereotype.Component;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 public class AuthService {
@@ -58,7 +56,7 @@ public class AuthService {
     @NonFinal
     @Value("${jwt.refreshable-duration}")
     protected int refreshableDuration;
-    
+
     public List<Auth> getAuthList() {
         return authRepository.findAll();
     }
@@ -98,7 +96,7 @@ public class AuthService {
             SignedJWT signedJWT = SignedJWT.parse(token);
             expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
             verified = signedJWT.verify(jwsVerifier);
-        } catch(ParseException e) {
+        } catch (ParseException e) {
             log.error("Error parsing token to verify");
             return false;
         } catch (JOSEException e) {
@@ -111,7 +109,7 @@ public class AuthService {
 
     public TokenDto refresh(RefreshDto refreshDto, String rt) {
         boolean verified = verify(rt);
-        if(!verified) throw new AuthException(ErrorCode.UNAUTHENTICATED);
+        if (!verified) throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
 //        Session session = sessionRepository.findOneByRefreshToken(rt);
 //        if (session == null)
@@ -194,10 +192,19 @@ public class AuthService {
         return response;
     }
 
-    public void deleteAuth(String username) {
-        Auth auth = authRepository.findByUsername(username);
-        if (auth == null) throw new AuthException(ErrorCode.USER_NOT_EXIST);
-        authRepository.delete(auth);
+    public void deleteAuth(String id) {
+        Optional<Auth> auth = authRepository.findById(id);
+        auth.ifPresent(value -> authRepository.delete(value));
+    }
+
+    public void updateAuth(String id, Role role, ProfileState state) {
+        Optional<Auth> optAuth = authRepository.findById(id);
+        if(optAuth.isEmpty()) return;
+        Auth auth = optAuth.get();
+        auth.setRole(role);
+        auth.setProfileState(state);
+
+        authRepository.save(auth);
     }
 
     private String generateToken(String username, String role, String profileID, boolean isRefreshToken) {
