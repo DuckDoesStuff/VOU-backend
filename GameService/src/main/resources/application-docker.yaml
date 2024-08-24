@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: GameService
+  data:
+    mongodb.uri: mongodb://game-db:27017/game_db
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: game-service-group
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: 'com.vou.api.dto'
+
+server:
+  port: 8004
+
+heygen.api_key: Nzc0N2I3YzBiZjUxNDNiZDhkYzU5OWUyMGZjNTYyMTEtMTcyNDE1MTUyMg==

@@ -16,6 +16,7 @@ services:
 
   auth-db:
     image: postgres
+    container_name: auth-db
     ports:
       - "5431:5432"
     networks:
@@ -29,6 +30,7 @@ services:
 
   user-db:
     image: postgres
+    container_name: user-db
     ports:
       - "5432:5432"
     networks:
@@ -42,6 +44,7 @@ services:
 
   event-db:
     image: postgres
+    container_name: event-db
     ports:
       - "5433:5432"
     networks:
@@ -56,6 +59,8 @@ services:
   game-db:
     image: mongo:latest
     container_name: game-db
+    networks:
+      - mongo-network
     ports:
       - "27017:27017"
     volumes:
@@ -80,6 +85,19 @@ services:
 
   # API SERVICES
   # TO RUN USE: docker compose up --build --profile API
+  api-gateway:
+    profiles: [API]
+    build: ./nginx
+    volumes:
+    - ./temp:/etc/nginx/temp
+    ports:
+    - "8000:8000"
+    networks:
+      - auth-network
+      - user-network
+      - event-network
+      - mongo-network
+
   auth-service:
     depends_on:
       - auth-db
@@ -118,6 +136,20 @@ services:
       - "8003:8003"
     networks:
       - event-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  game-service:
+    depends_on:
+      - game-db
+      - kafka
+    profiles: [API]
+    build: ./GameService
+    ports:
+      - "8004:8004"
+    networks:
+      - mongo-network
       - kafka-network
     environment:
       SPRING_PROFILES_ACTIVE: docker

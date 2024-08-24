@@ -163,7 +163,7 @@ public class AuthService {
 //        sessionRepository.delete(session);
     }
 
-    public AuthRegisterResponse createAuth(AuthRegisterDto authRegisterDto) {
+    public void createAuth(AuthRegisterDto authRegisterDto) {
         // Check duplicate info
         if (authRepository.findByUsername(authRegisterDto.getUsername()) != null)
             throw new AuthException(ErrorCode.USERNAME_EXISTED);
@@ -175,21 +175,12 @@ public class AuthService {
         auth.setPassword(passwordEncoder.encode(authRegisterDto.getPassword()));
         auth.setRole(authRegisterDto.getRole());
         auth.setProfileState(ProfileState.PENDING);
-        Auth savedAuth = authRepository.save(auth);
+        authRepository.save(auth);
 
         // Generate OTP
-        Otp otp = otpService.createOtp(authRegisterDto.getPhone(), savedAuth);
-
+        Otp otp = otpService.createOtp(authRegisterDto.getPhone(), auth);
         // Call SMS Service
         // ??????
-
-        AuthRegisterResponse response = new AuthRegisterResponse();
-        response.setName(authRegisterDto.getUsername());
-        response.setPhone(authRegisterDto.getPhone());
-        response.setState(savedAuth.getProfileState());
-        response.setRole(savedAuth.getRole());
-
-        return response;
     }
 
     public void deleteAuth(String id) {

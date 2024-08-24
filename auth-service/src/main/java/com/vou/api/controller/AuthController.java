@@ -119,14 +119,14 @@ public class AuthController {
         authService.logout(logoutDto);
     }
 
-    @PostMapping("/register")
-    public ApiResponse<AuthRegisterResponse> register(@Valid @RequestBody AuthRegisterDto authRegisterDto) {
-        return ApiResponse.<AuthRegisterResponse>builder()
-                .result(authService.createAuth(authRegisterDto))
-                .message("Successfully created new authentication credential")
-                .code(200)
-                .build();
-    }
+//    @PostMapping("/register")
+//    public ApiResponse<AuthRegisterResponse> register(@Valid @RequestBody AuthRegisterDto authRegisterDto) {
+//        return ApiResponse.<AuthRegisterResponse>builder()
+//                .result(authService.createAuth(authRegisterDto))
+//                .message("Successfully created new authentication credential")
+//                .code(200)
+//                .build();
+//    }
 
     @KafkaListener(topics = "auth-create-topic")
     public void authCreateListener(AuthRegisterDto authRegisterDto) {
