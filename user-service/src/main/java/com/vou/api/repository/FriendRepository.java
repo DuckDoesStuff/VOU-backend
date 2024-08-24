@@ -7,9 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface FriendRepository extends JpaRepository<Friend, Long> {
     Optional<Friend> findByFriend(UserProfile friend);
     List<Friend> findByUser(UserProfile user);
+
+    void deleteAllByUser(UserProfile user);
+    void deleteAllByFriend(UserProfile friend);
 }

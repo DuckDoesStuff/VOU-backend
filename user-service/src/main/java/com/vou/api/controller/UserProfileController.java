@@ -9,7 +9,9 @@ import com.vou.api.entity.UserProfile;
 import com.vou.api.enumerate.ProfileState;
 import com.vou.api.service.UserProfileService;
 import jakarta.validation.Valid;
+import org.apache.kafka.shaded.com.google.protobuf.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,10 +56,18 @@ public class UserProfileController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<UserProfile> updateUserProfile(@RequestBody UserUpdateDto userUpdateDto, UUID id) {
+    public ApiResponse<UserProfile> updateUserProfile(@RequestBody UserUpdateDto userUpdateDto, @PathVariable UUID id){
         return ApiResponse.<UserProfile>builder()
                 .code(200)
                 .result(userProfileService.updateUser(id, userUpdateDto))
+                .build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<String> deleteUserProfile(@PathVariable UUID id) {
+        return ApiResponse.<String>builder()
+                .code(200)
+                .result(userProfileService.deleteUser(id))
                 .build();
     }
 

@@ -5,6 +5,7 @@ import com.vou.api.enumerate.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -25,7 +26,7 @@ public class UserProfile {
     private Role role;
 
     private String displayName;
-    private String birthday;
+    private LocalDate birthday;
     private String avatar;
     private String gender;
     private String facebookAccount;

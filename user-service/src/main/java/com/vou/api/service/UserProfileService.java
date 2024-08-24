@@ -7,11 +7,14 @@ import com.vou.api.dto.user.UserRegisterDto;
 import com.vou.api.dto.user.UserUpdateDto;
 import com.vou.api.entity.UserProfile;
 import com.vou.api.enumerate.ProfileState;
+import com.vou.api.enumerate.Role;
 import com.vou.api.exception.AuthException;
 import com.vou.api.exception.ErrorCode;
 import com.vou.api.exception.ProfileException;
+import com.vou.api.repository.FriendRepository;
 import com.vou.api.repository.UserProfileRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -33,7 +36,13 @@ public class UserProfileService {
     private UserProfileRepository userProfileRepository;
 
     @Autowired
+    private FriendRepository friendRepository;
+
+    @Autowired
     KafkaService<AuthRegisterDto> kafkaAuthService;
+
+    @Autowired
+    KafkaService<String> kafkaString;
 
     public List<UserProfile> getAllUsers() {
         return userProfileRepository.findAll();
@@ -93,15 +102,34 @@ public class UserProfileService {
         UserProfile userProfile = userProfileRepository.findById(id)
                 .orElseThrow(() -> new ProfileException(ErrorCode.PROFILE_NOT_FOUND));
 
-        userUpdateDto.getDisplayName().ifPresent(userProfile::setDisplayName);
-        userUpdateDto.getPhone().ifPresent(userProfile::setPhone);
-        userUpdateDto.getEmail().ifPresent(userProfile::setEmail);
-        userUpdateDto.getAvatar().ifPresent(userProfile::setAvatar);
+        userProfile.setDisplayName(userUpdateDto.getDisplayName());
+        userProfile.setPhone(userUpdateDto.getPhone());
+        userProfile.setBirthday(userUpdateDto.getBirthday());
+        userProfile.setEmail(userUpdateDto.getEmail());
+        userProfile.setAvatar(userUpdateDto.getAvatar());
+        userProfile.setGender(userUpdateDto.getGender());
+
+        if (userProfile.getRole() != userUpdateDto.getRole() || userProfile.getState() != userUpdateDto.getState()) {
+            userProfile.setRole(userUpdateDto.getRole());
+            userProfile.setState(userUpdateDto.getState());
+            kafkaString.send("auth-update", id + "_" + userUpdateDto.getRole() + "_" + userUpdateDto.getState());
+        }
 
         return userProfileRepository.save(userProfile);
     }
 
-    public void deleteUser(UUID id) {
+    @Transactional
+    public String deleteUser(UUID id) {
+        UserProfile userProfile = userProfileRepository.findById(id)
+                .orElseThrow(() -> new ProfileException(ErrorCode.PROFILE_NOT_FOUND));
+
+        friendRepository.deleteAllByUser(userProfile);
+        friendRepository.deleteAllByFriend(userProfile);
+
         userProfileRepository.deleteById(id);
+
+        kafkaString.send("auth-delete", id.toString());
+
+        return "Successfully deleted user";
     }
 }

@@ -29,6 +29,10 @@ public class FriendService {
         return false;
     }
 
+    public List<Friend> searchFriendByUsername(String username) {
+        return null;
+    }
+
     public Friend addFriend(String username, String friendname) {
         UserProfile userProfile = userProfileRepository.findUserProfileByUsername(username).orElseThrow(() -> new ProfileException(ErrorCode.PROFILE_NOT_FOUND));
         UserProfile friendProfile = userProfileRepository.findUserProfileByUsername(friendname).orElseThrow(() -> new ProfileException(ErrorCode.PROFILE_NOT_FOUND));
