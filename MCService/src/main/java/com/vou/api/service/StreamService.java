@@ -48,7 +48,8 @@ public class StreamService implements PropertyChangeListener {
         //Them Listener
         streamInfo.addPropertyChangeListener(this);
         try {
-            socketStreamService.streamVideoData(streamInfo);
+//            socketStreamService.streamVideoData(streamInfo);
+            socketStreamService.streamVideoDataJcodec(streamInfo);
 //            ffmpegService.streamVideo(streamInfo);
 //            ffmpegService.streamVideo2(streamInfo);
         } catch (Exception e) {

@@ -48,8 +48,8 @@ public class GeneralListener {
     public void onDisconnect(SocketIOClient client) {
         String clientId = client.getSessionId().toString();
         UserInfo userInfo = socketInfoManager.getUserInfo(clientId);
-        userInfo.setLeaveTime(LocalDateTime.now());
         if (!Objects.isNull(userInfo)) {
+            userInfo.setLeaveTime(LocalDateTime.now());
 //            System.out.println(String.format("Client disconnected: %s from : %s", clientId, userInfo.getRoom()));
             //Them lich su
             streamInfoManager.addNewUserHistory(userInfo.getGameID(),userInfo);
@@ -58,8 +58,8 @@ public class GeneralListener {
     }
 
     @OnEvent("joinStream")
-    public void onJoinRoom(SocketIOClient client, JoinStreamRequest joinStreamRequest) {
-        int connectedClients = server.getRoomOperations(joinStreamRequest.getRoom()).getClients().size();
+    public void onJoinRoom(SocketIOClient client, JoinStreamRequest joinStreamRequest, AckRequest ackRequest) {
+//        int connectedClients = server.getRoomOperations(joinStreamRequest.getRoom()).getClients().size();
 //        if (connectedClients == MAX_CONNECTS) {
 //            ackRequest.sendAckData("full");
 //            log.info("Stream is full: " + room);
@@ -76,6 +76,12 @@ public class GeneralListener {
                 .build();
 
         socketInfoManager.addNewUser(joinStreamRequest.getRoom(), client.getSessionId().toString(),userInfo);
+        ackRequest.sendAckData(joinStreamRequest.getRoom());
+    }
+
+    @OnEvent("*")
+    public void onEvent(SocketIOClient client, JoinStreamRequest joinStreamRequest, AckRequest ackRequest) {
+        log.info("UserAnswer ");
     }
 
     @OnEvent("Answer")
