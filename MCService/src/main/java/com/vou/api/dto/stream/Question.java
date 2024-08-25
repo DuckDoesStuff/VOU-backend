@@ -1,6 +1,5 @@
 package com.vou.api.dto.stream;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Question {
     String question;
-    String[] answer;
+    String[] answers;
     int correctAnswer;
 }

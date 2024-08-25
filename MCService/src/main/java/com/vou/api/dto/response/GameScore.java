@@ -3,6 +3,7 @@ package com.vou.api.dto.response;
 import com.vou.api.entity.UserScore;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Getter
+@Data
 public class GameScore {
     String gameID;
     String eventID;

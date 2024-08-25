@@ -22,7 +22,7 @@ public class StreamInfo {
     // -1: start stream; -2: end stream
     int order;
     StreamEvent event;
-    PropertyChangeSupport support = new PropertyChangeSupport(this);
+    final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     public void raiseEvent(String streamKey) {
         support.firePropertyChange(streamKey, null, this);
@@ -31,7 +31,6 @@ public class StreamInfo {
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         support.addPropertyChangeListener(listener);
     }
-
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         support.removePropertyChangeListener(listener);
     }

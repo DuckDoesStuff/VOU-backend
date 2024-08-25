@@ -1,6 +1,5 @@
 package com.vou.api.socket.manage;
 
-import com.vou.api.dto.socket.ServerSocketInformation;
 import com.vou.api.socket.listener.GeneralListener;
 import com.corundumstudio.socketio.SocketIOServer;
 import jakarta.annotation.PreDestroy;
@@ -17,13 +16,13 @@ import java.util.HashMap;
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SocketHandler {
-    @Autowired
     SocketIOServer server;
-    @Autowired
     GeneralListener handler;
-    public SocketHandler(SocketIOServer server, GeneralListener handler) {
+    SocketInfoManager socketInfoManager;
+    public SocketHandler(SocketIOServer server, GeneralListener handler, SocketInfoManager socketInfoManager) {
         this.server = server;
         this.handler = handler;
+        this.socketInfoManager = socketInfoManager;
         server.addListeners(this.handler);
     }
 
@@ -40,20 +39,21 @@ public class SocketHandler {
     public void sendRoomMessage(String room ,String eventName ,Object message) {
         server.getRoomOperations(room).sendEvent(eventName,message.toString());
     }
+
+    public void sendRomeByteMessage(String room ,String eventName ,Object message) {
+        server.getRoomOperations(room).sendEvent(eventName,message);
+    }
+
     public void disconnectRoom(String room) {
         server.getRoomOperations(room).sendEvent("disconnect");
         server.getRoomOperations(room).disconnect();
     }
 
     public void cleanRoom(String room) {
-        ServerSocketInformation.getRooms().remove(room);
-        ServerSocketInformation.getHistory().remove(room);
-        ServerSocketInformation.getUserScore().remove(room);
+        socketInfoManager.cleanRoom(room);
     }
 
     public void initRoom(String room) {
-        ServerSocketInformation.getRooms().put(room, new ArrayList<>());
-        ServerSocketInformation.getHistory().put(room, new ArrayList<>());
-        ServerSocketInformation.getUserScore().put(room, new HashMap<>());
+        socketInfoManager.initRoom(room);
     }
 }
