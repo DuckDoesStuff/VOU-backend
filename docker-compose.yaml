@@ -56,6 +56,20 @@ services:
     volumes:
       - event-data:/var/lib/postgresql/data
 
+  report-db:
+    image: postgres
+    container_name: report-db
+    ports:
+      - "5434:5432"
+    networks:
+      - report-network
+    environment:
+      POSTGRES_USER: vou
+      POSTGRES_PASSWORD: vouadmin123
+      POSTGRES_DB: report_service
+    volumes:
+      - report-data:/var/lib/postgresql/data
+
   game-db:
     image: mongo:latest
     container_name: game-db
@@ -165,6 +179,8 @@ networks:
     driver: bridge
   mongo-network:
     driver: bridge
+  report-network:
+    driver: bridge
 
 volumes:
   auth-data:
@@ -172,3 +188,4 @@ volumes:
   pgadmin-data:
   mongo-data:
   event-data:
+  report-data:
