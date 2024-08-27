@@ -101,6 +101,11 @@ services:
   # TO RUN USE: docker compose up --build --profile API
   api-gateway:
     profiles: [API]
+    depends_on:
+      - auth-service
+      - user-service
+      - event-service
+      - game-service
     build: ./nginx
     volumes:
     - ./temp:/etc/nginx/temp

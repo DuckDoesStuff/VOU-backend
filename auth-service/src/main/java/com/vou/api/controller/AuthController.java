@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -118,15 +120,6 @@ public class AuthController {
     public void logout(@Valid @RequestBody LogoutDto logoutDto) {
         authService.logout(logoutDto);
     }
-
-//    @PostMapping("/register")
-//    public ApiResponse<AuthRegisterResponse> register(@Valid @RequestBody AuthRegisterDto authRegisterDto) {
-//        return ApiResponse.<AuthRegisterResponse>builder()
-//                .result(authService.createAuth(authRegisterDto))
-//                .message("Successfully created new authentication credential")
-//                .code(200)
-//                .build();
-//    }
 
     @KafkaListener(topics = "auth-create-topic")
     public void authCreateListener(AuthRegisterDto authRegisterDto) {
