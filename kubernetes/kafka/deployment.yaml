@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka
+  labels:
+    app: kafka
+spec:
+  replicas: 1
+  serviceName: kafka
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+      - name: kafka
+        image: bitnami/kafka:latest
+        ports:
+        - containerPort: 9092
+        env:
+          - name: KAFKA_CFG_NODE_ID
+            valueFrom:
+              configMapKeyRef: 
+                name: kafka-config
+                key: KAFKA_CFG_NODE_ID
+
+          - name: KAFKA_CFG_PROCESS_ROLES
+            valueFrom:
+              configMapKeyRef: 
+                name: kafka-config
+                key: KAFKA_CFG_PROCESS_ROLES
+
+          - name: KAFKA_CFG_CONTROLLER_QUORUM_VOTERS
+            valueFrom:
+              configMapKeyRef: 
+                name: kafka-config
+                key: KAFKA_CFG_CONTROLLER_QUORUM_VOTERS
+
+          - name: KAFKA_CFG_LISTENERS
+            valueFrom:
+              configMapKeyRef: 
+                name: kafka-config
+                key: KAFKA_CFG_LISTENERS
+
+          - name: KAFKA_CFG_ADVERTISED_LISTENERS
+            valueFrom:
+              configMapKeyRef: 
+                name: kafka-config
+                key: KAFKA_CFG_ADVERTISED_LISTENERS
+
+          - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+            valueFrom:
+              configMapKeyRef: 
+                name: kafka-config
+                key: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+
+          - name: KAFKA_CFG_CONTROLLER_LISTENER_NAMES
+            valueFrom:
+              configMapKeyRef: 
+                name: kafka-config
+                key: KAFKA_CFG_CONTROLLER_LISTENER_NAMES
+
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 250m
+          limits:
+            memory: 512Mi
+            cpu: 500m
+        volumeMounts:
+          - name: kafka-storage
+            mountPath: /bitnami/kafka
+      volumes:
+      - name: kafka-storage
+        persistentVolumeClaim:
+          claimName: kafka-pvc

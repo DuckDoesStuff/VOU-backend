@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-service-config
+  labels:
+    app: auth-service
+data:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://auth-db:5431/auth_service
+  JWT_VALID_DURATION: "3600"
+  JWT_REFRESHABLE_DURATION: "36000"
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9092

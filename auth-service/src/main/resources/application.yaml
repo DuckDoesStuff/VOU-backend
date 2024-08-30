@@ -1,0 +1,32 @@
+spring:
+  profiles:
+    active: ${ACTIVE_PROFILE:local}
+  application:
+    name: "auth-service"
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true # Remember to remove this otherwise sql gets logged
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: auth-service-group
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: 'com.vou.api.dto'
+server:
+  port: ${SERVER_PORT}
+
+jwt:
+  signerKey: ${JWT_SIGNER_KEY}
+  valid-duration: ${JWT_VALID_DURATION}
+  refreshable-duration: ${JWT_REFRESHABLE_DURATION}
