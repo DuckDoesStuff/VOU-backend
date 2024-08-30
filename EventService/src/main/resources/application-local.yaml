@@ -1,4 +1,4 @@
-DATABASE_URL: jdbc:postgresql://event-db:5432/event_service
+DATABASE_URL: jdbc:postgresql://localhost:5433/event_service
 POSTGRES_USERNAME: vou
 POSTGRES_PASSWORD: vouadmin123
 SERVER_PORT: 8003
