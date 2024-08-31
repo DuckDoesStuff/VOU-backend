@@ -177,7 +177,8 @@ public class SocketStreamService {
         streamInfo.raiseEvent(streamInfo.getStreamKey());
         socketHandler.sendRomeByteMessage(streamKey, "stream", SocketResponse.<String>builder()
                 .code(0)
-                .result(defaultIntro));
+                .result(defaultIntro)
+                .build());
         log.info(defaultIntro);
         Thread.sleep((FileUtils.calculateTTSDuration_Second(defaultIntro, wordPerSecond)+ defaultTime)*1000);
 
@@ -188,9 +189,11 @@ public class SocketStreamService {
             streamInfo.raiseEvent(streamInfo.getStreamKey());
 
             Question2User question2User = questionMapper.questionToQuestion2User(questionList.get(i));
+            question2User.setOrder(i+1);
             socketHandler.sendRomeByteMessage(streamKey, "stream",SocketResponse.<Question2User>builder()
                     .code(1)
-                    .result(question2User));
+                    .result(question2User)
+                    .build());
 
             log.info(question2User.toString());
             Thread.sleep((FileUtils.calculateTTSDuration_Second(questionList.get(i).getQuestion(), wordPerSecond)+ defaultTime)*1000);
@@ -199,9 +202,11 @@ public class SocketStreamService {
             streamInfo.raiseEvent(streamInfo.getStreamKey());
 
             Answer2User answer2User = questionMapper.questionToAnswer2User(questionList.get(i));
+            answer2User.setOrder(i+1);
             socketHandler.sendRomeByteMessage(streamKey, "stream", SocketResponse.<Answer2User>builder()
                     .code(2)
-                    .result(answer2User));
+                    .result(answer2User)
+                    .build());
 
             log.info(answer2User.toString());
             Thread.sleep((FileUtils.calculateTTSDuration_Second(questionList.get(i).getAnswers().toString(), wordPerSecond)+ defaultTime)*1000);

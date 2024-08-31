@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Setter
+@Getter
 @ToString
 public class Question2User {
     String question;

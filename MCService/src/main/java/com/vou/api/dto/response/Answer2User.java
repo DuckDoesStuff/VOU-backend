@@ -1,12 +1,11 @@
 package com.vou.api.dto.response;
 
-import lombok.AccessLevel;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Setter
+@Getter
 @ToString
 public class Answer2User {
     String question;
