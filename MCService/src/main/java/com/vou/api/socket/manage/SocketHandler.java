@@ -1,5 +1,6 @@
 package com.vou.api.socket.manage;
 
+import com.vou.api.dto.SocketResponse;
 import com.vou.api.socket.listener.GeneralListener;
 import com.corundumstudio.socketio.SocketIOServer;
 import jakarta.annotation.PreDestroy;
@@ -50,7 +51,10 @@ public class SocketHandler {
 
 
     public void disconnectRoom(String room) {
-        server.getRoomOperations(room).sendEvent("disconnect");
+        server.getRoomOperations(room).sendEvent("disconnectStream", SocketResponse.<String>builder()
+                .code(-2)
+                .message("Stream ended")
+                .build());
         server.getRoomOperations(room).disconnect();
     }
 

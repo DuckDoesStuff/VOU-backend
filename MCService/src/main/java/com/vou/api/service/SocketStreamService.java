@@ -1,9 +1,13 @@
 package com.vou.api.service;
 
+import com.vou.api.dto.SocketResponse;
+import com.vou.api.dto.response.Answer2User;
+import com.vou.api.dto.response.Question2User;
 import com.vou.api.dto.stream.Question;
 import com.vou.api.dto.stream.Script;
 import com.vou.api.dto.stream.StreamEvent;
 import com.vou.api.dto.stream.StreamInfo;
+import com.vou.api.mapper.QuestionMapper;
 import com.vou.api.socket.manage.SocketHandler;
 import com.vou.api.utils.FileUtils;
 import com.vou.api.utils.VideoUtils;
@@ -19,6 +23,7 @@ import org.jcodec.api.JCodecException;
 import org.jcodec.common.io.NIOUtils;
 import org.jcodec.common.io.SeekableByteChannel;
 import org.jcodec.common.model.Picture;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -36,8 +41,12 @@ import java.util.List;
 public class SocketStreamService {
     final SocketHandler socketHandler;
     final FFmpegService ffmpegService;
-    long defaultTime = 10;
+    final QuestionMapper questionMapper;
+    long defaultTime = 6;
     double wordPerSecond = 2.5;
+    @Value("${stream.default.intro}")
+    String defaultIntro;
+
     public void streamVideoData(StreamInfo streamInfo) {
         String[] listVideo = streamInfo.getVideoUrl();
         String streamKey = streamInfo.getStreamKey();
@@ -160,28 +169,41 @@ public class SocketStreamService {
         streamInfo.setEvent(StreamEvent.START_STREAM);
 
         String streamKey = streamInfo.getStreamKey();
-        Script script = streamInfo.getScript();
+//        Script script = streamInfo.getScript();
 
         List<Question> questionList = streamInfo.getQuestions();
-        int order = 0;
-        streamInfo.setOrder(order);
+
+        streamInfo.setOrder(0);
         streamInfo.raiseEvent(streamInfo.getStreamKey());
-        socketHandler.sendRomeByteMessage(streamKey, "stream",script.getIntro());
-        Thread.sleep((FileUtils.calculateTTSDuration_Second(script.getIntro(), wordPerSecond)+ defaultTime)*1000);
+        socketHandler.sendRomeByteMessage(streamKey, "stream", SocketResponse.<String>builder()
+                .code(0)
+                .result(defaultIntro));
+        log.info(defaultIntro);
+        Thread.sleep((FileUtils.calculateTTSDuration_Second(defaultIntro, wordPerSecond)+ defaultTime)*1000);
 
         for (int i = 0; i < questionList.size(); i++) {
             // Thứ tự câu hỏi
             streamInfo.setOrder(i+1);
             streamInfo.setEvent(StreamEvent.QUESTION);
             streamInfo.raiseEvent(streamInfo.getStreamKey());
-            log.info(questionList.get(i).getQuestion());
-            socketHandler.sendRomeByteMessage(streamKey, "stream", questionList.get(i).getQuestion());
+
+            Question2User question2User = questionMapper.questionToQuestion2User(questionList.get(i));
+            socketHandler.sendRomeByteMessage(streamKey, "stream",SocketResponse.<Question2User>builder()
+                    .code(1)
+                    .result(question2User));
+
+            log.info(question2User.toString());
             Thread.sleep((FileUtils.calculateTTSDuration_Second(questionList.get(i).getQuestion(), wordPerSecond)+ defaultTime)*1000);
             // Dod cau tra loi
             streamInfo.setEvent(StreamEvent.ANSWER);
             streamInfo.raiseEvent(streamInfo.getStreamKey());
-            socketHandler.sendRomeByteMessage(streamKey, "stream", questionList.get(i).getAnswers().toString());
-            log.info(questionList.get(i).getAnswers().toString());
+
+            Answer2User answer2User = questionMapper.questionToAnswer2User(questionList.get(i));
+            socketHandler.sendRomeByteMessage(streamKey, "stream", SocketResponse.<Answer2User>builder()
+                    .code(2)
+                    .result(answer2User));
+
+            log.info(answer2User.toString());
             Thread.sleep((FileUtils.calculateTTSDuration_Second(questionList.get(i).getAnswers().toString(), wordPerSecond)+ defaultTime)*1000);
         }
         // end

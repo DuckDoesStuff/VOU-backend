@@ -1,10 +1,13 @@
 package com.vou.api.socket.listener;
 
+import com.vou.api.dto.SocketResponse;
 import com.vou.api.dto.request.JoinStreamRequest;
-import com.vou.api.dto.response.JoinRoomResponse;
+import com.vou.api.dto.response.Answer2User;
+import com.vou.api.dto.response.Question2User;
 import com.vou.api.dto.stream.Question;
 import com.vou.api.dto.stream.StreamEvent;
 import com.vou.api.dto.stream.StreamInfo;
+import com.vou.api.mapper.QuestionMapper;
 import com.vou.api.socket.manage.SocketInfoManager;
 import com.vou.api.dto.request.UserAnswer;
 import com.vou.api.service.StreamInfoManager;
@@ -17,16 +20,12 @@ import com.corundumstudio.socketio.annotation.OnDisconnect;
 import com.corundumstudio.socketio.annotation.OnEvent;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.requests.JoinGroupRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +38,7 @@ public class GeneralListener {
     final SocketIOServer server;
     final StreamInfoManager streamInfoManager;
     final SocketInfoManager socketInfoManager;
+    final QuestionMapper questionMapper;
     @Value("${rtmp.maxConnects}")
     int MAX_CONNECTS;
 
@@ -71,35 +71,52 @@ public class GeneralListener {
 //            return;
 //        }
         String room = joinStreamRequest.getRoom();
-        StreamInfo stream = streamInfoManager.getStreamInfo(room);
-        if (stream == null) {
-            ackRequest.sendAckData(JoinRoomResponse.builder()
+        StreamInfo streamInfo = streamInfoManager.getStreamInfo(room);
+        if (streamInfo == null) {
+            ackRequest.sendAckData(SocketResponse.builder()
                     .code(-1)
                     .message("Room is not init")
                     .build());
+            client.disconnect();
+            return;
         }
 
 
         log.info("Joining room " + joinStreamRequest.getRoom());
-        client.joinRoom(joinStreamRequest.getRoom());
-        // Lưu thông tin user
-        UserInfo userInfo = UserInfo.builder()
-                .userID(joinStreamRequest.getUserID())
-                .gameID(joinStreamRequest.getRoom())
-                .eventID(joinStreamRequest.getEventID())
-                .joinTime(LocalDateTime.now())
-                .build();
+        try {
+            client.joinRoom(joinStreamRequest.getRoom());
+            // Lưu thông tin user
+            UserInfo userInfo = UserInfo.builder()
+                    .userID(joinStreamRequest.getUserID())
+                    .gameID(joinStreamRequest.getRoom())
+                    .eventID(joinStreamRequest.getEventID())
+                    .joinTime(LocalDateTime.now())
+                    .build();
 
-        socketInfoManager.addNewUser(joinStreamRequest.getRoom(), client.getSessionId().toString(),userInfo);
-        // Giả sử JoinRoomResponse là lớp bạn muốn tạo builder
-        JoinRoomResponse.JoinRoomResponseBuilder<Question> responseBuilder = JoinRoomResponse.<Question>builder();
-        responseBuilder.data(stream.getQuestions().get(stream.getOrder()-1));
-        if (stream.getEvent() == StreamEvent.QUESTION) {
-            responseBuilder.code(0);
-        } else if (stream.getEvent() == StreamEvent.ANSWER) {
-            responseBuilder.code(1);
+            socketInfoManager.addNewUser(joinStreamRequest.getRoom(), client.getSessionId().toString(), userInfo);
+            // Giả sử JoinRoomResponse là lớp bạn muốn tạo builder
+            int order= streamInfo.getOrder();
+            if (streamInfo.getEvent() == StreamEvent.QUESTION) {
+                Question2User question2User = questionMapper.questionToQuestion2User(streamInfo.getQuestions().get(order - 1));
+                question2User.setOrder(order);
+                ackRequest.sendAckData(SocketResponse.<Question2User>builder()
+                        .code(1)
+                        .result(question2User)
+                        .build());
+            } else if (streamInfo.getEvent() == StreamEvent.ANSWER) {
+                Answer2User answer2User = questionMapper.questionToAnswer2User(streamInfo.getQuestions().get(order - 1));
+                answer2User.setOrder(order);
+                ackRequest.sendAckData(SocketResponse.<Answer2User>builder()
+                        .code(2)
+                        .result(answer2User)
+                        .build());
+            }
+        } catch (Exception e) {
+            ackRequest.sendAckData(SocketResponse.builder()
+                    .code(-1)
+                    .message("Some internal problem")
+                    .build());
         }
-        ackRequest.sendAckData(responseBuilder.build());
     }
 
     @OnEvent("Answer")

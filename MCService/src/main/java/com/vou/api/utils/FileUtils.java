@@ -18,6 +18,7 @@ public class FileUtils {
     }
 
     public static long calculateTTSDuration_Second(String words, double wordPerSecond) {
-        return (long)(words.length() / wordPerSecond);
+        return (long)(words.split(" ").length / wordPerSecond);
     }
 }
+

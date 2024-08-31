@@ -78,10 +78,10 @@ public class StreamService implements PropertyChangeListener {
             return;
         }
         if (order%2 != 0 ) {
-            log.info(streamInfo.getQuestions().get(order-1).toString());
+//            log.info(streamInfo.getQuestions().get(order-1).toString());
             socketHandler.sendRoomMessage(streamKey,"Question", streamInfo.getQuestions().get(order-1));
         } else {
-            log.info(streamInfo.getQuestions().get(order-1).toString());
+//            log.info(streamInfo.getQuestions().get(order-1).toString());
             socketHandler.sendRoomMessage(streamKey,"Answer", streamInfo.getQuestions().get(order-1).getAnswers());
         }
     }
@@ -92,8 +92,8 @@ public class StreamService implements PropertyChangeListener {
         //disconnect users
         socketHandler.disconnectRoom(streamKey);
         //save participants history
-        List<UserInfo> streamHistory = streamInfoManager.getHistoryOfStream(streamKey);
-        kafkaTemplate.send("SaveGameHistory", streamHistory);
+//        List<UserInfo> streamHistory = streamInfoManager.getHistoryOfStream(streamKey);
+//        kafkaTemplate.send("SaveGameHistory", streamHistory);
 
         //Process UserScore
         List<UserScore> sortedUserScoreList = streamInfoManager.getListUserScoreOfStream(streamKey)
