@@ -34,7 +34,10 @@ public class StreamScheduler {
             InfoForStream info = new InfoForStream();
             info.setVideoUrl(videoUrl);
             info.setGameID(game.getGameID().toString());
+            info.setGameName(game.getNameOfGame());
             info.setEventID(game.getEventID().toString());
+            info.setEventName(game.getEventName());
+            info.setEventBanner(game.getEventBanner());
             info.setQuestions(game.getQuestions());
 
             infoForStreamKafkaService.send("startStream", info);

@@ -1,7 +1,6 @@
 package com.vou.api.service;
 
 import com.vou.api.dto.request.InfoForStream;
-import com.vou.api.dto.response.GameScore;
 import com.vou.api.dto.response.OnlineStreams;
 import com.vou.api.dto.stream.StreamInfo;
 import com.vou.api.entity.UserInfo;
@@ -12,14 +11,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,7 +36,7 @@ public class StreamService implements PropertyChangeListener {
     int numberTopUser = 10;
 
     public void startStream(InfoForStream infoForStream) {
-        StreamInfo streamInfo = streamInforMapper.infoForStreamToStreamInfo(infoForStream);
+        StreamInfo streamInfo = streamInforMapper.infoForStreamToStreamInfoVideo(infoForStream);
         //Khoi tao stream va socket
 //        log.info(streamInfo.toString());
         socketHandler.initRoom(streamInfo.getStreamKey());
@@ -49,7 +45,8 @@ public class StreamService implements PropertyChangeListener {
         streamInfo.addPropertyChangeListener(this);
         try {
 //            socketStreamService.streamVideoData(streamInfo);
-            socketStreamService.streamVideoDataJcodec(streamInfo);
+            socketStreamService.streamText(streamInfo);
+//            socketStreamService.streamVideoDataJcodec(streamInfo);
 //            ffmpegService.streamVideo(streamInfo);
 //            ffmpegService.streamVideo2(streamInfo);
         } catch (Exception e) {
@@ -63,7 +60,7 @@ public class StreamService implements PropertyChangeListener {
     // Hàm xử lý
     public void propertyChange(PropertyChangeEvent evt) {
         String streamKey = evt.getPropertyName();
-        StreamInfo streamInfo= streamInfoManager.getStreamInfo(streamKey);
+        StreamInfo streamInfo = streamInfoManager.getStreamInfo(streamKey);
         int order = streamInfo.getOrder();
         if (order == 0) {
             log.info("intro");
@@ -81,11 +78,11 @@ public class StreamService implements PropertyChangeListener {
             return;
         }
         if (order%2 != 0 ) {
-            log.info(streamInfo.getQuestions().get(order-1).toString());
-            socketHandler.sendRoomMessage(streamKey,"Question",streamInfo.getQuestions().get(order-1));
+//            log.info(streamInfo.getQuestions().get(order-1).toString());
+            socketHandler.sendRoomMessage(streamKey,"Question", streamInfo.getQuestions().get(order-1));
         } else {
-            log.info(streamInfo.getQuestions().get(order-1).toString());
-            socketHandler.sendRoomMessage(streamKey,"Answer",streamInfo.getQuestions().get(order-1).getAnswers());
+//            log.info(streamInfo.getQuestions().get(order-1).toString());
+            socketHandler.sendRoomMessage(streamKey,"Answer", streamInfo.getQuestions().get(order-1).getAnswers());
         }
     }
 
@@ -95,8 +92,8 @@ public class StreamService implements PropertyChangeListener {
         //disconnect users
         socketHandler.disconnectRoom(streamKey);
         //save participants history
-        List<UserInfo> streamHistory = streamInfoManager.getHistoryOfStream(streamKey);
-        kafkaTemplate.send("SaveGameHistory", streamHistory);
+//        List<UserInfo> streamHistory = streamInfoManager.getHistoryOfStream(streamKey);
+//        kafkaTemplate.send("SaveGameHistory", streamHistory);
 
         //Process UserScore
         List<UserScore> sortedUserScoreList = streamInfoManager.getListUserScoreOfStream(streamKey)
@@ -118,10 +115,10 @@ public class StreamService implements PropertyChangeListener {
         List<UserScore> topUserScores = sortedUserScoreList.subList(0, maxIndex);
 
         //Save UserScore
-        kafkaTemplate.send("SaveGameScore", GameScore.builder()
-                .gameID(streamKey)
-                .eventID(streamInfo.getEventID())
-                .userScores(sortedUserScoreList.subList(0, maxIndex)));
+//        kafkaTemplate.send("SaveGameScore", GameScore.builder()
+//                .gameID(streamKey)
+//                .eventID(streamInfo.getEventID())
+//                .userScores(sortedUserScoreList.subList(0, maxIndex)));
 
         //Clean Resource
         cleanResouce(streamKey);
@@ -144,25 +141,4 @@ public class StreamService implements PropertyChangeListener {
         streamInfoManager.cleanStream(streamKey);
         socketHandler.cleanRoom(streamKey);
     }
-
-//    @PostConstruct
-    //Test
-//    public void init() {
-//        String[] ListVideo = {
-//                "https://firebasestorage.googleapis.com/v0/b/vou-hcmus-69ff6.appspot.com/o/videoplayback%20(1).mp4?alt=media&token=c267ef95-8c87-42e5-ae8d-66c150ecc03a&fbclid=IwY2xjawEueLtleHRuA2FlbQIxMAABHTQJfMLDFouRorbTOYNzLImmPInBLXQW_lPEqLYqSo21Bx40mvNb94_h_A_aem_OlKFd-Vmyj_Z59Mi918_QA",
-//                "https://firebasestorage.googleapis.com/v0/b/vou-hcmus-69ff6.appspot.com/o/videoplayback%20(2).mp4?alt=media&token=99d6c801-a98a-44d7-9371-05031031f55a&fbclid=IwY2xjawEueNtleHRuA2FlbQIxMAABHTIqxt8gWG2_xJEMkwTvyLLHxZI_bysjzPI4UHDy5RWuD4vpMuD5XyfQjg_aem_xiZTH9llhBopc9e5V0uL1g",
-//        };
-////                "C:\\Users\\Toan\\Desktop\\WorkStation\\5742343248928.mp4",
-//
-////                "C:\\Users\\Toan\\Desktop\\WorkStation\\5742341682520.mp4",
-////                "C:\\Users\\Toan\\Desktop\\WorkStation\\5742505679730.mp4"};
-//        try {
-//            ffmpegService.streamVideo(ListVideo, "stream");
-//        } catch (Exception e) {
-//            System.out.println("hhhhh");
-//            System.out.println(e);
-//            e.printStackTrace();
-//        }
-//    }
-
 }

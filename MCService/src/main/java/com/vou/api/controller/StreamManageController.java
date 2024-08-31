@@ -17,10 +17,10 @@ import java.beans.PropertyChangeListener;
 public class StreamManageController {
     @Autowired
     PropertyChangeListener streamService;
-
-    @KafkaListener(topics = "startStream")
-    public void listenStartStreamRequest(InfoForStream message) {
-        log.info("InfoForStream: {}", message);
-        ((StreamService)streamService).startStream(message);
-    }
+//
+//    @KafkaListener(topics = "startStream")
+//    public void listenStartStreamRequest(InfoForStream message) {
+//        log.info("InfoForStream: {}", message);
+//        ((StreamService)streamService).startStream(message);
+//    }
 }

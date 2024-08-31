@@ -9,5 +9,5 @@ import org.mapstruct.Mapping;
 public interface StreamInfoMapper {
 
     @Mapping(source = "gameID", target = "streamKey") // Nếu gameID ánh xạ đến eventID trong StreamInfo
-    StreamInfo infoForStreamToStreamInfo(InfoForStream infoForStream);
+    StreamInfo infoForStreamToStreamInfoVideo(InfoForStream infoForStream);
 }

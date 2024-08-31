@@ -114,7 +114,7 @@ public class FFmpegService {
         return stream.bit_rate;
     }
 
-    public void streamVideo(StreamInfo streamInfo) throws IOException {
+    public void streamVideoWithFFmpegLib(StreamInfo streamInfo) throws IOException {
         String[] listVideo = streamInfo.getVideoUrl();
         String streamKey = streamInfo.getStreamKey();
 
@@ -206,7 +206,7 @@ public class FFmpegService {
         log.info("ffmpeg stream started");
     }
 
-    public void streamVideo2(StreamInfo streamInfo) throws IOException, InterruptedException {
+    public void streamVideWFFmpegWrapper(StreamInfo streamInfo) throws IOException, InterruptedException {
         String[] listVideo = streamInfo.getVideoUrl();
         String streamKey = streamInfo.getStreamKey();
         if (listVideo == null || listVideo.length == 0) {
@@ -316,15 +316,6 @@ public class FFmpegService {
 
         int exitCode = process.waitFor();
         System.out.println("FFmpeg process exited with code " + exitCode);
-    }
-
-    public void streamVideo3(StreamInfo streamInfo) throws IOException, InterruptedException {
-        String[] listVideo = streamInfo.getVideoUrl();
-        String streamKey = streamInfo.getStreamKey();
-        if (listVideo == null || listVideo.length == 0) {
-            return;
-        }
-
     }
 
     private String buildComplexFilter(int videoCount) {
