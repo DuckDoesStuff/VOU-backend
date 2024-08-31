@@ -112,6 +112,15 @@ public class VoucherService {
         ApiResponse<String> response = new ApiResponse<>();
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Decreased voucher quantity successfully");
+        // Send to kafka topic VoucherType-update
+        VoucherTypeMessage message = VoucherTypeMessage.builder()
+                .eventID(voucherType.getPromotionalEvent().getEventID())
+                .voucherTypeID(voucherType.getVoucherTypeID())
+                .inStock(voucherType.getInStock())
+                .build();
+        System.out.println(message.toString());
+        kafkaProducerService.sendVoucherTypeMessage(message);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

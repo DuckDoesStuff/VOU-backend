@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface VoucherTypeRepository extends JpaRepository<VoucherType ,Long> {
-    @Query("SELECT new com.example.ReportService.dto.VoucherReportDTO(v.eventID, v.totalQuantity, v.totalQuantity - v.inStock) " +
+    @Query("SELECT new com.vou.api.dto.VoucherReportDTO(v.eventID, v.totalQuantity, v.totalQuantity - v.inStock) " +
             "FROM VoucherType v " +
             "WHERE v.eventID = :eventID")
     List<VoucherReportDTO> findVoucherReportByEventId(@Param("eventID") Long eventID);

@@ -3,6 +3,7 @@ package com.vou.api.controller;
 import com.vou.api.dto.ApiResponse;
 import com.vou.api.dto.VoucherReportDTO;
 import com.vou.api.dto.VoucherTypeMessage;
+import com.vou.api.entity.VoucherType;
 import com.vou.api.service.VoucherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -23,10 +24,9 @@ public class VoucherController {
     public ApiResponse<List<VoucherReportDTO>> getVouchersReportInAEvent(@PathVariable Long eventID) {
         return voucherService.getVouchersDistributedInAEvent(eventID);
     }
-    @KafkaListener(topics = "VoucherType-update")
-    public void listen(VoucherTypeMessage message) {
-        System.out.println(message.toString());
+    @GetMapping("/voucher")
+    public List<VoucherType> getAllVoucherType() {
+        return voucherService.getAllVoucherType();
     }
-
 }
 
