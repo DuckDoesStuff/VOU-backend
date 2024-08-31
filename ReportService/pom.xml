@@ -8,7 +8,7 @@
 		<version>3.3.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
+	<groupId>com.vou.api</groupId>
 	<artifactId>ReportService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ReportService</name>
@@ -64,6 +64,7 @@
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
+
 	</dependencies>
 
 	<build>
