@@ -19,6 +19,8 @@ public class Game {
     @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId gameID;
     private Long eventID;
+    private String eventName;
+    private String eventBanner;
     private String nameOfGame;
     private String picture;
     private String instruction;
