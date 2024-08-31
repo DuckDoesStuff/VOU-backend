@@ -14,11 +14,15 @@ import java.util.List;
 @Data
 public class StreamInfo {
     String eventID;
-    String streamKey;
+    String roomID;
     String[] videoUrl;
     List<Question> questions;
     Script script;
     long estimatedDuration;
+
+    String eventName;
+    String gameName;
+    String eventBanner;
     // -1: start stream; -2: end stream
     int order;
     StreamEvent event;

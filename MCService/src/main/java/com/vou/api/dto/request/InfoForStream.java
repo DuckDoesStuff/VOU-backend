@@ -13,7 +13,10 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class InfoForStream {
     String gameID;
+    String gameName;
     String eventID;
+    String eventName;
+    String eventBanner;
     List<Question> questions;
     String[] videoUrl;
 }

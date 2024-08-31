@@ -1,7 +1,8 @@
 package com.vou.api.service;
 
 import com.vou.api.dto.request.InfoForStream;
-import com.vou.api.dto.response.OnlineStreams;
+import com.vou.api.dto.response.GameScore;
+import com.vou.api.dto.response.Stream2User;
 import com.vou.api.dto.stream.StreamInfo;
 import com.vou.api.entity.UserInfo;
 import com.vou.api.entity.UserScore;
@@ -32,6 +33,7 @@ public class StreamService implements PropertyChangeListener {
     final StreamInfoMapper streamInforMapper;
     final KafkaTemplate<String, Object> kafkaTemplate;
     final StreamInfoManager streamInfoManager;
+    private final StreamInfoMapper streamInfoMapper;
 
     int numberTopUser = 10;
 
@@ -39,7 +41,7 @@ public class StreamService implements PropertyChangeListener {
         StreamInfo streamInfo = streamInforMapper.infoForStreamToStreamInfoVideo(infoForStream);
         //Khoi tao stream va socket
 //        log.info(streamInfo.toString());
-        socketHandler.initRoom(streamInfo.getStreamKey());
+        socketHandler.initRoom(streamInfo.getRoomID());
         streamInfoManager.initStream(streamInfo);
         //Them Listener
         streamInfo.addPropertyChangeListener(this);
@@ -59,8 +61,8 @@ public class StreamService implements PropertyChangeListener {
 //    @Async
     // Hàm xử lý
     public void propertyChange(PropertyChangeEvent evt) {
-        String streamKey = evt.getPropertyName();
-        StreamInfo streamInfo = streamInfoManager.getStreamInfo(streamKey);
+        String roomID = evt.getPropertyName();
+        StreamInfo streamInfo = streamInfoManager.getStreamInfo(roomID);
         int order = streamInfo.getOrder();
         if (order == 0) {
             log.info("intro");
@@ -74,29 +76,29 @@ public class StreamService implements PropertyChangeListener {
         if (order == -2) {
             log.info("endStream");
             //endstream
-            endStream(streamKey);
+            endStream(roomID);
             return;
         }
         if (order%2 != 0 ) {
 //            log.info(streamInfo.getQuestions().get(order-1).toString());
-            socketHandler.sendRoomMessage(streamKey,"Question", streamInfo.getQuestions().get(order-1));
+            socketHandler.sendRoomMessage(roomID,"Question", streamInfo.getQuestions().get(order-1));
         } else {
 //            log.info(streamInfo.getQuestions().get(order-1).toString());
-            socketHandler.sendRoomMessage(streamKey,"Answer", streamInfo.getQuestions().get(order-1).getAnswers());
+            socketHandler.sendRoomMessage(roomID,"Answer", streamInfo.getQuestions().get(order-1).getAnswers());
         }
     }
 
-    public void endStream(String streamKey) {
-        StreamInfo streamInfo = streamInfoManager.getStreamInfo(streamKey);
+    public void endStream(String roomID) {
+        StreamInfo streamInfo = streamInfoManager.getStreamInfo(roomID);
         streamInfo.removePropertyChangeListener(this);
         //disconnect users
-        socketHandler.disconnectRoom(streamKey);
+        socketHandler.disconnectRoom(roomID);
         //save participants history
-//        List<UserInfo> streamHistory = streamInfoManager.getHistoryOfStream(streamKey);
-//        kafkaTemplate.send("SaveGameHistory", streamHistory);
+        List<UserInfo> streamHistory = streamInfoManager.getHistoryOfStream(roomID);
+        kafkaTemplate.send("SaveGameHistory", streamHistory);
 
         //Process UserScore
-        List<UserScore> sortedUserScoreList = streamInfoManager.getListUserScoreOfStream(streamKey)
+        List<UserScore> sortedUserScoreList = streamInfoManager.getListUserScoreOfStream(roomID)
                 .entrySet()
                 .stream()
                 .map(entry -> UserScore.builder()
@@ -112,29 +114,30 @@ public class StreamService implements PropertyChangeListener {
                 sortedUserScoreList.get(maxIndex).getScore() == sortedUserScoreList.get(maxIndex - 1).getScore()) {
             maxIndex++;
         }
+        maxIndex = Math.min(maxIndex, sortedUserScoreList.size());
         List<UserScore> topUserScores = sortedUserScoreList.subList(0, maxIndex);
-
         //Save UserScore
-//        kafkaTemplate.send("SaveGameScore", GameScore.builder()
-//                .gameID(streamKey)
-//                .eventID(streamInfo.getEventID())
-//                .userScores(sortedUserScoreList.subList(0, maxIndex)));
+        kafkaTemplate.send("SaveGameScore", GameScore.builder()
+                .gameID(roomID)
+                .eventID(streamInfo.getEventID())
+                .userScores(topUserScores));
 
         //Clean Resource
-        cleanResouce(streamKey);
-
+        cleanResouce(roomID);
     }
 
     public StreamInfo getStreamInfo(String streamKey) {
         return streamInfoManager.getStreamInfo(streamKey);
     }
 
-    public OnlineStreams getStreamKeys() {
-        Set<String> rooms = streamInfoManager.getStreamKeys();
-
-        return OnlineStreams.builder()
-                .rooms(rooms)
-                .build();
+    public List<Stream2User> getStreams() {
+        List<StreamInfo> streams = streamInfoManager.getStreams();
+        List<Stream2User> stream2UsersList = new ArrayList<>();
+        for (StreamInfo streamInfo : streams) {
+            Stream2User stream2User = streamInfoMapper.streamInfoToStreamList(streamInfo);
+            stream2UsersList.add(stream2User);
+        }
+        return stream2UsersList;
     }
 
     void cleanResouce(String streamKey) {

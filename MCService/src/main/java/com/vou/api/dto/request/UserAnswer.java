@@ -6,6 +6,6 @@ import lombok.Data;
 public class UserAnswer {
     String roomID;
     String userID;
-    int questionId;
+    int questionID;
     int answer;
 }

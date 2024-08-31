@@ -18,8 +18,12 @@ public class StreamInfoManager {
     public StreamInfo getStreamInfo(String streamKey) {
         return listStream.get(streamKey);
     }
-    public Set<String> getStreamKeys() {
+    public Set<String> getRoomIDs() {
         return listStream.keySet();
+    }
+
+    public List<StreamInfo> getStreams() {
+        return new ArrayList<>(listStream.values());
     }
 
     //Get history of a stream
@@ -42,7 +46,7 @@ public class StreamInfoManager {
     //Update score for user
     public void updateUserScoreOfStream(UserAnswer userAnswer) {
         StreamInfo streamInfo = this.getStreamInfo(userAnswer.getRoomID());
-        int questionId = userAnswer.getQuestionId();
+        int questionId = userAnswer.getQuestionID() -1;
 
         if (userAnswer.getAnswer() ==  streamInfo.getQuestions().get(questionId).getCorrectAnswer()) {
             listUserScore.get(userAnswer.getRoomID()).merge(userAnswer.getUserID(),1,Integer::sum);
@@ -50,9 +54,9 @@ public class StreamInfoManager {
     }
 
     public void initStream(StreamInfo streamInfo) {
-        listStream.put(streamInfo.getStreamKey(), streamInfo);
-        listHistory.put(streamInfo.getStreamKey(),new ArrayList<>());
-        listUserScore.put(streamInfo.getStreamKey(),new HashMap<>());
+        listStream.put(streamInfo.getRoomID(), streamInfo);
+        listHistory.put(streamInfo.getRoomID(),new ArrayList<>());
+        listUserScore.put(streamInfo.getRoomID(),new HashMap<>());
     }
 
     public void cleanStream(String streamKey) {

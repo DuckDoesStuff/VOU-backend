@@ -4,7 +4,6 @@ import com.vou.api.dto.SocketResponse;
 import com.vou.api.dto.request.JoinStreamRequest;
 import com.vou.api.dto.response.Answer2User;
 import com.vou.api.dto.response.Question2User;
-import com.vou.api.dto.stream.Question;
 import com.vou.api.dto.stream.StreamEvent;
 import com.vou.api.dto.stream.StreamInfo;
 import com.vou.api.mapper.QuestionMapper;
@@ -41,6 +40,8 @@ public class GeneralListener {
     final QuestionMapper questionMapper;
     @Value("${rtmp.maxConnects}")
     int MAX_CONNECTS;
+    @Value("${stream.default.intro}")
+    String defaultIntro;
 
     @OnConnect
     public void onConnect(SocketIOClient client) {
@@ -70,7 +71,7 @@ public class GeneralListener {
 //            log.info("Stream is full: " + room);
 //            return;
 //        }
-        String room = joinStreamRequest.getRoom();
+        String room = joinStreamRequest.getRoomID();
         StreamInfo streamInfo = streamInfoManager.getStreamInfo(room);
         if (streamInfo == null) {
             ackRequest.sendAckData(SocketResponse.builder()
@@ -82,21 +83,26 @@ public class GeneralListener {
         }
 
 
-        log.info("Joining room " + joinStreamRequest.getRoom());
+        log.info("Joining room " + joinStreamRequest.getRoomID());
         try {
-            client.joinRoom(joinStreamRequest.getRoom());
+            client.joinRoom(joinStreamRequest.getRoomID());
             // Lưu thông tin user
             UserInfo userInfo = UserInfo.builder()
                     .userID(joinStreamRequest.getUserID())
-                    .gameID(joinStreamRequest.getRoom())
+                    .gameID(joinStreamRequest.getRoomID())
                     .eventID(joinStreamRequest.getEventID())
                     .joinTime(LocalDateTime.now())
                     .build();
 
-            socketInfoManager.addNewUser(joinStreamRequest.getRoom(), client.getSessionId().toString(), userInfo);
+            socketInfoManager.addNewUser(joinStreamRequest.getRoomID(), client.getSessionId().toString(), userInfo);
             // Giả sử JoinRoomResponse là lớp bạn muốn tạo builder
             int order= streamInfo.getOrder();
-            if (streamInfo.getEvent() == StreamEvent.QUESTION) {
+            if (streamInfo.getEvent() == StreamEvent.INTRO) {
+                ackRequest.sendAckData(SocketResponse.<String>builder()
+                        .code(0)
+                        .result(defaultIntro)
+                        .build());
+            } else if (streamInfo.getEvent() == StreamEvent.QUESTION) {
                 Question2User question2User = questionMapper.questionToQuestion2User(streamInfo.getQuestions().get(order - 1));
                 question2User.setOrder(order);
                 ackRequest.sendAckData(SocketResponse.<Question2User>builder()
@@ -116,6 +122,7 @@ public class GeneralListener {
                     .code(-1)
                     .message("Some internal problem")
                     .build());
+            client.disconnect();
         }
     }
 

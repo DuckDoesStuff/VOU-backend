@@ -1,7 +1,7 @@
 package com.vou.api.controller;
 
 import com.vou.api.dto.request.InfoForStream;
-import com.vou.api.dto.response.OnlineStreams;
+import com.vou.api.dto.response.Stream2User;
 import com.vou.api.dto.stream.StreamInfo;
 import com.vou.api.service.StreamService;
 import lombok.AccessLevel;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.vou.api.dto.ApiResponse;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -27,9 +28,9 @@ public class ClientController {
     }
 
     @GetMapping("/getOnlineStreams")
-    public ApiResponse<OnlineStreams>getOnlineStreams() {
-        return ApiResponse.<OnlineStreams>builder()
-                .result(((StreamService)streamService).getStreamKeys())
+    public ApiResponse<List<Stream2User>>getOnlineStreams() {
+        return ApiResponse.<List<Stream2User>>builder()
+                .result(((StreamService)streamService).getStreams())
                 .build();
     }
     @PostMapping("/testStartStream")

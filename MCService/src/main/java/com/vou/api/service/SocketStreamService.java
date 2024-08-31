@@ -4,7 +4,6 @@ import com.vou.api.dto.SocketResponse;
 import com.vou.api.dto.response.Answer2User;
 import com.vou.api.dto.response.Question2User;
 import com.vou.api.dto.stream.Question;
-import com.vou.api.dto.stream.Script;
 import com.vou.api.dto.stream.StreamEvent;
 import com.vou.api.dto.stream.StreamInfo;
 import com.vou.api.mapper.QuestionMapper;
@@ -12,7 +11,6 @@ import com.vou.api.socket.manage.SocketHandler;
 import com.vou.api.utils.FileUtils;
 import com.vou.api.utils.VideoUtils;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +29,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -49,7 +46,7 @@ public class SocketStreamService {
 
     public void streamVideoData(StreamInfo streamInfo) {
         String[] listVideo = streamInfo.getVideoUrl();
-        String streamKey = streamInfo.getStreamKey();
+        String streamKey = streamInfo.getRoomID();
         if (listVideo == null || listVideo.length == 0) {
             return;
         }
@@ -65,7 +62,7 @@ public class SocketStreamService {
 
         streamInfo.setOrder(-1);
         streamInfo.setEvent(StreamEvent.START_STREAM);
-        streamInfo.raiseEvent(streamInfo.getStreamKey());
+        streamInfo.raiseEvent(streamInfo.getRoomID());
 
         for (int i = 0; i < videoStream.size(); i++) {
             try {
@@ -102,7 +99,7 @@ public class SocketStreamService {
     }
     public void streamVideoDataJcodec(StreamInfo streamInfo) throws MalformedURLException {
         String[] listVideo = streamInfo.getVideoUrl();
-        String streamKey = streamInfo.getStreamKey();
+        String streamKey = streamInfo.getRoomID();
         if (listVideo == null || listVideo.length == 0) {
             return;
         }
@@ -118,14 +115,14 @@ public class SocketStreamService {
 
         streamInfo.setOrder(-1);
         streamInfo.setEvent(StreamEvent.START_STREAM);
-        streamInfo.raiseEvent(streamInfo.getStreamKey());
+        streamInfo.raiseEvent(streamInfo.getRoomID());
         List<String> fileNames = new ArrayList<>();
         for (int i = 0; i < listVideo.length; i++) {
             try {
                 URL url = new URL(listVideo[i]);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
-                String newFileName = streamInfo.getStreamKey() + "_" + i + ".mp4";
+                String newFileName = streamInfo.getRoomID() + "_" + i + ".mp4";
                 FileUtils.convertInputStreamToFile(connection.getInputStream(),newFileName);
                 fileNames.add(newFileName);
             }  catch (IOException e) {
@@ -168,14 +165,15 @@ public class SocketStreamService {
         streamInfo.setOrder(-1);
         streamInfo.setEvent(StreamEvent.START_STREAM);
 
-        String streamKey = streamInfo.getStreamKey();
+        String roomID = streamInfo.getRoomID();
 //        Script script = streamInfo.getScript();
 
         List<Question> questionList = streamInfo.getQuestions();
 
         streamInfo.setOrder(0);
-        streamInfo.raiseEvent(streamInfo.getStreamKey());
-        socketHandler.sendRomeByteMessage(streamKey, "stream", SocketResponse.<String>builder()
+        streamInfo.setEvent(StreamEvent.INTRO);
+        streamInfo.raiseEvent(streamInfo.getRoomID());
+        socketHandler.sendRomeByteMessage(roomID, "stream", SocketResponse.<String>builder()
                 .code(0)
                 .result(defaultIntro)
                 .build());
@@ -186,11 +184,11 @@ public class SocketStreamService {
             // Thứ tự câu hỏi
             streamInfo.setOrder(i+1);
             streamInfo.setEvent(StreamEvent.QUESTION);
-            streamInfo.raiseEvent(streamInfo.getStreamKey());
+            streamInfo.raiseEvent(streamInfo.getRoomID());
 
             Question2User question2User = questionMapper.questionToQuestion2User(questionList.get(i));
             question2User.setOrder(i+1);
-            socketHandler.sendRomeByteMessage(streamKey, "stream",SocketResponse.<Question2User>builder()
+            socketHandler.sendRomeByteMessage(roomID, "stream",SocketResponse.<Question2User>builder()
                     .code(1)
                     .result(question2User)
                     .build());
@@ -199,11 +197,11 @@ public class SocketStreamService {
             Thread.sleep((FileUtils.calculateTTSDuration_Second(questionList.get(i).getQuestion(), wordPerSecond)+ defaultTime)*1000);
             // Dod cau tra loi
             streamInfo.setEvent(StreamEvent.ANSWER);
-            streamInfo.raiseEvent(streamInfo.getStreamKey());
+            streamInfo.raiseEvent(streamInfo.getRoomID());
 
             Answer2User answer2User = questionMapper.questionToAnswer2User(questionList.get(i));
             answer2User.setOrder(i+1);
-            socketHandler.sendRomeByteMessage(streamKey, "stream", SocketResponse.<Answer2User>builder()
+            socketHandler.sendRomeByteMessage(roomID, "stream", SocketResponse.<Answer2User>builder()
                     .code(2)
                     .result(answer2User)
                     .build());
@@ -214,10 +212,13 @@ public class SocketStreamService {
         // end
         streamInfo.setOrder(-2);
         streamInfo.setEvent(StreamEvent.STOP_STREAM);
+        socketHandler.sendRoomMessage(roomID,"stream",SocketResponse.<String>builder()
+                .code(-2)
+                .build());
         // wait for receiving user answer
         Thread.sleep(defaultTime);
         //actually endstream
-        streamInfo.raiseEvent(streamInfo.getStreamKey());
+        streamInfo.raiseEvent(streamInfo.getRoomID());
 
     }
 

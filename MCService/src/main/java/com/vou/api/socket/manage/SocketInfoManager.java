@@ -15,30 +15,30 @@ import java.util.Map;
 @Component
 public class SocketInfoManager {
     // socketID,userInfo
-    final Map<String, UserInfo> users = new HashMap<>();
+    final Map<String, UserInfo> userIDs = new HashMap<>();
     // room,List<socketID>
-    final Map<String, List<String>> rooms = new HashMap<>();
+    final Map<String, List<String>> roomIDs = new HashMap<>();
 
-    public void addNewUser(String room, String clientID, UserInfo userInfo) {
-        users.put(clientID, userInfo);
-        rooms.get(room).add(clientID);
+    public void addNewUser(String roomID, String clientID, UserInfo userInfo) {
+        userIDs.put(clientID, userInfo);
+        roomIDs.get(roomID).add(clientID);
     }
 
-    public void removeUser(String room, String clientID) {
-        rooms.get(room).remove(clientID);
-        users.remove(clientID);
+    public void removeUser(String roomID, String clientID) {
+        roomIDs.get(roomID).remove(clientID);
+        userIDs.remove(clientID);
     }
 
     public UserInfo getUserInfo(String clientID) {
-        return users.get(clientID);
+        return userIDs.get(clientID);
     }
 
-    public void initRoom(String room) {
-        rooms.put(room, new ArrayList<>());
+    public void initRoom(String roomID) {
+        roomIDs.put(roomID, new ArrayList<>());
     }
 
-    public void cleanRoom(String room) {
-        rooms.remove(room);
+    public void cleanRoom(String roomID) {
+        roomIDs.remove(roomID);
     }
 
 }

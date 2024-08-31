@@ -116,7 +116,7 @@ public class FFmpegService {
 
     public void streamVideoWithFFmpegLib(StreamInfo streamInfo) throws IOException {
         String[] listVideo = streamInfo.getVideoUrl();
-        String streamKey = streamInfo.getStreamKey();
+        String streamKey = streamInfo.getRoomID();
 
         if (listVideo == null || listVideo.length == 0) {
             return;
@@ -160,7 +160,7 @@ public class FFmpegService {
 
         streamInfo.setOrder(-1);
         streamInfo.setEvent(StreamEvent.START_STREAM);
-        streamInfo.raiseEvent(streamInfo.getStreamKey());
+        streamInfo.raiseEvent(streamInfo.getRoomID());
         List<Double> durations = getVideosDuration(listVideo);
         double[] cumulativeDurations = VideoUtils.computeCumulativeDurations(durations);
 
@@ -208,7 +208,7 @@ public class FFmpegService {
 
     public void streamVideWFFmpegWrapper(StreamInfo streamInfo) throws IOException, InterruptedException {
         String[] listVideo = streamInfo.getVideoUrl();
-        String streamKey = streamInfo.getStreamKey();
+        String streamKey = streamInfo.getRoomID();
         if (listVideo == null || listVideo.length == 0) {
             return;
         }
