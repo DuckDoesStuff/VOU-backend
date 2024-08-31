@@ -44,6 +44,11 @@ public class SocketHandler {
         server.getRoomOperations(room).sendEvent(eventName,message);
     }
 
+    public void sendRomeByteMessage1(String room ,String eventName ,byte[] message) {
+        server.getRoomOperations(room).sendEvent(eventName,message);
+    }
+
+
     public void disconnectRoom(String room) {
         server.getRoomOperations(room).sendEvent("disconnect");
         server.getRoomOperations(room).disconnect();

@@ -17,8 +17,8 @@ public class StreamInfo {
     String streamKey;
     String[] videoUrl;
     List<Question> questions;
+    Script script;
     long estimatedDuration;
-    long currentTime;
     // -1: start stream; -2: end stream
     int order;
     StreamEvent event;

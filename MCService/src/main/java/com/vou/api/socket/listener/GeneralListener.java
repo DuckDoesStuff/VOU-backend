@@ -1,6 +1,10 @@
 package com.vou.api.socket.listener;
 
 import com.vou.api.dto.request.JoinStreamRequest;
+import com.vou.api.dto.response.JoinRoomResponse;
+import com.vou.api.dto.stream.Question;
+import com.vou.api.dto.stream.StreamEvent;
+import com.vou.api.dto.stream.StreamInfo;
 import com.vou.api.socket.manage.SocketInfoManager;
 import com.vou.api.dto.request.UserAnswer;
 import com.vou.api.service.StreamInfoManager;
@@ -21,6 +25,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.requests.JoinGroupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -65,6 +70,16 @@ public class GeneralListener {
 //            log.info("Stream is full: " + room);
 //            return;
 //        }
+        String room = joinStreamRequest.getRoom();
+        StreamInfo stream = streamInfoManager.getStreamInfo(room);
+        if (stream == null) {
+            ackRequest.sendAckData(JoinRoomResponse.builder()
+                    .code(-1)
+                    .message("Room is not init")
+                    .build());
+        }
+
+
         log.info("Joining room " + joinStreamRequest.getRoom());
         client.joinRoom(joinStreamRequest.getRoom());
         // Lưu thông tin user
@@ -76,12 +91,15 @@ public class GeneralListener {
                 .build();
 
         socketInfoManager.addNewUser(joinStreamRequest.getRoom(), client.getSessionId().toString(),userInfo);
-        ackRequest.sendAckData(joinStreamRequest.getRoom());
-    }
-
-    @OnEvent("*")
-    public void onEvent(SocketIOClient client, JoinStreamRequest joinStreamRequest, AckRequest ackRequest) {
-        log.info("UserAnswer ");
+        // Giả sử JoinRoomResponse là lớp bạn muốn tạo builder
+        JoinRoomResponse.JoinRoomResponseBuilder<Question> responseBuilder = JoinRoomResponse.<Question>builder();
+        responseBuilder.data(stream.getQuestions().get(stream.getOrder()-1));
+        if (stream.getEvent() == StreamEvent.QUESTION) {
+            responseBuilder.code(0);
+        } else if (stream.getEvent() == StreamEvent.ANSWER) {
+            responseBuilder.code(1);
+        }
+        ackRequest.sendAckData(responseBuilder.build());
     }
 
     @OnEvent("Answer")

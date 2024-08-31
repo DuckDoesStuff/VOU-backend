@@ -29,7 +29,9 @@ public class StreamInfoManager {
 
     //Add a new user history to a stream's history
     public void addNewUserHistory(String streamKey, UserInfo userInfo) {
-        listHistory.get(streamKey).add(userInfo);
+        if (listHistory.containsKey(streamKey)) {
+            listHistory.get(streamKey).add(userInfo);
+        }
     }
 
     //Get list(map) user score of a stream
