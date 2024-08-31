@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-api
+  name: user-api
   labels:
-    app: auth-api
+    app: user-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth-api
+      app: user-api
   template:
     metadata:
       labels:
-        app: auth-api
+        app: user-api
     spec:
       containers:
-      - name: auth-api
-        image: vou-backend-auth-service:latest
+      - name: user-api
+        image: vou-backend-user-service:latest
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 8001
+        - containerPort: 8002
         resources:
           limits:
             memory: "256Mi"
@@ -33,35 +33,20 @@ spec:
         - name: KAFKA_BOOTSTRAP_SERVERS
           valueFrom:
             configMapKeyRef:
-              name: auth-service-config
+              name: user-service-config
               key: KAFKA_BOOTSTRAP_SERVERS
         - name: SPRING_DATASOURCE_URL
           valueFrom:
             configMapKeyRef:
-              name: auth-service-config
+              name: user-service-config
               key: SPRING_DATASOURCE_URL
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
-              name: auth-db-secret
+              name: user-db-secret
               key: POSTGRES_USER
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: auth-db-secret
+              name: user-db-secret
               key: POSTGRES_PASSWORD
-        - name: jwt.signerKey
-          valueFrom:
-            secretKeyRef:
-              name: auth-api-secret
-              key: JWT_SIGNER_KEY
-        - name: jwt.valid-duration
-          valueFrom:
-            configMapKeyRef:
-              name: auth-service-config
-              key: JWT_VALID_DURATION
-        - name: jwt.refreshable-duration
-          valueFrom:
-            configMapKeyRef:
-              name: auth-service-config
-              key: JWT_REFRESHABLE_DURATION

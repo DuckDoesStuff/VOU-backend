@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-db
+  name: user-db
 spec:
   selector:
-    app: auth-db
+    app: user-db
   ports:
   - protocol: TCP
     port: 5432

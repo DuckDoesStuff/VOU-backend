@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: game-service-config
+  labels:
+    app: game-service
+data:
+  SPRING_DATASOURCE_URL: mongodb://game-db:27017/game_service
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9092

@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-db
+  name: game-db
 spec:
   selector:
-    app: auth-db
+    app: game-db
   ports:
   - protocol: TCP
-    port: 5432
-    targetPort: 5432
+    port: 27017
+    targetPort: 27017
