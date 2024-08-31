@@ -105,3 +105,6 @@
 2024/08/18 11:26:35 [error] 15880#27152: *8 no live upstreams while connecting to upstream, client: 127.0.0.1, server: , request: "GET /api/event/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c HTTP/1.1", upstream: "http://eventService/event/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c", host: "localhost:8000", referrer: "http://localhost:5173/"
 2024/08/18 11:26:35 [error] 15880#27152: *6 no live upstreams while connecting to upstream, client: 127.0.0.1, server: , request: "GET /api/event/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c HTTP/1.1", upstream: "http://eventService/event/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c", host: "localhost:8000", referrer: "http://localhost:5173/"
 2024/08/18 11:26:35 [error] 15880#27152: *6 no live upstreams while connecting to upstream, client: 127.0.0.1, server: , request: "GET /api/event/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c HTTP/1.1", upstream: "http://eventService/event/brand/2d573fe5-eeff-479c-b4f2-ee4b6c73a07c", host: "localhost:8000", referrer: "http://localhost:5173/"
+2024/09/01 03:47:33 [notice] 27396#21916: signal process started
+2024/09/01 03:47:42 [notice] 16564#26852: signal process started
+2024/09/01 04:46:59 [notice] 19692#22344: signal process started
