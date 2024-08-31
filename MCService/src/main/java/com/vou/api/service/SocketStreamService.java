@@ -36,7 +36,7 @@ import java.util.List;
 public class SocketStreamService {
     final SocketHandler socketHandler;
     final FFmpegService ffmpegService;
-    long defaultTime = 10*1000;
+    long defaultTime = 10;
     double wordPerSecond = 2.5;
     public void streamVideoData(StreamInfo streamInfo) {
         String[] listVideo = streamInfo.getVideoUrl();
@@ -167,20 +167,22 @@ public class SocketStreamService {
         streamInfo.setOrder(order);
         streamInfo.raiseEvent(streamInfo.getStreamKey());
         socketHandler.sendRomeByteMessage(streamKey, "stream",script.getIntro());
-        Thread.sleep(FileUtils.calculateTTSDuration_Second(script.getIntro(), wordPerSecond)+ defaultTime);
+        Thread.sleep((FileUtils.calculateTTSDuration_Second(script.getIntro(), wordPerSecond)+ defaultTime)*1000);
 
         for (int i = 0; i < questionList.size(); i++) {
             // Thứ tự câu hỏi
             streamInfo.setOrder(i+1);
             streamInfo.setEvent(StreamEvent.QUESTION);
             streamInfo.raiseEvent(streamInfo.getStreamKey());
+            log.info(questionList.get(i).getQuestion());
             socketHandler.sendRomeByteMessage(streamKey, "stream", questionList.get(i).getQuestion());
-            Thread.sleep(FileUtils.calculateTTSDuration_Second(questionList.get(i).getQuestion(), wordPerSecond)+ defaultTime);
+            Thread.sleep((FileUtils.calculateTTSDuration_Second(questionList.get(i).getQuestion(), wordPerSecond)+ defaultTime)*1000);
             // Dod cau tra loi
             streamInfo.setEvent(StreamEvent.ANSWER);
             streamInfo.raiseEvent(streamInfo.getStreamKey());
             socketHandler.sendRomeByteMessage(streamKey, "stream", questionList.get(i).getAnswers().toString());
-            Thread.sleep(FileUtils.calculateTTSDuration_Second(questionList.get(i).getAnswers().toString(), wordPerSecond)+ defaultTime);
+            log.info(questionList.get(i).getAnswers().toString());
+            Thread.sleep((FileUtils.calculateTTSDuration_Second(questionList.get(i).getAnswers().toString(), wordPerSecond)+ defaultTime)*1000);
         }
         // end
         streamInfo.setOrder(-2);
