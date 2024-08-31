@@ -54,7 +54,7 @@ public class AuthService {
             throw new AuthException(ErrorCode.UNAUTHENTICATED);
 
         if (!passwordEncoder.matches(authDto.getPassword(), auth.getPassword()))
-            throw new AuthException(ErrorCode.UNAUTHENTICATED);
+            throw new AuthException(ErrorCode.WRONG_CREDENTIAL);
 
         String token = jwtProvider.generateToken(auth.getUsername(), auth.getRole().toString(), auth.getId(), false);
         String refreshToken = jwtProvider.generateToken(auth.getUsername(), auth.getRole().toString(), auth.getId(), true);
