@@ -120,7 +120,8 @@ public class StreamService implements PropertyChangeListener {
         kafkaTemplate.send("SaveGameScore", GameScore.builder()
                 .gameID(roomID)
                 .eventID(streamInfo.getEventID())
-                .userScores(topUserScores));
+                .userScores(topUserScores)
+                .build());
 
         //Clean Resource
         cleanResouce(roomID);
