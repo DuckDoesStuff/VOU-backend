@@ -1,4 +1,4 @@
-package com.example.GameService.dto;
+package com.vou.api.dto;
 
 import com.vou.api.custom.ObjectIdSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
