@@ -1,5 +1,6 @@
 package com.vou.api.repository;
 
+import com.vou.api.dto.ReportTotalVoucherByBrandID;
 import com.vou.api.dto.VoucherReportDTO;
 import com.vou.api.entity.VoucherType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,12 @@ public interface VoucherTypeRepository extends JpaRepository<VoucherType ,Long> 
             "WHERE v.eventID = :eventID")
     List<VoucherReportDTO> findVoucherReportByEventId(@Param("eventID") Long eventID);
 
+    @Query("SELECT SUM(v.totalQuantity - v.inStock) " +
+            "FROM VoucherType v ")
+    Long findTotalVouchersDistributed();
+
+    @Query("SELECT new com.vou.api.dto.ReportTotalVoucherByBrandID(v.brandID, v.eventID, SUM(v.value)) " +
+            "FROM VoucherType v " +
+            "GROUP BY v.brandID, v.eventID")
+    List<ReportTotalVoucherByBrandID> findTotalValueGroupedByBrandAndEvent();
 }
