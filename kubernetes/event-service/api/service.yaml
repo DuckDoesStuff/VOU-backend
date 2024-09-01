@@ -6,5 +6,5 @@ spec:
   selector:
     app: event-api
   ports:
-  - port: 8002
-    targetPort: 8002
+  - port: 8003
+    targetPort: 8003

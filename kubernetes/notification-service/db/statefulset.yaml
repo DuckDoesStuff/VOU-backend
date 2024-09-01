@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: game-db
+  name: notification-db
 spec:
   replicas: 1
-  serviceName: game-db
+  serviceName: notification-db
   selector:
     matchLabels:
-      app: game-db
+      app: notification-db
   template:
     metadata:
       labels:
-        app: game-db
+        app: notification-db
     spec:
       containers:
-      - name: game-db
-        image: mongo:latest
+      - name: notification-db
+        image: bitnami/mongodb:7.0.11
         ports:
         - containerPort: 27017
         resources:
@@ -23,9 +23,9 @@ spec:
             memory: "256Mi"
             cpu: "200m"
         volumeMounts:
-        - name: game-storage
+        - name: notification-storage
           mountPath: /data/db
       volumes:
-      - name: game-storage
+      - name: notification-storage
         persistentVolumeClaim:
-          claimName: game-pvc
+          claimName: notification-pvc

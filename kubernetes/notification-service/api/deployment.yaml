@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-api
+  labels:
+    app: notification-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-api
+  template:
+    metadata:
+      labels:
+        app: notification-api
+    spec:
+      containers:
+      - name: notification-api
+        image: vou-backend-notification-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8005
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "128Mi"
+            cpu: "200m"
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: prod
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          valueFrom:
+            configMapKeyRef:
+              name: notification-service-config
+              key: KAFKA_BOOTSTRAP_SERVERS
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: notification-service-config
+              key: SPRING_DATASOURCE_URL

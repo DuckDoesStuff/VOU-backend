@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mc-service-config
+  labels:
+    app: mc-service
+data:
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9092
