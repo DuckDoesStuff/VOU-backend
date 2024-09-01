@@ -121,6 +121,7 @@ services:
       - event-service
       - game-service
       - notification-service
+      - mc-service
     build: ./nginx
     volumes:
     - ./temp:/etc/nginx/temp
@@ -132,6 +133,7 @@ services:
       - event-network
       - mongo-network
       - notification-network
+      - mc-network
 
   auth-service:
     depends_on:
@@ -203,6 +205,19 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
 
+  mc-service:
+    depends_on:
+      - kafka
+    profiles: [API]
+    build: ./MCService
+    ports:
+      - "8006:8006"
+    networks:
+      - mc-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
 networks:
   kafka-network:
     driver: bridge
@@ -217,6 +232,8 @@ networks:
   report-network:
     driver: bridge
   notification-network:
+    driver: bridge
+  mc-network:
     driver: bridge
 
 volumes:

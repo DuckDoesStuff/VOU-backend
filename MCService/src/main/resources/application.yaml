@@ -1,13 +1,15 @@
 server:
-  port: 8006
+  port: ${SERVER_PORT}
   servlet:
     context-path: /mc
 
 spring:
+  profiles:
+    active: ${ACTIVE_PROFILES:local}
   application:
     name: MCService
   kafka:
-    bootstrap-servers: localhost:9094
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
