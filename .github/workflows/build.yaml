@@ -12,7 +12,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     # Add "id-token" with the intended permissions.
     permissions:
       contents: 'read'
@@ -58,5 +58,5 @@ jobs:
       - name: Build Docker images
         run: |
           version=$VERSION
-          docker-compose --profile API build
-          docker-compose --profile API push
+          docker compose --profile API build
+          docker compose --profile API push
