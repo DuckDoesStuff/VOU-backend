@@ -80,6 +80,20 @@ services:
     volumes:
       - mongo-data:/data/db
 
+
+  notification-db:
+    image: bitnami/mongodb:7.0.11
+    container_name: notification-db
+    networks:
+      - notification-network
+    ports:
+      - "5435:27017"
+    environment:
+      MONGODB_ROOT_USER: root
+      MONGODB_ROOT_PASSWORD: root
+    volumes:
+      - notification-data:/data/db
+
   kafka:
     image: 'bitnami/kafka:latest'
     container_name: kafka
@@ -106,6 +120,7 @@ services:
       - user-service
       - event-service
       - game-service
+      - notification-service
     build: ./nginx
     volumes:
     - ./temp:/etc/nginx/temp
@@ -116,6 +131,7 @@ services:
       - user-network
       - event-network
       - mongo-network
+      - notification-network
 
   auth-service:
     depends_on:
@@ -173,6 +189,20 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
 
+  notification-service:
+    depends_on:
+      - notification-db
+      - kafka
+    profiles: [API]
+    build: ./NotficationService
+    ports:
+      - "8005:8005"
+    networks:
+      - notification-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
 networks:
   kafka-network:
     driver: bridge
@@ -186,6 +216,8 @@ networks:
     driver: bridge
   report-network:
     driver: bridge
+  notification-network:
+    driver: bridge
 
 volumes:
   auth-data:
@@ -194,3 +226,4 @@ volumes:
   mongo-data:
   event-data:
   report-data:
+  notification-data:

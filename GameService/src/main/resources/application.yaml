@@ -1,6 +1,6 @@
 spring:
-  active:
-    profiles: ${ACTIVE_PROFILE:local}
+  profiles:
+    active: ${ACTIVE_PROFILE:local}
   application:
     name: GameService
   data:
