@@ -123,6 +123,7 @@ services:
       - notification-service
       - mc-service
     build: ./nginx
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-api-gateway:${version:-latest}
     volumes:
     - ./temp:/etc/nginx/temp
     ports:
@@ -141,6 +142,7 @@ services:
       - kafka
     profiles: [API]
     build: ./auth-service
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-auth-service:${version:-latest}
     ports:
       - "8001:8001"
     networks:
@@ -155,6 +157,7 @@ services:
       - kafka
     profiles: [API]
     build: ./user-service
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-user-service:${version:-latest}
     ports:
       - "8002:8002"
     networks:
@@ -169,6 +172,7 @@ services:
       - kafka
     profiles: [API]
     build: ./EventService
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-event-service:${version:-latest}
     ports:
       - "8003:8003"
     networks:
@@ -183,6 +187,7 @@ services:
       - kafka
     profiles: [API]
     build: ./GameService
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-game-service:${version:-latest}
     ports:
       - "8004:8004"
     networks:
@@ -197,6 +202,7 @@ services:
       - kafka
     profiles: [API]
     build: ./NotficationService
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-notification-service:${version:-latest}
     ports:
       - "8005:8005"
     networks:
@@ -210,6 +216,7 @@ services:
       - kafka
     profiles: [API]
     build: ./MCService
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-mc-service:${version:-latest}
     ports:
       - "8006:8006"
     networks:
