@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.nio.channels.Channels;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class VideoUtils {
 
@@ -58,26 +59,65 @@ public class VideoUtils {
         return baos.toByteArray();
     }
 
+//    public static Iterator<Picture> getFrames(String videoFilePath) throws IOException, JCodecException {
+//        SeekableByteChannel byteChannel = NIOUtils.readableChannel(new java.io.File(videoFilePath));
+//        FrameGrab grab = FrameGrab.createFrameGrab(byteChannel);
+//        return new Iterator<Picture>() {
+//            Picture nextPicture = null;
+//
+//            @Override
+//            public boolean hasNext() {
+//                try {
+//                    nextPicture = grab.getNativeFrame();
+//                    return nextPicture != null;
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    return false;
+//                }
+//            }
+//
+//            @Override
+//            public Picture next() {
+//                return nextPicture;
+//            }
+//        };
+//    }
+//
     public static Iterator<Picture> getFrames(String videoFilePath) throws IOException, JCodecException {
         SeekableByteChannel byteChannel = NIOUtils.readableChannel(new java.io.File(videoFilePath));
         FrameGrab grab = FrameGrab.createFrameGrab(byteChannel);
+
         return new Iterator<Picture>() {
-            Picture nextPicture = null;
+            private Picture nextPicture = null;
+            private boolean endOfStream = false;
 
             @Override
             public boolean hasNext() {
+                if (endOfStream) {
+                    return false;
+                }
                 try {
                     nextPicture = grab.getNativeFrame();
-                    return nextPicture != null;
+                    if (nextPicture == null) {
+                        endOfStream = true;
+                        return false;
+                    }
+                    return true;
                 } catch (IOException e) {
                     e.printStackTrace();
+                    endOfStream = true;
                     return false;
                 }
             }
 
             @Override
             public Picture next() {
-                return nextPicture;
+                if (!hasNext()) {
+                    throw new NoSuchElementException("No more frames available.");
+                }
+                Picture currentPicture = nextPicture;
+                nextPicture = null; // Clear nextPicture for future hasNext calls
+                return currentPicture;
             }
         };
     }

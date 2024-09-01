@@ -9,5 +9,5 @@ import lombok.experimental.FieldDefaults;
 public class JoinStreamRequest {
     String userID;
     String eventID;
-    String room;
+    String roomID;
 }

@@ -11,5 +11,5 @@ import java.util.Set;
 public class OnlineStreams {
     @Value("${rtmp.server}")
     private String server;
-    private Set<String> rooms;
+    private Set<String> roomIDs;
 }

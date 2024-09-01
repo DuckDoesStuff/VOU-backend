@@ -28,3 +28,7 @@ rtmp:
   maxConnects: 1500
   pathToFFprobe: ffprobe
   pathToFFmpeg: ffmpeg
+
+stream:
+  default:
+    intro: Welcome to VOU - gamification marketing platform, play and earn valuable gifts with us
