@@ -1,3 +1,4 @@
+KAFKA_BOOTSTRAP_SERVERS: kafka:9092
 DATABASE_URL: jdbc:postgresql://event-db:5432/event_service
 POSTGRES_USERNAME: vou
 POSTGRES_PASSWORD: vouadmin123
