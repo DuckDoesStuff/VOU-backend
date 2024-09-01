@@ -1,6 +1,7 @@
 package com.vou.api.controller;
 
 import com.vou.api.dto.ApiResponse;
+import com.vou.api.dto.ReportTotalVoucherByBrandID;
 import com.vou.api.dto.VoucherReportDTO;
 import com.vou.api.dto.VoucherTypeMessage;
 import com.vou.api.entity.VoucherType;
@@ -27,6 +28,11 @@ public class VoucherController {
     @GetMapping("/voucher")
     public List<VoucherType> getAllVoucherType() {
         return voucherService.getAllVoucherType();
+    }
+
+    @GetMapping("/voucher/total_by_brand_event")
+    public ApiResponse<List<ReportTotalVoucherByBrandID>> getTotalValueGroupedByBrandAndEvent() {
+        return voucherService.findTotalValueGroupedByBrandAndEvent();
     }
 }
 

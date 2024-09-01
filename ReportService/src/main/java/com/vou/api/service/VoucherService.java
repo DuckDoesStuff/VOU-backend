@@ -1,6 +1,7 @@
 package com.vou.api.service;
 
 import com.vou.api.dto.ApiResponse;
+import com.vou.api.dto.ReportTotalVoucherByBrandID;
 import com.vou.api.dto.VoucherReportDTO;
 import com.vou.api.dto.VoucherTypeMessage;
 import com.vou.api.entity.VoucherType;
@@ -28,6 +29,14 @@ public class VoucherService {
     public List<VoucherType> getAllVoucherType() {
         return voucherTypeRepository.findAll();
     }
+    public ApiResponse<List<ReportTotalVoucherByBrandID>> findTotalValueGroupedByBrandAndEvent() {
+        List<ReportTotalVoucherByBrandID> reportTotalVoucherByBrandIDS = voucherTypeRepository.findTotalValueGroupedByBrandAndEvent();
+        ApiResponse<List<ReportTotalVoucherByBrandID>> response = new ApiResponse<>();
+        response.setStatus(HttpStatus.OK.value());
+        response.setResult(reportTotalVoucherByBrandIDS);
+        return response;
+    }
+
     @KafkaListener(topics = "VoucherType-update")
     public void listenToVoucherChange(VoucherTypeMessage message) {
         Optional<VoucherType> voucherType = voucherTypeRepository.findById(message.getVoucherTypeID());
@@ -52,4 +61,5 @@ public class VoucherService {
         voucherTypeRepository.save(currentVoucherType);
         System.out.println("Update current voucher type");
     }
+
 }
