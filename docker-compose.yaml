@@ -123,7 +123,7 @@ services:
       - notification-service
       - mc-service
     build: ./nginx
-    image: vou-api-gateway:latest
+    image: vou-backend-api-gateway:latest
     volumes:
     - ./temp:/etc/nginx/temp
     ports:
@@ -142,7 +142,7 @@ services:
       - kafka
     profiles: [API]
     build: ./auth-service
-    image: vou-auth-service:latest
+    image: vou-backend-auth-service:latest
     ports:
       - "8001:8001"
     networks:
@@ -157,7 +157,7 @@ services:
       - kafka
     profiles: [API]
     build: ./user-service
-    image: vou-user-service:latest
+    image: vou-backend-user-service:latest
     ports:
       - "8002:8002"
     networks:
@@ -172,7 +172,7 @@ services:
       - kafka
     profiles: [API]
     build: ./EventService
-    image: vou-event-service:latest
+    image: vou-backend-event-service:latest
     ports:
       - "8003:8003"
     networks:
@@ -187,7 +187,7 @@ services:
       - kafka
     profiles: [API]
     build: ./GameService
-    image: vou-game-service:latest
+    image: vou-backend-game-service:latest
     ports:
       - "8004:8004"
     networks:
@@ -202,7 +202,7 @@ services:
       - kafka
     profiles: [API]
     build: ./NotficationService
-    image: vou-notification-service:latest
+    image: vou-backend-notification-service:latest
     ports:
       - "8005:8005"
     networks:
@@ -216,7 +216,7 @@ services:
       - kafka
     profiles: [API]
     build: ./MCService
-    image: vou-mc-service:latest
+    image: vou-backend-mc-service:latest
     ports:
       - "8006:8006"
     networks:
