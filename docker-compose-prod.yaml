@@ -122,6 +122,7 @@ services:
       - game-service
       - notification-service
       - mc-service
+      - report-service
     build: ./nginx
     image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-api-gateway:${version:-latest}
     volumes:
@@ -135,6 +136,7 @@ services:
       - mongo-network
       - notification-network
       - mc-network
+      - report-network
 
   auth-service:
     depends_on:
@@ -221,6 +223,21 @@ services:
       - "8006:8006"
     networks:
       - mc-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  report-service:
+    depends_on:
+      - kafka
+      - report-db
+    profiles: [API]
+    build: ./ReportService
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-report-service:${version:-latest}
+    ports:
+      - "8007:8007"
+    networks:
+      - report-network
       - kafka-network
     environment:
       SPRING_PROFILES_ACTIVE: docker

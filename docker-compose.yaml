@@ -231,6 +231,7 @@ services:
   report-service:
     depends_on:
       - kafka
+      - report-db
     profiles: [API]
     build: ./ReportService
     image: vou-backend-report-service:latest

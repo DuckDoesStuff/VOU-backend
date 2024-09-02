@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: report-api
+  labels:
+    app: report-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: report-api
+  template:
+    metadata:
+      labels:
+        app: report-api
+    spec:
+      containers:
+      - name: report-api
+        image: vou-backend-report-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8001
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "128Mi"
+            cpu: "200m"
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: prod
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          valueFrom:
+            configMapKeyRef:
+              name: report-service-config
+              key: KAFKA_BOOTSTRAP_SERVERS
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: report-service-config
+              key: SPRING_DATASOURCE_URL
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: report-db-secret
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: report-db-secret
+              key: POSTGRES_PASSWORD

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: report-db
+spec:
+  replicas: 1
+  serviceName: report-db
+  selector:
+    matchLabels:
+      app: report-db
+  template:
+    metadata:
+      labels:
+        app: report-db
+    spec:
+      containers:
+      - name: report-db
+        image: postgres:latest
+        ports:
+        - containerPort: 5432
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: report-db-secret
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: report-db-secret
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: report-db-secret
+              key: POSTGRES_DB
+        volumeMounts:
+        - name: report-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: report-storage
+        persistentVolumeClaim:
+          claimName: report-pvc

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: report-service-config
+  labels:
+    app: report-service
+data:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://report-db:5432/report_service
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9092
