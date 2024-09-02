@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: game-api
+  labels:
+    app: game-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: game-api
+  template:
+    metadata:
+      labels:
+        app: game-api
+    spec:
+      containers:
+      - name: game-api
+        image: vou-backend-game-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8004
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "128Mi"
+            cpu: "200m"
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: prod
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          valueFrom:
+            configMapKeyRef:
+              name: game-service-config
+              key: KAFKA_BOOTSTRAP_SERVERS
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: game-service-config
+              key: SPRING_DATASOURCE_URL
+        - name: HEYGEN_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: game-api-secret
+              key: HEYGEN_API_KEY

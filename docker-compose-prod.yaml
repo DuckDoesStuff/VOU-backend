@@ -1,0 +1,253 @@
+services:
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: vou@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    networks:
+      - auth-network
+      - user-network
+      - event-network
+      - mongo-network
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+  auth-db:
+    image: postgres
+    container_name: auth-db
+    ports:
+      - "5431:5432"
+    networks:
+      - auth-network
+    environment:
+      POSTGRES_USER: vou
+      POSTGRES_PASSWORD: vouadmin123
+      POSTGRES_DB: auth_service
+    volumes:
+      - auth-data:/var/lib/postgresql/data
+
+  user-db:
+    image: postgres
+    container_name: user-db
+    ports:
+      - "5432:5432"
+    networks:
+      - user-network
+    environment:
+      POSTGRES_USER: vou
+      POSTGRES_PASSWORD: vouadmin123
+      POSTGRES_DB: user_service
+    volumes:
+      - user-data:/var/lib/postgresql/data
+
+  event-db:
+    image: postgres
+    container_name: event-db
+    ports:
+      - "5433:5432"
+    networks:
+      - event-network
+    environment:
+      POSTGRES_USER: vou
+      POSTGRES_PASSWORD: vouadmin123
+      POSTGRES_DB: event_service
+    volumes:
+      - event-data:/var/lib/postgresql/data
+
+  report-db:
+    image: postgres
+    container_name: report-db
+    ports:
+      - "5434:5432"
+    networks:
+      - report-network
+    environment:
+      POSTGRES_USER: vou
+      POSTGRES_PASSWORD: vouadmin123
+      POSTGRES_DB: report_service
+    volumes:
+      - report-data:/var/lib/postgresql/data
+
+  game-db:
+    image: mongo:latest
+    container_name: game-db
+    networks:
+      - mongo-network
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+
+  notification-db:
+    image: bitnami/mongodb:7.0.11
+    container_name: notification-db
+    networks:
+      - notification-network
+    ports:
+      - "5435:27017"
+    environment:
+      MONGODB_ROOT_USER: root
+      MONGODB_ROOT_PASSWORD: root
+    volumes:
+      - notification-data:/data/db
+
+  kafka:
+    image: 'bitnami/kafka:latest'
+    container_name: kafka
+    hostname: kafka
+    networks:
+      - kafka-network
+    ports:
+      - '9094:9094'
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+
+  # API SERVICES
+  # TO RUN USE: docker compose up --build --profile API
+  api-gateway:
+    profiles: [API]
+    depends_on:
+      - auth-service
+      - user-service
+      - event-service
+      - game-service
+      - notification-service
+      - mc-service
+    build: ./nginx
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-api-gateway:${version:-latest}
+    volumes:
+    - ./temp:/etc/nginx/temp
+    ports:
+    - "8000:8000"
+    networks:
+      - auth-network
+      - user-network
+      - event-network
+      - mongo-network
+      - notification-network
+      - mc-network
+
+  auth-service:
+    depends_on:
+      - auth-db
+      - kafka
+    profiles: [API]
+    build: ./auth-service
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-auth-service:${version:-latest}
+    ports:
+      - "8001:8001"
+    networks:
+      - auth-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  user-service:
+    depends_on:
+      - user-db
+      - kafka
+    profiles: [API]
+    build: ./user-service
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-user-service:${version:-latest}
+    ports:
+      - "8002:8002"
+    networks:
+      - user-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  event-service:
+    depends_on:
+      - event-db
+      - kafka
+    profiles: [API]
+    build: ./EventService
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-event-service:${version:-latest}
+    ports:
+      - "8003:8003"
+    networks:
+      - event-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  game-service:
+    depends_on:
+      - game-db
+      - kafka
+    profiles: [API]
+    build: ./GameService
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-game-service:${version:-latest}
+    ports:
+      - "8004:8004"
+    networks:
+      - mongo-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  notification-service:
+    depends_on:
+      - notification-db
+      - kafka
+    profiles: [API]
+    build: ./NotficationService
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-notification-service:${version:-latest}
+    ports:
+      - "8005:8005"
+    networks:
+      - notification-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  mc-service:
+    depends_on:
+      - kafka
+    profiles: [API]
+    build: ./MCService
+    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-mc-service:${version:-latest}
+    ports:
+      - "8006:8006"
+    networks:
+      - mc-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+networks:
+  kafka-network:
+    driver: bridge
+  auth-network:
+    driver: bridge
+  user-network:
+    driver: bridge
+  event-network:
+    driver: bridge
+  mongo-network:
+    driver: bridge
+  report-network:
+    driver: bridge
+  notification-network:
+    driver: bridge
+  mc-network:
+    driver: bridge
+
+volumes:
+  auth-data:
+  user-data:
+  pgadmin-data:
+  mongo-data:
+  event-data:
+  report-data:
+  notification-data:

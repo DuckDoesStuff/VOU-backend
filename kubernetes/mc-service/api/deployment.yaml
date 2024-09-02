@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mc-api
+  labels:
+    app: mc-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mc-api
+  template:
+    metadata:
+      labels:
+        app: mc-api
+    spec:
+      containers:
+      - name: mc-api
+        image: vou-backend-mc-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8006
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "128Mi"
+            cpu: "200m"
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: prod
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          valueFrom:
+            configMapKeyRef:
+              name: mc-service-config
+              key: KAFKA_BOOTSTRAP_SERVERS

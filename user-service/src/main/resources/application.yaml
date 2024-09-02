@@ -1,12 +1,12 @@
-server:
-  port: 8002
 spring:
+  profiles:
+    active: ${ACTIVE_PROFILE:local}
   application:
     name: UserVOAService
   datasource:
-    url: jdbc:postgresql://localhost:5432/user_service
-    username: vou
-    password: vouadmin123
+    url: ${DATABASE_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
   jpa:
     properties:
       hibernate:
@@ -14,7 +14,7 @@ spring:
     hibernate:
       ddl-auto: update
   kafka:
-    bootstrap-servers: localhost:9094
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -25,3 +25,5 @@ spring:
       auto-offset-reset: earliest
       properties:
         spring.json.trusted.packages: 'com.vou.api.dto.request'
+server:
+  port: ${SERVER_PORT}

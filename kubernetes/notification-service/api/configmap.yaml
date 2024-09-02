@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notification-service-config
+  labels:
+    app: notification-service
+data:
+  SPRING_DATASOURCE_URL: mongodb://root:root@notification-db:27017/notification-service?authSource=admin
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9092

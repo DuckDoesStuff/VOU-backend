@@ -23,7 +23,7 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    private final String[] PUBLIC_ENDPOINTS = new String[]{"/auth/test", "/auth/token", "/auth/refresh", "/auth/logout", "/auth/otp"};
+    private final String[] PUBLIC_ENDPOINTS = new String[]{"/auth/test", "/auth/token", "/auth/refresh", "/auth/logout", "/auth/otp/{phoneNumber}"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {

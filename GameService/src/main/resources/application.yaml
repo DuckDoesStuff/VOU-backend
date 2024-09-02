@@ -1,10 +1,12 @@
 spring:
+  profiles:
+    active: ${ACTIVE_PROFILE:local}
   application:
     name: GameService
   data:
-    mongodb.uri: mongodb://localhost:27017/game_db
+    mongodb.uri: ${DATABASE_URL}
   kafka:
-    bootstrap-servers: localhost:9094
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -17,6 +19,6 @@ spring:
         spring.json.trusted.packages: 'com.vou.api.dto'
 
 server:
-  port: 8004
+  port: ${SERVER_PORT}
 
-heygen.api_key: Nzc0N2I3YzBiZjUxNDNiZDhkYzU5OWUyMGZjNTYyMTEtMTcyNDE1MTUyMg==
+heygen.api_key: ${HEYGEN_API_KEY}

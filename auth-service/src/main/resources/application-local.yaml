@@ -1,30 +1,8 @@
-spring:
-  application:
-    name: "auth-service"
-  datasource:
-    url: "jdbc:postgresql://localhost:5431/auth_service"
-    username: vou
-    password: vouadmin123
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true # Remember to remove this otherwise sql gets logged
-  kafka:
-    bootstrap-servers: localhost:9094
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      group-id: auth-service-group
-      auto-offset-reset: earliest
-      properties:
-        spring.json.trusted.packages: 'com.vou.api.dto'
-server:
-  port: 8001
-
-jwt:
-  signerKey: "REPLACETHISWITHSOMETHINGELSEPLEASE"
-  valid-duration: 3600
-  refreshable-duration: 36000
+DATABASE_URL: "jdbc:postgresql://localhost:5431/auth_service"
+POSTGRES_USERNAME: vou
+POSTGRES_PASSWORD: vouadmin123
+KAFKA_BOOTSTRAP_SERVERS: localhost:9094
+SERVER_PORT: 8001
+JWT_SIGNER_KEY: "REPLACETHISWITHSOMETHINGELSEPLEASE"
+JWT_VALID_DURATION: 3600
+JWT_REFRESHABLE_DURATION: 36000

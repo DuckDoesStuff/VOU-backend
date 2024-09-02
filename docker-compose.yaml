@@ -80,6 +80,20 @@ services:
     volumes:
       - mongo-data:/data/db
 
+
+  notification-db:
+    image: bitnami/mongodb:7.0.11
+    container_name: notification-db
+    networks:
+      - notification-network
+    ports:
+      - "5435:27017"
+    environment:
+      MONGODB_ROOT_USER: root
+      MONGODB_ROOT_PASSWORD: root
+    volumes:
+      - notification-data:/data/db
+
   kafka:
     image: 'bitnami/kafka:latest'
     container_name: kafka
@@ -106,7 +120,10 @@ services:
       - user-service
       - event-service
       - game-service
+      - notification-service
+      - mc-service
     build: ./nginx
+    image: vou-api-gateway:latest
     volumes:
     - ./temp:/etc/nginx/temp
     ports:
@@ -116,6 +133,8 @@ services:
       - user-network
       - event-network
       - mongo-network
+      - notification-network
+      - mc-network
 
   auth-service:
     depends_on:
@@ -123,6 +142,7 @@ services:
       - kafka
     profiles: [API]
     build: ./auth-service
+    image: vou-auth-service:latest
     ports:
       - "8001:8001"
     networks:
@@ -137,6 +157,7 @@ services:
       - kafka
     profiles: [API]
     build: ./user-service
+    image: vou-user-service:latest
     ports:
       - "8002:8002"
     networks:
@@ -151,6 +172,7 @@ services:
       - kafka
     profiles: [API]
     build: ./EventService
+    image: vou-event-service:latest
     ports:
       - "8003:8003"
     networks:
@@ -165,10 +187,40 @@ services:
       - kafka
     profiles: [API]
     build: ./GameService
+    image: vou-game-service:latest
     ports:
       - "8004:8004"
     networks:
       - mongo-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  notification-service:
+    depends_on:
+      - notification-db
+      - kafka
+    profiles: [API]
+    build: ./NotficationService
+    image: vou-notification-service:latest
+    ports:
+      - "8005:8005"
+    networks:
+      - notification-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  mc-service:
+    depends_on:
+      - kafka
+    profiles: [API]
+    build: ./MCService
+    image: vou-mc-service:latest
+    ports:
+      - "8006:8006"
+    networks:
+      - mc-network
       - kafka-network
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -186,6 +238,10 @@ networks:
     driver: bridge
   report-network:
     driver: bridge
+  notification-network:
+    driver: bridge
+  mc-network:
+    driver: bridge
 
 volumes:
   auth-data:
@@ -194,3 +250,4 @@ volumes:
   mongo-data:
   event-data:
   report-data:
+  notification-data:

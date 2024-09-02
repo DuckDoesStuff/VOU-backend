@@ -1,15 +1,15 @@
 server:
-  port: 8005
-#  servlet:
-#    context-path: /notification
+  port: ${SERVER_PORT}
 spring:
+  profiles:
+    active: ${ACTIVE_PROFILE:local}
   application:
     name: NotficationService
   data:
     mongodb:
-      uri: mongodb://root:root@localhost:5435/notification-service?authSource=admin
+      uri: ${MONGO_URI}
   kafka:
-    bootstrap-servers: localhost:9094
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
       group-id: notification-group
       auto-offset-reset: earliest

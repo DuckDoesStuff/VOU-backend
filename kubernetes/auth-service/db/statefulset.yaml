@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: auth-db
+spec:
+  replicas: 1
+  serviceName: auth-db
+  selector:
+    matchLabels:
+      app: auth-db
+  template:
+    metadata:
+      labels:
+        app: auth-db
+    spec:
+      containers:
+      - name: auth-db
+        image: postgres:latest
+        ports:
+        - containerPort: 5432
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: auth-db-secret
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: auth-db-secret
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: auth-db-secret
+              key: POSTGRES_DB
+        volumeMounts:
+        - name: auth-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: auth-storage
+        persistentVolumeClaim:
+          claimName: auth-pvc

@@ -1,16 +1,5 @@
-spring:
-  application:
-    name: EventService
-  datasource:
-    url: jdbc:postgresql://event-db:5432/event_service
-    username: vou
-    password: vouadmin123
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: update
-
-server:
-  port: 8003
+KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+DATABASE_URL: jdbc:postgresql://event-db:5432/event_service
+POSTGRES_USERNAME: vou
+POSTGRES_PASSWORD: vouadmin123
+SERVER_PORT: 8003
