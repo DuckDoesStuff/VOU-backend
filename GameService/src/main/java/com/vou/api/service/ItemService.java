@@ -12,6 +12,7 @@ import com.vou.api.repository.ExchangeHistoryRepository;
 import com.vou.api.repository.ItemRepository;
 import com.vou.api.repository.ItemTypeRepository;
 import com.vou.api.repository.ParticipantRepository;
+import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,15 +24,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ItemService {
-    @Autowired
+
     private ItemRepository itemRepository;
-    @Autowired
     private ItemTypeRepository itemTypeRepository;
-    @Autowired
     private ExchangeHistoryRepository exchangeHistoryRepository;
-    @Autowired
     private ParticipantRepository participantRepository;
+    private KafkaService<Object> kafkaService;
 
     public List<Item> getAllItems() {
         return itemRepository.findAll();
@@ -75,6 +75,7 @@ public class ItemService {
         String userID = getRandomItemTypeDTO.getUserID();
         ObjectId gameID = getRandomItemTypeDTO.getGameID();
         Long eventID = getRandomItemTypeDTO.getEventID();
+
         ApiResponse<ItemType> response = new ApiResponse<>();
         List<ItemType> itemTypes = itemTypeRepository.findAll();
         System.out.println("itemTypes: " + itemTypes.size());
@@ -85,6 +86,11 @@ public class ItemService {
                 gameID,
                 userID
         );
+        if (participant.isEmpty()) {
+            response.setMessage("Please participating before shake item");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
 
         // if user already had item type in that game and event, increase count
         Item userItem = itemRepository.findByEventIDAndGameIDAndItemTypeIDAndUserID(eventID, gameID, randomItem.getItemTypeID(), userID);
@@ -99,11 +105,11 @@ public class ItemService {
             userItem.setItemTypeID(randomItem.getItemTypeID());
         }
         itemRepository.save(userItem);
-        // Decrement user turnLeft by 1
-        if (participant.isPresent()) {
-            participant.get().setTurnLeft(participant.get().getTurnLeft() - 1);
-            participantRepository.save(participant.get());
-        }
+        participant.get().setTurnLeft(participant.get().getTurnLeft() - 1);
+        participantRepository.save(participant.get());
+
+        // Send kafka message to report service for tracking user shake game activity
+
 
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("You just achieved an item");

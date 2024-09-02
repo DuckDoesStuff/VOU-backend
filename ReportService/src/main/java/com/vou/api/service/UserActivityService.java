@@ -1,12 +1,11 @@
 package com.vou.api.service;
 
-import com.vou.api.dto.ApiResponse;
-import com.vou.api.dto.ReportTotalParticipantsByBrand;
-import com.vou.api.dto.ReportUserCount;
-import com.vou.api.dto.UserGamePlaytime;
+import com.vou.api.dto.*;
+import com.vou.api.entity.UserActivity;
 import com.vou.api.repository.UserActivityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -42,5 +41,39 @@ public class UserActivityService {
         response.setStatus(HttpStatus.OK.value());
         response.setResult(reportTotalParticipantsByBrands);
         return response;
+    }
+
+    @KafkaListener(topics = "user_join_shake_game")
+    public void listenToUserJoinShakeGame(UserActivityMessage message) {
+        System.out.println("Receive message join shake game" + message);
+        UserActivity userActivity = UserActivity
+                .builder()
+                .userID(message.getUserID())
+                .gameID(message.getGameID())
+                .eventID(message.getEventID())
+                .activityType(message.getActivityType())
+                .rewardType(message.getRewardType())
+                .gameType(message.getGameType())
+                .joinTime(message.getJoinTime())
+                .leftTime(message.getJoinTime())
+                .build();
+        userActivityRepository.save(userActivity);
+    }
+
+    @KafkaListener(topics = "user_join_quiz_game")
+    public void listenToUserJoinQuizGame(UserActivityMessage message) {
+        System.out.println("Receive message join quiz game" + message);
+        UserActivity userActivity = UserActivity
+                .builder()
+                .userID(message.getUserID())
+                .gameID(message.getGameID())
+                .eventID(message.getEventID())
+                .activityType(message.getActivityType())
+                .rewardType(message.getRewardType())
+                .gameType(message.getGameType())
+                .joinTime(message.getJoinTime())
+                .leftTime(message.getJoinTime())
+                .build();
+        userActivityRepository.save(userActivity);
     }
 }

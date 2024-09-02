@@ -72,7 +72,6 @@ public class VoucherService {
         // Convert the saved VoucherType entity to a VoucherDto
         VoucherDto newVoucherDto = convertToDto(newVoucher);
 
-        // Create and populate the ApiResponse with the VoucherDto
         ApiResponse<VoucherDto> response = new ApiResponse<>();
         response.setStatus(HttpStatus.CREATED.value());
         response.setMessage("Voucher created successfully");
@@ -127,6 +126,7 @@ public class VoucherService {
     // Conversion method from VoucherType to VoucherDto
     private VoucherDto convertToDto(VoucherType voucherType) {
         VoucherDto dto = new VoucherDto();
+        dto.setGameID(voucherType.getGameID());
         dto.setEventID(voucherType.getPromotionalEvent().getEventID());
         dto.setTotalQuantity(voucherType.getTotalQuantity());
         dto.setExpiryDate(voucherType.getExpiryDay());

@@ -24,7 +24,7 @@ public class GameController {
     }
 
     @GetMapping("/game/event/{gameID}/{eventID}")
-    public ResponseEntity<ApiResponse<Game>> getGame(@PathVariable ObjectId gameID, @PathVariable Long eventID) {
+    public ResponseEntity<ApiResponse<Game>> getGame(@PathVariable String gameID, @PathVariable Long eventID) {
         return gameService.getGame(gameID, eventID);
     }
 
@@ -45,13 +45,13 @@ public class GameController {
 
     @PutMapping("/game/{gameID}")
     public ResponseEntity<ApiResponse<Game>> updateGame(
-            @PathVariable String gameID,
+            @PathVariable ObjectId gameID,
             @RequestBody Game updatedGameDetails) {
-        return gameService.updateGame(new ObjectId(gameID), updatedGameDetails);
+        return gameService.updateGame(gameID, updatedGameDetails);
     }
 
     @PostMapping("/game/question")
-    public ResponseEntity<ApiResponse<Game>> addGameQuestion(@RequestParam String gameID, @RequestBody Game.Question questionDto) {
-        return gameService.addGameQuestion(new ObjectId(gameID), questionDto);
+    public ResponseEntity<ApiResponse<Game>> addGameQuestion(@RequestParam ObjectId gameID, @RequestBody Game.Question questionDto) {
+        return gameService.addGameQuestion(gameID, questionDto);
     }
 }
