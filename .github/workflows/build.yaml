@@ -58,5 +58,10 @@ jobs:
       - name: Build Docker images
         run: |
           version=$VERSION
-          docker compose --profile API build
-          docker compose --profile API push
+          docker compose --profile API build ./docker-compose-prod.yaml -q
+      
+      # Push the Docker images to the Artifact Registry
+      - name: Push Docker images
+        run: |
+          version=$VERSION
+          docker compose --profile API push ./docker-compose-prod.yaml
