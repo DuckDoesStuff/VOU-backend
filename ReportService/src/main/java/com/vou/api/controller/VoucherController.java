@@ -28,6 +28,7 @@ public class VoucherController {
         return voucherService.getAllVoucherType();
     }
 
+    // Total all voucher value of a brand ( sum_of(value * voucherQuantity) )
     @GetMapping("/voucher/total-by-brand-event")
     public ApiResponse<List<ReportTotalVoucherByBrandID>> getTotalValueGroupedByBrandAndEvent() {
         return voucherService.findTotalValueGroupedByBrandAndEvent();

@@ -18,16 +18,19 @@ import java.util.List;
 public class UserActivityController {
     private final UserActivityService userActivityService;
 
+    // Play time of all users
     @GetMapping("/user-activity/play-time")
     public List<UserGamePlaytime> getUsersPlayTime() {
         return userActivityService.getUsersPlayTime();
     }
 
+    // Total user (old + new) sine last week
     @GetMapping("/user-activity/user-count")
     public ApiResponse<ReportUserCount> reportUserCountSinceLastWeek() {
         return userActivityService.reportNumUsersSinceLastWeek();
     }
 
+    // Total user (old + new, historical data) of a brand
     @GetMapping("/user-activity/participants/total-by-brand")
     public ApiResponse<List<ReportTotalParticipantsByBrand>> getTotalParticipantsByBrand() {
         return userActivityService.getTotalParticipantsByBrand();

@@ -11,6 +11,7 @@ services:
       - user-network
       - event-network
       - mongo-network
+      - report-network
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 
@@ -122,6 +123,7 @@ services:
       - game-service
       - notification-service
       - mc-service
+      - report-service
     build: ./nginx
     image: vou-backend-api-gateway:latest
     volumes:
@@ -135,6 +137,7 @@ services:
       - mongo-network
       - notification-network
       - mc-network
+      - report-network
 
   auth-service:
     depends_on:
@@ -221,6 +224,20 @@ services:
       - "8006:8006"
     networks:
       - mc-network
+      - kafka-network
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  report-service:
+    depends_on:
+      - kafka
+    profiles: [API]
+    build: ./ReportService
+    image: vou-backend-report-service:latest
+    ports:
+      - "8007:8007"
+    networks:
+      - report-network
       - kafka-network
     environment:
       SPRING_PROFILES_ACTIVE: docker

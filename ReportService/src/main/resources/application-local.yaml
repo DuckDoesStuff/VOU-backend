@@ -1,0 +1,5 @@
+DATABASE_URL: jdbc:postgresql://localhost:5434/report_service
+POSTGRES_USERNAME: vou
+POSTGRES_PASSWORD: vouadmin123
+KAFKA_BOOTSTRAP_SERVERS: localhost:9094
+SERVER_PORT: 8007
