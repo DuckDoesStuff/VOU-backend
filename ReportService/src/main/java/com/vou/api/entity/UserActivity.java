@@ -23,6 +23,7 @@ public class UserActivity {
     private Long eventID;
     private LocalDateTime joinTime;
     private LocalDateTime leftTime;
+    private String activityType;
     private String gameType;
     private String rewardType;
 }

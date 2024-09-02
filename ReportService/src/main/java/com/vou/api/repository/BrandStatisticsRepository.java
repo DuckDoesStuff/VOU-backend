@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BrandStatisticsRepository extends JpaRepository<BrandStatistics, String> {
-    @Query("SELECT SUM(bs.totalEventsHosted) FROM brand_statistics bs")
-    Long findTotalEventsHosted();
+    @Query("SELECT COALESCE(SUM(bs.totalEventsHosted), 0) FROM BrandStatistics bs")
+    long findTotalEventsHosted();  // This should return 0 if the sum is null
+
 }

@@ -1,6 +1,7 @@
 package com.vou.api.controller;
 
 import com.vou.api.dto.ApiResponse;
+import com.vou.api.dto.ReportTotalParticipantsByBrand;
 import com.vou.api.dto.ReportUserCount;
 import com.vou.api.dto.UserGamePlaytime;
 import com.vou.api.service.UserActivityService;
@@ -17,13 +18,18 @@ import java.util.List;
 public class UserActivityController {
     private final UserActivityService userActivityService;
 
-    @GetMapping("/user_activity/play_time")
+    @GetMapping("/user-activity/play-time")
     public List<UserGamePlaytime> getUsersPlayTime() {
         return userActivityService.getUsersPlayTime();
     }
 
-    @GetMapping("/user_activity/user_count")
+    @GetMapping("/user-activity/user-count")
     public ApiResponse<ReportUserCount> reportUserCountSinceLastWeek() {
         return userActivityService.reportNumUsersSinceLastWeek();
+    }
+
+    @GetMapping("/user-activity/participants/total-by-brand")
+    public ApiResponse<List<ReportTotalParticipantsByBrand>> getTotalParticipantsByBrand() {
+        return userActivityService.getTotalParticipantsByBrand();
     }
 }

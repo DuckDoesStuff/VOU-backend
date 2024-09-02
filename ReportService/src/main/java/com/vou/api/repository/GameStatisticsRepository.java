@@ -7,9 +7,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GameStatisticsRepository extends JpaRepository<GameStatistics, String> {
-    @Query("SELECT SUM(ga.totalParticipants) FROM game_statistics ga")
+
+    @Query("SELECT COALESCE(SUM(ga.totalParticipants), 0) FROM GameStatistics ga")
     Long findTotalParticipants();
 
-    @Query("SELECT COUNT(gameID) FROM game_statistics ga")
+    @Query("SELECT COUNT(ga.gameID) FROM GameStatistics ga")
     Long findTotalGame();
 }

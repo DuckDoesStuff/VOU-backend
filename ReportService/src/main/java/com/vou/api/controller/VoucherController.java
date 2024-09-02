@@ -3,11 +3,9 @@ package com.vou.api.controller;
 import com.vou.api.dto.ApiResponse;
 import com.vou.api.dto.ReportTotalVoucherByBrandID;
 import com.vou.api.dto.VoucherReportDTO;
-import com.vou.api.dto.VoucherTypeMessage;
 import com.vou.api.entity.VoucherType;
 import com.vou.api.service.VoucherService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +28,7 @@ public class VoucherController {
         return voucherService.getAllVoucherType();
     }
 
-    @GetMapping("/voucher/total_by_brand_event")
+    @GetMapping("/voucher/total-by-brand-event")
     public ApiResponse<List<ReportTotalVoucherByBrandID>> getTotalValueGroupedByBrandAndEvent() {
         return voucherService.findTotalValueGroupedByBrandAndEvent();
     }

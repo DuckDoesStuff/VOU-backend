@@ -1,6 +1,7 @@
 package com.vou.api.service;
 
 import com.vou.api.dto.ApiResponse;
+import com.vou.api.dto.ReportTotalParticipantsByBrand;
 import com.vou.api.dto.ReportUserCount;
 import com.vou.api.dto.UserGamePlaytime;
 import com.vou.api.repository.UserActivityRepository;
@@ -31,6 +32,15 @@ public class UserActivityService {
         ApiResponse<ReportUserCount> response = new ApiResponse<>();
         response.setStatus(HttpStatus.OK.value());
         response.setResult(reportUserCount);
+        return response;
+    }
+
+    public ApiResponse<List<ReportTotalParticipantsByBrand>> getTotalParticipantsByBrand() {
+        List<ReportTotalParticipantsByBrand> reportTotalParticipantsByBrands =
+                userActivityRepository.findTotalParticipantsByBrand();
+        ApiResponse<List<ReportTotalParticipantsByBrand>> response = new ApiResponse<>();
+        response.setStatus(HttpStatus.OK.value());
+        response.setResult(reportTotalParticipantsByBrands);
         return response;
     }
 }
