@@ -55,7 +55,7 @@ public class GameService {
         );
     }
 
-    public ResponseEntity<ApiResponse<Game>> getGame(ObjectId gameID, Long eventID) {
+    public ResponseEntity<ApiResponse<Game>> getGame(String gameID, Long eventID) {
         List<Game> games = gameRepository.findByEventIDAndGameID(
                 eventID,
                 gameID);

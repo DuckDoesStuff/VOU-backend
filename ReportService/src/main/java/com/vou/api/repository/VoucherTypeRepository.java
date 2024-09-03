@@ -18,10 +18,10 @@ public interface VoucherTypeRepository extends JpaRepository<VoucherType, Long> 
             "WHERE v.eventID = :eventID")
     List<VoucherReportDTO> findVoucherReportByEventId(@Param("eventID") Long eventID);
 
-    @Query("SELECT SUM(v.totalQuantity - v.inStock) FROM VoucherType v")
+    @Query("SELECT COALESCE(SUM(v.totalQuantity - v.inStock), 0) FROM VoucherType v")
     Long findTotalVouchersDistributed();
 
-    @Query("SELECT new com.vou.api.dto.ReportTotalVoucherByBrandID(v.brandID, v.eventID, SUM(v.value)) " +
+    @Query("SELECT new com.vou.api.dto.ReportTotalVoucherByBrandID(v.brandID, v.eventID, SUM(v.value * v.totalQuantity)) " +
             "FROM VoucherType v " +
             "GROUP BY v.brandID, v.eventID")
     List<ReportTotalVoucherByBrandID> findTotalValueGroupedByBrandAndEvent();

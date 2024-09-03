@@ -7,6 +7,7 @@ import com.vou.api.entity.Game;
 import com.vou.api.entity.Participant;
 import com.vou.api.repository.GameRepository;
 import com.vou.api.repository.ParticipantRepository;
+import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,11 +17,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ParticipantService {
-    @Autowired
-    private ParticipantRepository participantRepository;
-    @Autowired
-    private GameRepository gameRepository;
+    private final ParticipantRepository participantRepository;
+    private final GameRepository gameRepository;
+    private final KafkaService<Object> kafkaService;
 
     public List<Participant> getAllParticipants() {
         return participantRepository.findAll();
@@ -56,6 +57,14 @@ public class ParticipantService {
         participant.setUserID(addParticipantRequest.getUserID());
         Game game = gameRepository.findByGameID(addParticipantRequest.getGameID());
         participant.setTurnLeft(game.getDefaultFreeTurn());
+        // Send kafka message to report service for tracking their first time join game
+        if (game.getDefaultFreeTurn() == 1) {
+            // quiz game
+            kafkaService.sendUserJoinQuizGame(participant);
+        } else {
+            // shake game
+            kafkaService.sendUserJoinQuizGame(participant);
+        }
 
         try {
             Participant savedParticipant = participantRepository.save(participant);
