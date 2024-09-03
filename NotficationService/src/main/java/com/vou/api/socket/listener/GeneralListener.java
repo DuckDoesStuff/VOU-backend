@@ -28,7 +28,7 @@ public class GeneralListener {
 
     @OnConnect
     public void onConnect(SocketIOClient client) {
-//        log.info("onConnect " + client.getSessionId());
+        log.info("onConnect " + client.getSessionId());
 //        System.out.println("Client connected: " + client.getSessionId());
 //        String clientId = client.getSessionId().toString();
     }
@@ -36,6 +36,7 @@ public class GeneralListener {
     @OnDisconnect
     public void onDisconnect(SocketIOClient client) {
         String clientId = client.getSessionId().toString();
+//        log.info(clientId + " disconnected");
 //        socketInfoManager.removeUser(clientId);
     }
 
