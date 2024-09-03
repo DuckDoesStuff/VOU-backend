@@ -7,6 +7,7 @@ import com.vou.api.dto.UserGamePlaytime;
 import com.vou.api.service.UserActivityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,8 +32,17 @@ public class UserActivityController {
     }
 
     // Total user (old + new, historical data) of a brand
-    @GetMapping("/user-activity/participants/total-by-brand")
-    public ApiResponse<List<ReportTotalParticipantsByBrand>> getTotalParticipantsByBrand() {
+    @GetMapping("/user-activity/participants/total-by-brand/{brandID}")
+    public ApiResponse<ReportUserCount> getTotalParticipantsByBrand(
+            @PathVariable("brandID") String brandID
+    ) {
+        return userActivityService.getNewAndOldUsersCountByBrand(brandID);
+    }
+
+    // List of (brandID, totalParticipants)
+    @GetMapping("/user-activity/participants/all-brands")
+    public ApiResponse<List<ReportTotalParticipantsByBrand>> getTotalParticipantsByAllBrands() {
         return userActivityService.getTotalParticipantsByBrand();
     }
+
 }

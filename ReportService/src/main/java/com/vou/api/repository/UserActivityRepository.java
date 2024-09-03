@@ -28,10 +28,19 @@ public interface UserActivityRepository extends JpaRepository<UserActivity, Long
             "WHERE ua.joinTime < :lastWeek")
     long countOldUsersSinceLastWeek(@Param("lastWeek") LocalDateTime lastWeek);
 
+
     @Query("SELECT new com.vou.api.dto.ReportTotalParticipantsByBrand(event.brandID, COUNT(DISTINCT ua.userID)) " +
             "FROM UserActivity ua " +
             "JOIN PromotionalEvent event ON event.eventID = ua.eventID " +
-            "WHERE ua.activityType = 'joinGame' " +
+            "WHERE ua.activityType = 'join_game' " +
             "GROUP BY event.brandID")
     List<ReportTotalParticipantsByBrand> findTotalParticipantsByBrand();
+
+    @Query("SELECT " +
+            "SUM(CASE WHEN ua.joinTime >= :lastWeek THEN 1 ELSE 0 END) AS newUsers, " +
+            "SUM(CASE WHEN ua.joinTime < :lastWeek THEN 1 ELSE 0 END) AS oldUsers " +
+            "FROM UserActivity ua " +
+            "JOIN PromotionalEvent pe ON pe.eventID = ua.eventID " +
+            "WHERE pe.brandID = :brandID")
+    Object[] countNewAndOldUsersByBrand(@Param("lastWeek") LocalDateTime lastWeek, @Param("brandID") String brandID);
 }
