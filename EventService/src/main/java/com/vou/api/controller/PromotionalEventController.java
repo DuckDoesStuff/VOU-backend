@@ -1,6 +1,7 @@
 package com.vou.api.controller;
 
 import com.vou.api.dto.ApiResponse;
+import com.vou.api.dto.CreateEventRequest;
 import com.vou.api.entity.PromotionalEvent;
 import com.vou.api.service.PromotionalEventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class PromotionalEventController {
     private PromotionalEventService promotionalEventService;
 
     @PostMapping()
-    public ResponseEntity<ApiResponse<PromotionalEvent>> createEvent(@RequestBody PromotionalEvent event) {
+    public ResponseEntity<ApiResponse<PromotionalEvent>> createEvent(@RequestBody CreateEventRequest event) {
        return promotionalEventService.createEvent(event);
     }
 

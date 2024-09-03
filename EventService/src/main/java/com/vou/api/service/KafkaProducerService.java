@@ -1,5 +1,6 @@
 package com.vou.api.service;
 
+import com.vou.api.dto.EventMessage;
 import com.vou.api.dto.VoucherTypeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -15,5 +16,8 @@ public class KafkaProducerService {
 
     public void sendVoucherTypeMessage(VoucherTypeMessage message) {
         kafkaTemplate.send(TOPIC, message);
+    }
+    public void sendCreateEventMessage(EventMessage promotionalEvent) {
+        kafkaTemplate.send("create_event", promotionalEvent);
     }
 }

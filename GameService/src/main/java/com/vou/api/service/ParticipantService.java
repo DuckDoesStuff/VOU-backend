@@ -3,11 +3,13 @@ package com.vou.api.service;
 // ParticipantService.java
 import com.vou.api.dto.AddParticipantRequest;
 import com.vou.api.dto.ApiResponse;
+import com.vou.api.dto.ShareTurnForFriendRequest;
 import com.vou.api.entity.Game;
 import com.vou.api.entity.Participant;
 import com.vou.api.repository.GameRepository;
 import com.vou.api.repository.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.parser.HttpParser;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -74,6 +77,69 @@ public class ParticipantService {
             ApiResponse<Participant> response = new ApiResponse<>(500, "An error occurred while saving the participant", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+    public ResponseEntity<ApiResponse<Boolean>> checkIfParticipantValidForShareTurn(AddParticipantRequest participantRequest) {
+        Optional<Participant> participant = participantRepository.findParticipantByEventGameAndUser(
+                participantRequest.getEventID(),
+                participantRequest.getGameID(),
+                participantRequest.getUserID()
+        );
+        System.out.println("check if valid sharing turn " + participantRequest);
+        ApiResponse<Boolean> response = new ApiResponse<>();
+        if (participant.isEmpty()) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("This participant is not valid for sharing their turn");
+            response.setResult(false);
+            return new ResponseEntity<>(
+                    response,
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage("This participant is valid for sharing their turn");
+        response.setResult(true);
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.OK
+        );
+    }
+
+    public ResponseEntity<ApiResponse<Boolean>> shareTurnForFriend(ShareTurnForFriendRequest request) {
+        // Pariticipant a will give their turn
+        Optional<Participant> participantA = participantRepository.findParticipantByEventGameAndUser(
+                request.getEventID(),
+                request.getGameID(),
+                request.getGiver()
+        );
+        // Pariticipant b will increase their turn
+        Optional<Participant> participantB = participantRepository.findParticipantByEventGameAndUser(
+                request.getEventID(),
+                request.getGameID(),
+                request.getReceiver()
+        );
+        ApiResponse<Boolean> response = new ApiResponse<>();
+        if (participantB.isEmpty() || participantA.isEmpty()) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            response.setMessage("Participant not found");
+            response.setResult(false);
+            return new ResponseEntity<>(
+                    response,
+                    HttpStatus.NOT_FOUND
+            );
+        }
+        int turnA = participantA.get().getTurnLeft();
+        int turnB = participantB.get().getTurnLeft();
+        participantA.get().setTurnLeft(turnA - 1);
+        participantB.get().setTurnLeft(turnB + 1);
+        participantRepository.save(participantA.get());
+        participantRepository.save(participantB.get());
+        response.setStatus(HttpStatus.OK.value());
+        response.setResult(true);
+        response.setMessage("You two have exchange turn for each other");
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.OK
+        );
     }
 }
 

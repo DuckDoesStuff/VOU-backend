@@ -3,6 +3,7 @@ package com.vou.api.controller;
 // ParticipantController.java
 import com.vou.api.dto.AddParticipantRequest;
 import com.vou.api.dto.ApiResponse;
+import com.vou.api.dto.ShareTurnForFriendRequest;
 import com.vou.api.entity.Participant;
 import com.vou.api.service.ParticipantService;
 import org.bson.types.ObjectId;
@@ -47,9 +48,18 @@ public class ParticipantController {
     public ResponseEntity<ApiResponse<Participant>> addParticipantToGame(@RequestBody AddParticipantRequest addParticipantRequest) {
         return participantService.addParticipantToGame(addParticipantRequest);
     }
-
     @DeleteMapping("/{id}")
     public void deleteParticipant(@PathVariable String id) {
         participantService.deleteParticipant(id);
+    }
+
+    @PostMapping("/participant/valid/share-turn")
+    public ResponseEntity<ApiResponse<Boolean>> checkIfParticipantValidForSharingTurn(@RequestBody AddParticipantRequest request) {
+        return participantService.checkIfParticipantValidForShareTurn(request);
+    }
+
+    @PostMapping("/exchange-turn")
+    public ResponseEntity<ApiResponse<Boolean>> shareTurnForFriend(ShareTurnForFriendRequest request) {
+        return participantService.shareTurnForFriend(request);
     }
 }
