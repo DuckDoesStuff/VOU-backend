@@ -31,7 +31,7 @@ public class SocketPushService implements NotificationServiceType {
         SocketMessage socketMessage = SocketMessage.builder()
                 .tittle(notification.getTitle())
                 .content(notification.getContent())
-                .time(notification.getTime())
+                .time(notification.getTime().toString())
                 .build();
         String response = null;
         try {

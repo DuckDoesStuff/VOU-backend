@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PushTopicNotificationRequest {
     String topic;
-    @Size(max = 20, message = "INVALID_TITLE")
+//    @Size(max = 20, message = "INVALID_TITLE")
     String title;
     String content;
 }

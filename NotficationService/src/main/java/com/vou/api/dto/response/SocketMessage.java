@@ -10,5 +10,5 @@ import java.time.LocalDateTime;
 public class SocketMessage {
     String tittle;
     String content;
-    LocalDateTime time;
+    String time;
 }
