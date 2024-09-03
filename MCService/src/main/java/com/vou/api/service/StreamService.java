@@ -81,10 +81,10 @@ public class StreamService implements PropertyChangeListener {
         }
         if (order%2 != 0 ) {
 //            log.info(streamInfo.getQuestions().get(order-1).toString());
-            socketHandler.sendRoomMessage(roomID,"Question", streamInfo.getQuestions().get(order-1));
+            socketHandler.sendRoomStringMessage(roomID,"Question", streamInfo.getQuestions().get(order-1));
         } else {
 //            log.info(streamInfo.getQuestions().get(order-1).toString());
-            socketHandler.sendRoomMessage(roomID,"Answer", streamInfo.getQuestions().get(order-1).getAnswers());
+            socketHandler.sendRoomStringMessage(roomID,"Answer", streamInfo.getQuestions().get(order-1).getAnswers());
         }
     }
 

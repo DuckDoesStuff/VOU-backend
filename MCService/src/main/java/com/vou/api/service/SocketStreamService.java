@@ -142,7 +142,7 @@ public class SocketStreamService {
                     // Here you can process the BufferedImage as needed
                     byte[] frameData = VideoUtils.pictureToByteArray(picture);
                     log.info(""+frameData.length);
-                    socketHandler.sendRomeByteMessage(streamKey, "stream", frameData);
+                    socketHandler.sendRoomByteMessage(streamKey, "stream", frameData);
                     int frameInterval = 1000 / 25;
                     Thread.sleep(frameInterval); // Giả sử 30 fps, 33 ms giữa các khung hình
                 }
@@ -173,7 +173,7 @@ public class SocketStreamService {
         streamInfo.setOrder(0);
         streamInfo.setEvent(StreamEvent.INTRO);
         streamInfo.raiseEvent(streamInfo.getRoomID());
-        socketHandler.sendRomeByteMessage(roomID, "stream", SocketResponse.<String>builder()
+        socketHandler.sendRoomByteMessage(roomID, "stream", SocketResponse.<String>builder()
                 .code(0)
                 .result(defaultIntro)
                 .build());
@@ -188,7 +188,7 @@ public class SocketStreamService {
 
             Question2User question2User = questionMapper.questionToQuestion2User(questionList.get(i));
             question2User.setOrder(i+1);
-            socketHandler.sendRomeByteMessage(roomID, "stream",SocketResponse.<Question2User>builder()
+            socketHandler.sendRoomByteMessage(roomID, "stream",SocketResponse.<Question2User>builder()
                     .code(1)
                     .result(question2User)
                     .build());
@@ -201,7 +201,7 @@ public class SocketStreamService {
 
             Answer2User answer2User = questionMapper.questionToAnswer2User(questionList.get(i));
             answer2User.setOrder(i+1);
-            socketHandler.sendRomeByteMessage(roomID, "stream", SocketResponse.<Answer2User>builder()
+            socketHandler.sendRoomByteMessage(roomID, "stream", SocketResponse.<Answer2User>builder()
                     .code(2)
                     .result(answer2User)
                     .build());
@@ -212,7 +212,7 @@ public class SocketStreamService {
         // end
         streamInfo.setOrder(-2);
         streamInfo.setEvent(StreamEvent.STOP_STREAM);
-        socketHandler.sendRoomMessage(roomID,"stream",SocketResponse.<String>builder()
+        socketHandler.sendRoomByteMessage(roomID,"stream",SocketResponse.<String>builder()
                 .code(-2)
                 .build());
         // wait for receiving user answer
