@@ -41,8 +41,7 @@ public class StreamScheduler {
             info.setQuestions(game.getQuestions());
 
             infoForStreamKafkaService.send("startStream", info);
-            // TODO: Uncomment this
-            game.setQuizState("STREAMING");
+            game.setQuizState("ENDED");
             gameRepository.save(game);
             count++;
         }

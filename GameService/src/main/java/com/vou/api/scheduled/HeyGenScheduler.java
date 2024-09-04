@@ -20,7 +20,7 @@ public class HeyGenScheduler {
     @Autowired
     HeyGenAPI heyGenAPI;
 
-    @Scheduled(fixedDelay = 60 * 1000)
+//    @Scheduled(fixedDelay = 60 * 1000)
     public void getAllGames() {
         List<Game> quizGames = gameRepository.findGamesByVideoStatus("processing");
         boolean updated = false;

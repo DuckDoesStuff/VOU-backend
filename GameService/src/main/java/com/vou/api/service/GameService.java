@@ -180,13 +180,13 @@ public class GameService {
         List<Game.Question> questions = game.getQuestions();
         if (questions == null) questions = new ArrayList<>();
 
-        String videoID = heyGenAPI.generateVideo(question.getQuestion(), game.getEventID().toString(), gameID.toString(), String.valueOf(questions.size()));
-        question.setVideoStatus("processing");
-        question.setVideo(videoID);
+//        String videoID = heyGenAPI.generateVideo(question.getQuestion(), game.getEventID().toString(), gameID.toString(), String.valueOf(questions.size()));
+//        question.setVideoStatus("processing");
+//        question.setVideo(videoID);
 
         questions.add(question);
         game.setQuestions(questions);
-        game.setQuizState("PREPARING");
+        game.setQuizState("READY");
         gameRepository.save(game);
         ApiResponse<Game> response = new ApiResponse<>();
         response.setMessage("Successfully added a new question");
