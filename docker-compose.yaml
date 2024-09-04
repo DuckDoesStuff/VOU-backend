@@ -208,6 +208,7 @@ services:
     image: vou-backend-notification-service:latest
     ports:
       - "8005:8005"
+      - "8200:8200"
     networks:
       - notification-network
       - kafka-network
@@ -222,6 +223,7 @@ services:
     image: vou-backend-mc-service:latest
     ports:
       - "8006:8006"
+      - "8100:8100"
     networks:
       - mc-network
       - kafka-network

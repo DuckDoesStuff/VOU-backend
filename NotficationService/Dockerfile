@@ -6,5 +6,5 @@ RUN mvn clean package -DskipTests
 FROM openjdk:22
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
-EXPOSE 8005
+EXPOSE 8005 8200
 ENTRYPOINT ["java", "-jar", "app.jar"]
