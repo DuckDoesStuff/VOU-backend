@@ -1,8 +1,11 @@
 package com.vou.api.service;
 
 import com.vou.api.dto.ApiResponse;
+import com.vou.api.dto.CreateEventRequest;
 import com.vou.api.entity.PromotionalEvent;
+import com.vou.api.mapper.EventMapper;
 import com.vou.api.repository.PromotionalEventRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +16,24 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class PromotionalEventService {
-    @Autowired
-    private PromotionalEventRepository repository;
+    private final PromotionalEventRepository repository;
 
-    public ResponseEntity<ApiResponse<PromotionalEvent>> createEvent(PromotionalEvent event) {
-        PromotionalEvent promotionalEvent = repository.save(event);
+    private final KafkaProducerService kafkaProducerService;
+
+    public ResponseEntity<ApiResponse<PromotionalEvent>> createEvent(CreateEventRequest event) {
+        PromotionalEvent promotionalEvent = PromotionalEvent.builder()
+                .brandID(event.getBrandID())
+                .eventBanner(event.getEventBanner())
+                .startTime(event.getStartTime())
+                .endTime(event.getEndTime())
+                .nameOfEvent(event.getNameOfEvent())
+                .description(event.getDescription())
+                .build();
+        PromotionalEvent savedEvent = repository.save(promotionalEvent);
         ApiResponse<PromotionalEvent> response = new ApiResponse<>();
+        kafkaProducerService.sendCreateEventMessage(EventMapper.convertToEventMessage(savedEvent));
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Event created successfully");
         response.setResult(promotionalEvent);

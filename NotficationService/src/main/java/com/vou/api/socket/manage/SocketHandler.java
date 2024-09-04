@@ -1,8 +1,8 @@
 package com.vou.api.socket.manage;
 
+import com.corundumstudio.socketio.SocketIOServer;
 import com.vou.api.dto.SocketResponse;
 import com.vou.api.socket.listener.GeneralListener;
-import com.corundumstudio.socketio.SocketIOServer;
 import jakarta.annotation.PreDestroy;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -15,11 +15,11 @@ import org.springframework.stereotype.Component;
 public class SocketHandler {
     SocketIOServer server;
     GeneralListener handler;
-    SocketInfoManager socketInfoManager;
+//    SocketInfoManager socketInfoManager;
     public SocketHandler(SocketIOServer server, GeneralListener handler, SocketInfoManager socketInfoManager) {
         this.server = server;
         this.handler = handler;
-        this.socketInfoManager = socketInfoManager;
+//        this.socketInfoManager = socketInfoManager;
         server.addListeners(this.handler);
     }
 
@@ -33,11 +33,8 @@ public class SocketHandler {
         server.stop();
     }
 
-    public void sendRoomStringMessage(String room , String eventName , Object message) {
-        server.getRoomOperations(room).sendEvent(eventName,message.toString());
-    }
 
-    public void sendRoomByteMessage(String room , String eventName , Object message) {
+    public void sendRoomMessage(String room , String eventName , Object message) {
         server.getRoomOperations(room).sendEvent(eventName,message);
     }
 
@@ -53,12 +50,11 @@ public class SocketHandler {
                 .build());
         server.getRoomOperations(room).disconnect();
     }
-
-    public void cleanRoom(String room) {
-        socketInfoManager.cleanRoom(room);
-    }
-
-    public void initRoom(String room) {
-        socketInfoManager.initRoom(room);
-    }
+//    public void cleanRoom(String room) {
+//        socketInfoManager.cleanRoom(room);
+//    }
+//
+//    public void initRoom(String room) {
+//        socketInfoManager.initRoom(room);
+//    }
 }

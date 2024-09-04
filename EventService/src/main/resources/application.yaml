@@ -1,12 +1,12 @@
 spring:
-  active:
-    profiles: ${ACTIVE_PROFILE:local}
+  profiles:
+    active: ${ACTIVE_PROFILE:local}
   application:
     name: EventService
   datasource:
-    url: ${DATABASE_URL}
-    username: ${POSTGRES_USERNAME}
-    password: ${POSTGRES_PASSWORD}
+    url: jdbc:postgresql://event-db:5432/event_service
+    username: vou
+    password: vouadmin123
   jpa:
     properties:
       hibernate:
@@ -16,9 +16,9 @@ spring:
 
   kafka:
     producer:
-      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+      bootstrap-servers: kafka:9094
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       retries: 3
 server:
-  port: ${SERVER_PORT}
+  port: 8003

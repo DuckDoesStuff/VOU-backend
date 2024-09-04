@@ -9,7 +9,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +42,24 @@ public class UserActivityService {
         ApiResponse<List<ReportTotalParticipantsByBrand>> response = new ApiResponse<>();
         response.setStatus(HttpStatus.OK.value());
         response.setResult(reportTotalParticipantsByBrands);
+        return response;
+    }
+
+    public ApiResponse<ReportUserCount>  getNewAndOldUsersCountByBrand(String brandID) {
+        LocalDateTime lastWeek = LocalDateTime.now().minusWeeks(1);
+
+        Object[] result = userActivityRepository.countNewAndOldUsersByBrand(lastWeek, brandID);
+        ApiResponse<ReportUserCount> response = new ApiResponse<>();
+        Map<String, Long> userCounts = new HashMap<>();
+        userCounts.put("newUsers", ((Number) result[0]).longValue());
+        userCounts.put("oldUsers", ((Number) result[1]).longValue());
+        ReportUserCount reportUserCount = ReportUserCount
+                .builder()
+                .newUsersCount(userCounts.get("newUsers"))
+                .oldUsersCount(userCounts.get("oldUsers"))
+                .build();
+        response.setStatus(HttpStatus.OK.value());
+        response.setResult(reportUserCount);
         return response;
     }
 
