@@ -124,7 +124,7 @@ services:
       - mc-service
       - report-service
     build: ./nginx
-    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-api-gateway:${version:-latest}
+    image: asia-southeast1-docker.pkg.dev/vou-marketing/vou-app/vou-api-gateway:${version:-latest}
     volumes:
     - ./temp:/etc/nginx/temp
     ports:
@@ -144,7 +144,7 @@ services:
       - kafka
     profiles: [API]
     build: ./auth-service
-    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-auth-service:${version:-latest}
+    image: asia-southeast1-docker.pkg.dev/vou-marketing/vou-app/vou-auth-service:${version:-latest}
     ports:
       - "8001:8001"
     networks:
@@ -159,7 +159,7 @@ services:
       - kafka
     profiles: [API]
     build: ./user-service
-    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-user-service:${version:-latest}
+    image: asia-southeast1-docker.pkg.dev/vou-marketing/vou-app/vou-user-service:${version:-latest}
     ports:
       - "8002:8002"
     networks:
@@ -174,7 +174,7 @@ services:
       - kafka
     profiles: [API]
     build: ./EventService
-    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-event-service:${version:-latest}
+    image: asia-southeast1-docker.pkg.dev/vou-marketing/vou-app/vou-event-service:${version:-latest}
     ports:
       - "8003:8003"
     networks:
@@ -189,7 +189,7 @@ services:
       - kafka
     profiles: [API]
     build: ./GameService
-    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-game-service:${version:-latest}
+    image: asia-southeast1-docker.pkg.dev/vou-marketing/vou-app/vou-game-service:${version:-latest}
     ports:
       - "8004:8004"
     networks:
@@ -204,7 +204,7 @@ services:
       - kafka
     profiles: [API]
     build: ./NotficationService
-    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-notification-service:${version:-latest}
+    image: asia-southeast1-docker.pkg.dev/vou-marketing/vou-app/vou-notification-service:${version:-latest}
     ports:
       - "8005:8005"
     networks:
@@ -218,7 +218,7 @@ services:
       - kafka
     profiles: [API]
     build: ./MCService
-    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-mc-service:${version:-latest}
+    image: asia-southeast1-docker.pkg.dev/vou-marketing/vou-app/vou-mc-service:${version:-latest}
     ports:
       - "8006:8006"
     networks:
@@ -233,7 +233,7 @@ services:
       - report-db
     profiles: [API]
     build: ./ReportService
-    image: asia-southeast1-docker.pkg.dev/vou-hcmus-69ff6/vou-backend/vou-report-service:${version:-latest}
+    image: asia-southeast1-docker.pkg.dev/vou-marketing/vou-app/vou-report-service:${version:-latest}
     ports:
       - "8007:8007"
     networks:

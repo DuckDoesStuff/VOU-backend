@@ -11,16 +11,42 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+  
     # Add "id-token" with the intended permissions.
     permissions:
       contents: 'read'
       id-token: 'write'
 
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Create shorter commit SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Check outputs
+        run: echo ${{ steps.vars.outputs.sha_short }}
+
+      # Build the Docker images
+      - name: Build Docker images
+        run: |
+          version=${{ steps.vars.outputs.sha_short }}
+          docker compose --profile API -f ./docker-compose-prod.yaml build -q
+
+      - name: Create shorter commit SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Check outputs
+        run: echo ${{ steps.vars.outputs.sha_short }}
+
+      # Build the Docker images
+      - name: Build Docker images
+        run: |
+          version=${{ steps.vars.outputs.sha_short }}
+          docker compose --profile API -f ./docker-compose-prod.yaml build -q
 
       # Authenticate to Google Cloud
       - name: Google Auth
@@ -40,14 +66,9 @@ jobs:
           password: '${{ steps.auth.outputs.access_token }}'
           registry: '${{ env.GAR_LOCATION }}-docker.pkg.dev'
 
-      # Build the Docker images
-      - name: Build Docker images
-        run: |
-          version=${{ github.sha }}
-          docker compose --profile API -f ./docker-compose-prod.yaml build -q
-      
+
       # Push the Docker images to the Artifact Registry
       - name: Push Docker images
         run: |
-          version=${{ github.sha }}
-          docker compose --profile API -f ./docker-compose-prod.yaml push
+          version=${{ steps.vars.outputs.sha_short }}
+          docker compose --profile API -f ./docker-compose-prod.yaml push -q
