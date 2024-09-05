@@ -5,9 +5,13 @@ on:
     branches: [ "deploy" ]
 
 env:
-  PROJECT_ID: ${{ secrets.PROJECT_ID }}
-  GAR_LOCATION: ${{ secrets.GAR_LOCATION }}
-
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}       # Google Cloud project ID
+  GAR_LOCATION: ${{ secrets.GAR_LOCATION }}   # Artifact Registry location
+  GAR_REPO: ${{ secrets.GAR_REPO_NAME }}   # Artifact Registry location
+  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER_NAME}} # Cluster name
+  GKE_ZONE: ${{ secrets.GKE_CLUSTER_ZONE }}   # Cluster zone
+  WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}   # Workload Identity Provider
+  WIF_SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT }} # Workload Identity Service Account
 
 jobs:
   build:
@@ -22,12 +26,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+
+      # Create a shorter commit SHA
       - name: Create shorter commit SHA
         id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
+
+      # Check the outputs
       - name: Check outputs
         run: echo ${{ steps.vars.outputs.sha_short }}
+
 
       # Build the Docker images
       - name: Build Docker images
@@ -35,14 +44,16 @@ jobs:
           version=${{ steps.vars.outputs.sha_short }}
           docker compose --profile API -f ./docker-compose-prod.yaml build -q
 
+
       # Authenticate to Google Cloud
       - name: Google Auth
         id: auth
         uses: 'google-github-actions/auth@v1'
         with:
           token_format: 'access_token'
-          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}'
-          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}'
+          workload_identity_provider: '${{ env.WIF_PROVIDER }}'
+          service_account: '${{ env.WIF_SERVICE_ACCOUNT }}'
+
 
       # Authenticate to the Docker registry
       - name: Docker Auth
@@ -59,3 +70,36 @@ jobs:
         run: |
           version=${{ steps.vars.outputs.sha_short }}
           docker compose --profile API -f ./docker-compose-prod.yaml push -q
+
+
+      # Get the GKE credentials so we can deploy to the cluster
+      - name: Set up GKE credentials
+        uses: google-github-actions/get-gke-credentials@v0
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_ZONE }}
+
+
+      # Set up kustomize
+      - name: Set up Kustomize
+        run: |-
+          curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+          chmod u+x ./kustomize
+
+
+      # Deploy the Docker image to the GKE cluster
+      # TODO: CHANGE THIS
+      - name: Deploy
+        run: |-
+          version=${{ steps.vars.outputs.sha_short }}
+          cd kubernetes
+          ./kustomize edit set image vou-backend-auth-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-auth-service:version
+          ./kustomize edit set image vou-backend-user-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-user-service:version
+          ./kustomize edit set image vou-backend-game-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-game-service:version
+          ./kustomize edit set image vou-backend-event-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-event-service:version
+          ./kustomize edit set image vou-backend-mc-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-mc-service:version
+          ./kustomize edit set image vou-backend-notification-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-notification-service:version
+          ./kustomize edit set image vou-backend-report-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-report-service:version
+          ./kustomize edit set image vou-backend-api-gateway=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-mc-service:version
+          ./kustomize build . | kubectl apply -f -
+          kubectl get services -o wide
