@@ -35,13 +35,6 @@ jobs:
           version=${{ steps.vars.outputs.sha_short }}
           docker compose --profile API -f ./docker-compose-prod.yaml build -q
 
-      - name: Create shorter commit SHA
-        id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
-      - name: Check outputs
-        run: echo ${{ steps.vars.outputs.sha_short }}
-
       # Build the Docker images
       - name: Build Docker images
         run: |
