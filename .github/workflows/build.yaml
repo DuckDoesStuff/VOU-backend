@@ -44,7 +44,7 @@ jobs:
       - name: Build Docker images
         run: |
           version=${{ github.sha }}
-          docker compose --profile API -f ./docker-compose-prod.yaml -q build
+          docker compose --profile API -f ./docker-compose-prod.yaml build -q
       
       # Push the Docker images to the Artifact Registry
       - name: Push Docker images
