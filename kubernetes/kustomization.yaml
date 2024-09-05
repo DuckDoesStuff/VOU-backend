@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- auth-service
+- user-service
+- game-service
+- event-service
+- notification-service
+- report-service
+- nginx
+- kafka
