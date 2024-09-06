@@ -19,6 +19,11 @@ public class PromotionalEventController {
     @Autowired
     private PromotionalEventService promotionalEventService;
 
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> getEventMatchEventName(@RequestParam("nameOfEvent") String nameOfEvent){
+        return promotionalEventService.getEventMatchEventName(nameOfEvent);
+    }
+
     @PostMapping()
     public ResponseEntity<ApiResponse<PromotionalEvent>> createEvent(@RequestBody CreateEventRequest event) {
        return promotionalEventService.createEvent(event);

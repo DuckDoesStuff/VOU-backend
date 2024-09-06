@@ -22,6 +22,21 @@ public class PromotionalEventService {
 
     private final KafkaProducerService kafkaProducerService;
 
+    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> getEventMatchEventName(String nameOfEvent) {
+        if(nameOfEvent.isBlank())
+            return getAllEvents();
+
+        List<PromotionalEvent> promotionalEvents = repository.findEventMatchEventName(nameOfEvent);
+        ApiResponse<List<PromotionalEvent>> apiResponse = new ApiResponse<>();
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setResult(promotionalEvents);
+
+        return new ResponseEntity<>(
+                apiResponse,
+                HttpStatus.OK
+        );
+    }
+
     public ResponseEntity<ApiResponse<PromotionalEvent>> createEvent(CreateEventRequest event) {
         PromotionalEvent promotionalEvent = PromotionalEvent.builder()
                 .brandID(event.getBrandID())
