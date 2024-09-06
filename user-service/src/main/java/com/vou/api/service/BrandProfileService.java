@@ -1,8 +1,8 @@
 package com.vou.api.service;
 
+import com.vou.api.dto.AuthRegisterDto;
 import com.vou.api.dto.brand.BrandRegisterDto;
 import com.vou.api.dto.brand.BrandUpdateDto;
-import com.vou.api.dto.AuthRegisterDto;
 import com.vou.api.dto.response.ApiResponse;
 import com.vou.api.dto.response.AuthRegisterResponse;
 import com.vou.api.entity.BrandProfile;
@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,6 +35,11 @@ public class BrandProfileService {
 
     public List<BrandProfile> getAllBrands() {
         return brandProfileRepository.findAll();
+    }
+
+    public List<BrandProfile> getBrandMatchBrandname(String brandname) {
+        if (brandname.isBlank()) return new ArrayList<>();
+        return brandProfileRepository.searchByBrandname(brandname);
     }
 
     public AuthRegisterResponse createBrand(BrandRegisterDto brandRegisterDto) {

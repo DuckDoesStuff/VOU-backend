@@ -9,9 +9,7 @@ import com.vou.api.entity.UserProfile;
 import com.vou.api.enumerate.ProfileState;
 import com.vou.api.service.UserProfileService;
 import jakarta.validation.Valid;
-import org.apache.kafka.shaded.com.google.protobuf.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +28,14 @@ public class UserProfileController {
         return ApiResponse.<List<UserProfile>>builder()
                 .code(200)
                 .result(userProfileService.getAllUsers())
+                .build();
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<List<UserProfile>> getUserMatchUsername(@RequestParam("username") String username) {
+        return ApiResponse.<List<UserProfile>>builder()
+                .code(200)
+                .result(userProfileService.getUserMatchUsername(username))
                 .build();
     }
 

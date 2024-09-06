@@ -7,7 +7,6 @@ import com.vou.api.dto.user.UserRegisterDto;
 import com.vou.api.dto.user.UserUpdateDto;
 import com.vou.api.entity.UserProfile;
 import com.vou.api.enumerate.ProfileState;
-import com.vou.api.enumerate.Role;
 import com.vou.api.exception.AuthException;
 import com.vou.api.exception.ErrorCode;
 import com.vou.api.exception.ProfileException;
@@ -19,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,6 +46,11 @@ public class UserProfileService {
 
     public List<UserProfile> getAllUsers() {
         return userProfileRepository.findAll();
+    }
+
+    public List<UserProfile> getUserMatchUsername(String username) {
+        if(username.isBlank()) return new ArrayList<>();
+        return userProfileRepository.searchByUsername(username);
     }
 
     public UserProfile getUserById(UUID id) {

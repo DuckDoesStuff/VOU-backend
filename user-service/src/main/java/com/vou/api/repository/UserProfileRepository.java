@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,8 +16,6 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, UUID> 
     Optional<UserProfile> findUserProfileByPhone(String phone);
     Optional<UserProfile> findUserProfileByEmail(String email);
 
-    @Query("SELECT u FROM UserProfile u WHERE u.username = :username OR u.email = :email OR u.phone = :phone")
-    Optional<UserProfile> findByUsernameOrEmailOrPhone(@Param("username") String username,
-                                                       @Param("email") String email,
-                                                       @Param("phone") String phone);
+    @Query("SELECT u FROM UserProfile u WHERE u.username LIKE :username%")
+    List<UserProfile> searchByUsername(@Param("username") String username);
 }

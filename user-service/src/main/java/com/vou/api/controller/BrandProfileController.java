@@ -30,6 +30,14 @@ public class BrandProfileController {
                 .build();
     }
 
+    @GetMapping("/search")
+    public ApiResponse<List<BrandProfile>> getBrandMatchBrandname(@RequestParam("brandname") String brandname) {
+        return ApiResponse.<List<BrandProfile>>builder()
+                .code(200)
+                .result(brandProfileService.getBrandMatchBrandname(brandname))
+                .build();
+    }
+
     @PostMapping
     public ApiResponse<AuthRegisterResponse> createBrand(@Valid @RequestBody BrandRegisterDto brandRegisterDto) {
         return ApiResponse.<AuthRegisterResponse>builder()
