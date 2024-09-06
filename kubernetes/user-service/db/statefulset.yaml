@@ -21,7 +21,7 @@ spec:
         resources:
           limits:
             memory: "256Mi"
-            cpu: "200m"
+            cpu: "100m"
         env:
         - name: POSTGRES_USER
           valueFrom:
@@ -38,9 +38,11 @@ spec:
             secretKeyRef:
               name: user-db-secret
               key: POSTGRES_DB
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
         volumeMounts:
         - name: user-storage
-          mountPath: /var/lib/postgresql/data
+          mountPath: /var/lib/postgresql/data/db
       volumes:
       - name: user-storage
         persistentVolumeClaim:

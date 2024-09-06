@@ -21,7 +21,7 @@ spec:
         resources:
           limits:
             memory: "256Mi"
-            cpu: "200m"
+            cpu: "100m"
         volumeMounts:
         - name: game-storage
           mountPath: /data/db

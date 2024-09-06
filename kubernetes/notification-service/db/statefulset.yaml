@@ -20,8 +20,8 @@ spec:
         - containerPort: 27017
         resources:
           limits:
-            memory: "256Mi"
-            cpu: "200m"
+            memory: "512Mi"
+            cpu: "100m"
         volumeMounts:
         - name: notification-storage
           mountPath: /data/db

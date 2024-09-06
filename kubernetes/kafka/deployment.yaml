@@ -15,6 +15,13 @@ spec:
       labels:
         app: kafka
     spec:
+      initContainers:
+        - name: volume-permission-fix
+          image: busybox
+          command: ['sh', '-c', 'chmod -R 777 /bitnami/kafka']
+          volumeMounts:
+            - name: kafka-storage
+              mountPath: /bitnami/kafka
       containers:
       - name: kafka
         image: bitnami/kafka:latest
@@ -64,12 +71,9 @@ spec:
                 key: KAFKA_CFG_CONTROLLER_LISTENER_NAMES
 
         resources:
-          requests:
-            memory: 512Mi
-            cpu: 250m
           limits:
-            memory: 1Gi
-            cpu: 500m
+            memory: 512Mi
+            cpu: 300m
         volumeMounts:
           - name: kafka-storage
             mountPath: /bitnami/kafka

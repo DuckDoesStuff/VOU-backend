@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app: nginx
-  type: NodePort
+  type: LoadBalancer
   ports:
     - protocol: TCP
       port: 8000

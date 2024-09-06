@@ -1,26 +1,56 @@
-name: 'Build docker compose file and push to Artifact Registry'
+name: 'Build docker images and push to Artifact Registry'
 
 on:
   push:
     branches: [ "deploy" ]
 
 env:
-  PROJECT_ID: ${{ secrets.PROJECT_ID }}
-  GAR_LOCATION: ${{ secrets.GAR_LOCATION }}
-
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}       # Google Cloud project ID
+  GAR_LOCATION: ${{ secrets.GAR_LOCATION }}   # Artifact Registry location
+  GAR_REPO: ${{ secrets.GAR_REPO_NAME }}   # Artifact Registry location
+  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER_NAME}} # Cluster name
+  GKE_ZONE: ${{ secrets.GKE_CLUSTER_ZONE }}   # Cluster zone
+  WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}   # Workload Identity Provider
+  WIF_SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT }} # Workload Identity Service Account
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+  
     # Add "id-token" with the intended permissions.
     permissions:
       contents: 'read'
       id-token: 'write'
 
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+
+      # Create a shorter commit SHA
+      - name: Create shorter commit SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+
+      # Check the outputs
+      - name: Check outputs
+        run: echo ${{ steps.vars.outputs.sha_short }}
+
+
+      # Build the Docker images
+      - name: Build Docker images
+        run: |
+          docker build -t $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-auth-service:${{ steps.vars.outputs.sha_short }} ./auth-service
+          docker build -t $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-user-service:${{ steps.vars.outputs.sha_short }} ./user-service
+          docker build -t $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-game-service:${{ steps.vars.outputs.sha_short }} ./GameService
+          docker build -t $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-event-service:${{ steps.vars.outputs.sha_short }} ./EventService
+          docker build -t $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-mc-service:${{ steps.vars.outputs.sha_short }} ./MCService
+          docker build -t $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-notification-service:${{ steps.vars.outputs.sha_short }} ./NotficationService
+          docker build -t $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-report-service:${{ steps.vars.outputs.sha_short }} ./ReportService
+          docker build -t $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-api-gateway:${{ steps.vars.outputs.sha_short }} ./nginx
+
+
 
       # Authenticate to Google Cloud
       - name: Google Auth
@@ -28,8 +58,9 @@ jobs:
         uses: 'google-github-actions/auth@v1'
         with:
           token_format: 'access_token'
-          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}'
-          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}'
+          workload_identity_provider: '${{ env.WIF_PROVIDER }}'
+          service_account: '${{ env.WIF_SERVICE_ACCOUNT }}'
+
 
       # Authenticate to the Docker registry
       - name: Docker Auth
@@ -40,14 +71,48 @@ jobs:
           password: '${{ steps.auth.outputs.access_token }}'
           registry: '${{ env.GAR_LOCATION }}-docker.pkg.dev'
 
-      # Build the Docker images
-      - name: Build Docker images
-        run: |
-          version=${{ github.sha }}
-          docker compose --profile API -f ./docker-compose-prod.yaml build -q
-      
+
       # Push the Docker images to the Artifact Registry
       - name: Push Docker images
         run: |
-          version=${{ github.sha }}
-          docker compose --profile API -f ./docker-compose-prod.yaml push
+          docker push $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-auth-service:${{ steps.vars.outputs.sha_short }}
+          docker push $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-user-service:${{ steps.vars.outputs.sha_short }}
+          docker push $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-game-service:${{ steps.vars.outputs.sha_short }}
+          docker push $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-event-service:${{ steps.vars.outputs.sha_short }}
+          docker push $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-mc-service:${{ steps.vars.outputs.sha_short }}
+          docker push $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-notification-service:${{ steps.vars.outputs.sha_short }}
+          docker push $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-report-service:${{ steps.vars.outputs.sha_short }}
+          docker push $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-api-gateway:${{ steps.vars.outputs.sha_short }}
+
+
+      # Get the GKE credentials so we can deploy to the cluster
+      - name: Set up GKE credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_ZONE }}
+
+
+      # Set the kustomize
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v2
+      - run: |
+          cd kubernetes
+          kustomize edit set image vou-backend-auth-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-auth-service:${{ steps.vars.outputs.sha_short }}
+          kustomize edit set image vou-backend-user-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-user-service:${{ steps.vars.outputs.sha_short }}
+          kustomize edit set image vou-backend-game-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-game-service:${{ steps.vars.outputs.sha_short }}
+          kustomize edit set image vou-backend-event-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-event-service:${{ steps.vars.outputs.sha_short }}
+          kustomize edit set image vou-backend-mc-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-mc-service:${{ steps.vars.outputs.sha_short }}
+          kustomize edit set image vou-backend-notification-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-notification-service:${{ steps.vars.outputs.sha_short }}
+          kustomize edit set image vou-backend-report-service=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-report-service:${{ steps.vars.outputs.sha_short }}
+          kustomize edit set image vou-backend-api-gateway=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/vou-backend-api-gateway:${{ steps.vars.outputs.sha_short }}
+
+
+      # Deploy the Docker image to the GKE cluster
+      # TODO: CHANGE THIS
+      - name: Deploy
+        run: |-
+          cd kubernetes
+          kustomize build .
+          kustomize build . | kubectl apply -f -
+          kubectl get services -o wide
