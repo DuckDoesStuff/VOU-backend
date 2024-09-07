@@ -62,7 +62,7 @@ public class PromotionalEventController {
     }
 
     @GetMapping("/brand/{brandID}/search")
-    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> searchEventByBrandID(@PathVariable String brandID, @RequestParam(value = "nameOfEvent", defaultValue = "") String nameOfEvent) {
+    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> searchEventByBrandID(@PathVariable UUID brandID, @RequestParam(value = "nameOfEvent", defaultValue = "") String nameOfEvent) {
         return promotionalEventService.searchEventByBrandID(nameOfEvent, brandID);
     }
 }

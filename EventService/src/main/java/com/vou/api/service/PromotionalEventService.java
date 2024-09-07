@@ -113,8 +113,9 @@ public class PromotionalEventService {
         );
     }
 
-    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> searchEventByBrandID(String nameOfEvent, String brandID) {
+    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> searchEventByBrandID(String nameOfEvent, UUID brandID) {
         List<PromotionalEvent> promotionalEvents = repository.findEventMatchEventNameByBrand(nameOfEvent, brandID);
+        System.out.println(nameOfEvent + " " + brandID);
         ApiResponse<List<PromotionalEvent>> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(HttpStatus.OK.value());
         apiResponse.setResult(promotionalEvents);
