@@ -89,10 +89,9 @@ public class PromotionalEventService {
         );
     }
 
-    // Subject to change
-    public ResponseEntity<ApiResponse<List<Long>>> getEventsByBrandID(UUID brandID) {
-        List<Long> eventIDs = repository.getEventsIDByBrandID(brandID);
-        ApiResponse<List<Long>> response = new ApiResponse<>();
+    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> getPromotionalEventsByBrandID(UUID brandID) {
+        List<PromotionalEvent> eventIDs = repository.findByBrandID(brandID);
+        ApiResponse<List<PromotionalEvent>> response = new ApiResponse<>();
         if (eventIDs == null) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage("Invalid brandID or unable to fetch eventIDs");
@@ -114,26 +113,14 @@ public class PromotionalEventService {
         );
     }
 
-    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> getPromotionalEventsByBrandID(UUID brandID) {
-        List<PromotionalEvent> eventIDs = repository.findByBrandID(brandID);
-        ApiResponse<List<PromotionalEvent>> response = new ApiResponse<>();
-        if (eventIDs == null) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.setMessage("Invalid brandID or unable to fetch eventIDs");
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> searchEventByBrandID(String nameOfEvent, String brandID) {
+        List<PromotionalEvent> promotionalEvents = repository.findEventMatchEventNameByBrand(nameOfEvent, brandID);
+        ApiResponse<List<PromotionalEvent>> apiResponse = new ApiResponse<>();
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setResult(promotionalEvents);
 
-        if (eventIDs.isEmpty()) {
-            response.setStatus(HttpStatus.NO_CONTENT.value());
-            response.setMessage("No eventIDs found for the given brandID");
-            response.setResult(eventIDs);
-            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
-        }
-        response.setStatus(HttpStatus.OK.value());
-        response.setMessage("Get eventIDs");
-        response.setResult(eventIDs);
         return new ResponseEntity<>(
-                response,
+                apiResponse,
                 HttpStatus.OK
         );
     }

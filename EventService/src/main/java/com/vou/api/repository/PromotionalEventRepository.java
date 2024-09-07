@@ -18,4 +18,7 @@ public interface PromotionalEventRepository extends JpaRepository<PromotionalEve
 
     @Query(value = "SELECT e FROM PromotionalEvent e WHERE e.nameOfEvent LIKE :nameOfEvent%")
     List<PromotionalEvent> findEventMatchEventName(String nameOfEvent);
+
+    @Query(value = "SELECT e FROM PromotionalEvent e WHERE e.nameOfEvent LIKE :nameOfEvent% AND e.brandID = :brandID")
+    List<PromotionalEvent> findEventMatchEventNameByBrand(String nameOfEvent, String brandID);
 }

@@ -26,7 +26,7 @@ public class PromotionalEventController {
 
     @PostMapping()
     public ResponseEntity<ApiResponse<PromotionalEvent>> createEvent(@RequestBody CreateEventRequest event) {
-       return promotionalEventService.createEvent(event);
+        return promotionalEventService.createEvent(event);
     }
 
     @PutMapping("/{id}")
@@ -61,4 +61,8 @@ public class PromotionalEventController {
         return promotionalEventService.getPromotionalEventsByBrandID(brandID);
     }
 
+    @GetMapping("/brand/{brandID}/search")
+    public ResponseEntity<ApiResponse<List<PromotionalEvent>>> searchEventByBrandID(@PathVariable String brandID, @RequestParam(value = "nameOfEvent", defaultValue = "") String nameOfEvent) {
+        return promotionalEventService.searchEventByBrandID(nameOfEvent, brandID);
+    }
 }
