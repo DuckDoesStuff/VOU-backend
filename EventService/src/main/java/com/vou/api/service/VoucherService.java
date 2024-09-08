@@ -3,7 +3,9 @@ package com.vou.api.service;
 import com.vou.api.dto.ApiResponse;
 import com.vou.api.dto.VoucherDto;
 import com.vou.api.dto.VoucherTypeMessage;
+import com.vou.api.dto.response.GameScore;
 import com.vou.api.entity.PromotionalEvent;
+import com.vou.api.entity.UserScore;
 import com.vou.api.entity.VoucherType;
 import com.vou.api.entity.VoucherUser;
 import com.vou.api.exception.ErrorCode;
@@ -12,6 +14,7 @@ import com.vou.api.repository.PromotionalEventRepository;
 import com.vou.api.repository.VoucherTypeRepository;
 import com.vou.api.repository.VoucherUserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class VoucherService {
@@ -243,5 +247,35 @@ public class VoucherService {
                 HttpStatus.OK
         );
 
+    }
+
+    public void rewardTopPlayers(GameScore gameScore) {
+        List<VoucherType> voucherType = voucherTypeRepository.findByGameID(gameScore.getGameID()).orElseThrow(() -> new VoucherException(ErrorCode.VOUCHER_NOT_FOUND));
+
+        List<UserScore> userScores = gameScore.getUserScores();
+
+        int i = 1;
+        VoucherType voucher = voucherType.getFirst();
+        for (UserScore userScore : userScores) {
+            try {
+                givePlayerVoucher(UUID.fromString(userScore.getUserID()), voucher.getVoucherTypeID());
+            } catch (VoucherException e) {
+                switch (e.getErrorCode()) {
+                    case ErrorCode.VOUCHER_OUT_OF_STOCK:
+                        voucher = voucherType.get(i);
+                        i++;
+                        givePlayerVoucher(UUID.fromString(userScore.getUserID()), voucher.getVoucherTypeID());
+                        break;
+                    case ErrorCode.VOUCHER_ALREADY_SAVED:
+                        givePlayerVoucher(UUID.fromString(userScore.getUserID()), voucherType.get(i+1).getVoucherTypeID());
+                        break;
+                    default:
+                        i++;
+                        break;
+                }
+            } catch (Exception e) {
+                log.warn("Rewarding player: Failed to give player {} voucher", userScore.getUserID());
+            }
+        }
     }
 }

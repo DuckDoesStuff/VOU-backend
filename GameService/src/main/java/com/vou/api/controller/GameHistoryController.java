@@ -1,8 +1,10 @@
 package com.vou.api.controller;
 
 import com.vou.api.entity.GameHistory;
+import com.vou.api.entity.UserInfo;
 import com.vou.api.service.GameHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,13 +40,13 @@ public class GameHistoryController {
         return gameHistoryService.getGameHistoriesByGameID(gameID);
     }
 
-    @PostMapping
-    public GameHistory saveGameHistory(@RequestBody GameHistory gameHistory) {
-        return gameHistoryService.saveGameHistory(gameHistory);
-    }
-
     @DeleteMapping("/{id}")
     public void deleteGameHistory(@PathVariable String id) {
         gameHistoryService.deleteGameHistory(id);
+    }
+
+    @KafkaListener(topics = "SaveGameHistory")
+    public void saveGameHistory(List<UserInfo> userInfos) {
+        gameHistoryService.saveGameHistory(userInfos);
     }
 }

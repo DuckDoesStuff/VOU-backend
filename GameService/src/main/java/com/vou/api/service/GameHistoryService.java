@@ -1,11 +1,14 @@
 package com.vou.api.service;
 
 // GameHistoryService.java
+
 import com.vou.api.entity.GameHistory;
+import com.vou.api.entity.UserInfo;
 import com.vou.api.repository.GameHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,8 +36,20 @@ public class GameHistoryService {
         return gameHistoryRepository.findByGameID(gameID);
     }
 
-    public GameHistory saveGameHistory(GameHistory gameHistory) {
-        return gameHistoryRepository.save(gameHistory);
+    public void saveGameHistory(List<UserInfo> userInfos) {
+        GameHistory gameHistory = new GameHistory();
+        gameHistory.setGameID(userInfos.getFirst().getGameID());
+        gameHistory.setEventID(userInfos.getFirst().getEventID());
+
+        List<GameHistory.UserInfo> gameHistoryUserInfo = new ArrayList<>();
+        for (UserInfo userInfo : userInfos)
+            gameHistoryUserInfo.add(GameHistory.UserInfo.builder()
+                    .userID(userInfo.getUserID())
+                    .joinTime(userInfo.getJoinTime())
+                    .leftTime(userInfo.getLeaveTime())
+                    .build());
+
+        gameHistory.setUsers(gameHistoryUserInfo);
     }
 
     public void deleteGameHistory(String id) {

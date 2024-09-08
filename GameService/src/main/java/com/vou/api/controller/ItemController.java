@@ -61,7 +61,7 @@ public class ItemController {
         itemService.deleteItem(id);
     }
 
-        @PostMapping("/random_item_type")
+    @PostMapping("/random_item_type")
     public ResponseEntity<ApiResponse<ItemType>> getRandomItemType(@RequestBody GetRandomItemTypeDTO getRandomItemTypeDTO) {
 //        System.out.println(getRandomItemTypeDTO.toString());
         return itemService.getRandomItem(getRandomItemTypeDTO);
