@@ -54,7 +54,7 @@ public class NotificationController {
     }
 
 
-    @GetMapping("/getNotification/{userID}")
+    @GetMapping("/getPushNotification/{userID}")
     ApiResponse<UserNotificationReponse> getPushNotification(@PathVariable("userID") String userID) {
         log.info("hello");
         System.out.println("hjsnjasndj");
