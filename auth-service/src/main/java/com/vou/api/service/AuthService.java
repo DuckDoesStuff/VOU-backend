@@ -46,7 +46,6 @@ public class AuthService {
     }
 
     public TokenDto authenticate(AuthDto authDto) {
-        System.out.println(authDto.getUsername());
         if(authDto.getPassword().equals("admin") && authDto.getUsername().equals("admin"))
         {
             System.out.println("Prime admin logging in");
@@ -65,6 +64,9 @@ public class AuthService {
         Auth auth = authRepository.findByUsername(authDto.getUsername());
         if (auth == null)
             throw new AuthException(ErrorCode.USER_NOT_EXIST);
+
+        if(auth.getProfileState() == ProfileState.LOCKED)
+            throw new AuthException(ErrorCode.ACCOUNT_LOCKED);
 
         if (auth.getRole() == Role.USER && authDto.getRole() != Role.USER)
             throw new AuthException(ErrorCode.UNAUTHENTICATED);

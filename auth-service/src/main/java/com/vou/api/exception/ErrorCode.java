@@ -9,7 +9,8 @@ public enum ErrorCode {
     UNAUTHENTICATED(4010, "Unauthenticated"),
     INVALID_TOKEN(4011, "Invalid token"),
     INVALID_OTP(4012, "Invalid OTP"),
-    WRONG_CREDENTIAL(4013, "Wrong password")
+    WRONG_CREDENTIAL(4013, "Wrong password"),
+    ACCOUNT_LOCKED(4014, "This account has been locked, please contact our customer service")
     ;
 
     ErrorCode(int code, String message) {
