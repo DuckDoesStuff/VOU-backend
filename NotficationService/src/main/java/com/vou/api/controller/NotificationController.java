@@ -32,6 +32,14 @@ public class NotificationController {
                 .result(notificationService.sendGeneralPushNotification(pushNotificationRequest))
                 .build();
     }
+    @PostMapping("/sendSpecificMessage")
+    ApiResponse<String> sendSpecificMessage(@RequestBody @Valid PushTopicNotificationRequest pushNotificationRequest) {
+//        log.info("InfoForStream: {}", message);
+        log.info(pushNotificationRequest.toString());
+        return ApiResponse.<String>builder()
+                .result( notificationService.sendSpecificMessage(pushNotificationRequest))
+                .build();
+    }
 
     @KafkaListener(topics = "startStream")
     public void listenStartStreamRequest(InfoForStream message) {
@@ -39,10 +47,17 @@ public class NotificationController {
         PushTopicNotificationRequest pushNotificationRequest = pushNotificationRequestMapper.infoForStreamToPNR(message);
         notificationService.sendGeneralPushNotification(pushNotificationRequest);
     }
+    @KafkaListener(topics = "sendSpecificMessage")
+    public void listenSendSpecificMessage(PushTopicNotificationRequest pushNotificationRequest) {
+//        log.info("InfoForStream: {}", message);
+        notificationService.sendSpecificMessage(pushNotificationRequest);
+    }
 
 
-    @GetMapping("/getPushNotification/{userID}")
+    @GetMapping("/getNotification/{userID}")
     ApiResponse<UserNotificationReponse> getPushNotification(@PathVariable("userID") String userID) {
+        log.info("hello");
+        System.out.println("hjsnjasndj");
         return ApiResponse.<UserNotificationReponse>builder()
                 .result(new UserNotificationReponse(notificationService.getPushNotificationOfUser(userID)))
                 .build();

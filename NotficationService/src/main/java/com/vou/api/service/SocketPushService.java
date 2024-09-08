@@ -10,11 +10,15 @@ import com.vou.api.socket.manage.SocketHandler;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+
 @Component
 @AllArgsConstructor
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SocketPushService implements NotificationServiceType {
     @Autowired
@@ -45,8 +49,26 @@ public class SocketPushService implements NotificationServiceType {
     }
 
     @Override
-    public String sendSpecificNotification(Notification notification) {
-        return "";
+    public String sendSpecificNotification(Notification notification) throws AppException {
+
+        SocketMessage socketMessage = SocketMessage.builder()
+                .tittle(notification.getTitle())
+                .content(notification.getContent())
+                .time(notification.getTime().toString())
+                .build();
+
+        try {
+//            response = firebaseMessaging.send(message);
+//            System.out.println(response);
+            ArrayList<String> receivers = notification.getReceiver();
+            for (String receiver : receivers) {
+                socketHandler.sendMessageToSpecificUserID(receiver,socketMessage);
+            }
+            return "Successfully send notification to " + notification.getTopic();
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            throw new AppException(ErrorCode.CANNOT_SEND_PUSHMESSAGE);
+        }
     }
 
 

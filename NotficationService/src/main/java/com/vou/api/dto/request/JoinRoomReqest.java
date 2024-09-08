@@ -6,5 +6,6 @@ import java.util.List;
 
 @Getter
 public class JoinRoomReqest {
+    String userID;
     List<String> topics;
 }
