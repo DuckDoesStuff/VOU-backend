@@ -28,9 +28,9 @@ public class GameHistoryService {
         return gameHistoryRepository.findByEventID(eventID);
     }
 
-    public List<GameHistory> getGameHistoriesByUserID(Long userID) {
-        return gameHistoryRepository.findByUserID(userID);
-    }
+//    public List<GameHistory> getGameHistoriesByUserID(Long userID) {
+//        return gameHistoryRepository.findByUserID(userID);
+//    }
 
     public List<GameHistory> getGameHistoriesByGameID(Long gameID) {
         return gameHistoryRepository.findByGameID(gameID);

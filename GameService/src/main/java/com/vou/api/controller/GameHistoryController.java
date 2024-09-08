@@ -30,10 +30,11 @@ public class GameHistoryController {
         return gameHistoryService.getGameHistoriesByEventID(eventID);
     }
 
-    @GetMapping("/user/{userID}")
-    public List<GameHistory> getGameHistoriesByUserID(@PathVariable Long userID) {
-        return gameHistoryService.getGameHistoriesByUserID(userID);
-    }
+    // Commenting this because I'm too lazy to fix the real bug
+//    @GetMapping("/user/{userID}")
+//    public List<GameHistory> getGameHistoriesByUserID(@PathVariable Long userID) {
+//        return gameHistoryService.getGameHistoriesByUserID(userID);
+//    }
 
     @GetMapping("/game/{gameID}")
     public List<GameHistory> getGameHistoriesByGameID(@PathVariable Long gameID) {
