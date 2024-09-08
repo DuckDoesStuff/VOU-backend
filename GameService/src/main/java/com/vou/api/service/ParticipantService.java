@@ -53,31 +53,46 @@ public class ParticipantService {
 
     }
     public ResponseEntity<ApiResponse<Participant>> addParticipantToGame(AddParticipantRequest addParticipantRequest) {
-        Participant participant = new Participant();
+        // Check if the participant already exists in the database
+        Optional<Participant> existingParticipant = participantRepository.findParticipantByEventGameAndUser(
+                addParticipantRequest.getEventID(),
+                addParticipantRequest.getGameID(),
+                addParticipantRequest.getUserID());
 
+        // If the participant already exists, return an error response
+        if (existingParticipant.isPresent()) {
+            ApiResponse<Participant> response = new ApiResponse<>(400, "User has already joined this game", null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        // Create a new participant if no existing participant is found
+        Participant participant = new Participant();
         participant.setGameID(addParticipantRequest.getGameID());
         participant.setEventID(addParticipantRequest.getEventID());
         participant.setUserID(addParticipantRequest.getUserID());
+
         Game game = gameRepository.findByGameID(addParticipantRequest.getGameID());
         participant.setTurnLeft(game.getDefaultFreeTurn());
+
         // Send kafka message to report service for tracking their first time join game
         if (game.getDefaultFreeTurn() == 1) {
-            // quiz game
             kafkaService.sendUserJoinQuizGame(participant);
         } else {
-            // shake game
-            kafkaService.sendUserJoinQuizGame(participant);
+            kafkaService.sendUserJoinShakeGame(participant);
         }
 
         try {
+            // Save the participant to the database
             Participant savedParticipant = participantRepository.save(participant);
             ApiResponse<Participant> response = new ApiResponse<>(200, "Participant added successfully", savedParticipant);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            // Handle any exceptions that occur while saving the participant
             ApiResponse<Participant> response = new ApiResponse<>(500, "An error occurred while saving the participant", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
     public ResponseEntity<ApiResponse<Boolean>> checkIfParticipantValidForShareTurn(AddParticipantRequest participantRequest) {
         Optional<Participant> participant = participantRepository.findParticipantByEventGameAndUser(
                 participantRequest.getEventID(),
