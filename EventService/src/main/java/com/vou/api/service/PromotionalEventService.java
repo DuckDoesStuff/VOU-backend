@@ -99,7 +99,7 @@ public class PromotionalEventService {
         }
 
         if (eventIDs.isEmpty()) {
-            response.setStatus(HttpStatus.NO_CONTENT.value());
+            response.setStatus(HttpStatus.OK.value());
             response.setMessage("No eventIDs found for the given brandID");
             response.setResult(eventIDs);
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
