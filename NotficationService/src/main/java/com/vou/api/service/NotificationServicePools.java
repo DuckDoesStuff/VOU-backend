@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class NotificationServiceFactory {
+public class NotificationServicePools {
     private final Map<String, NotificationServiceType> notificationServices = new HashMap<>();
 
     @Autowired

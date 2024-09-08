@@ -24,7 +24,7 @@ import java.util.List;
 public class GeneralListener {
 
     final SocketIOServer server;
-//    final SocketInfoManager socketInfoManager;
+    final SocketInfoManager socketInfoManager;
 
     @OnConnect
     public void onConnect(SocketIOClient client) {
@@ -54,6 +54,9 @@ public class GeneralListener {
             for (String topic: topics) {
                 client.joinRoom(topic);
             }
+
+            socketInfoManager.addNewUser(joinRoomReqest.getUserID(), client.getSessionId().toString(), client);
+
             ackRequest.sendAckData(SocketResponse.builder()
                     .code(200)
                     .build());
@@ -69,5 +72,6 @@ public class GeneralListener {
     @OnEvent("leaveRoom")
     public void onJoinRooms(SocketIOClient client, String topic) {
         client.leaveRoom(topic);
+        socketInfoManager.removeUser(client.getSessionId().toString());
     }
 }

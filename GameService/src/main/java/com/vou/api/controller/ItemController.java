@@ -4,6 +4,7 @@ package com.vou.api.controller;
 import com.vou.api.dto.ApiResponse;
 import com.vou.api.dto.ExchangeItemsRequest;
 import com.vou.api.dto.GetRandomItemTypeDTO;
+import com.vou.api.dto.ItemWithDetails;
 import com.vou.api.entity.Item;
 import com.vou.api.entity.ItemType;
 import com.vou.api.service.ItemService;
@@ -44,6 +45,12 @@ public class ItemController {
     @GetMapping("/user/{userID}")
     public ResponseEntity<ApiResponse<List<Item>>> getItemsByUserID(@PathVariable String userID) {
         return itemService.getItemsByUserID(userID);
+    }
+    // Get items of user in an event
+    @GetMapping("/user/{userID}/event/{eventID}")
+    public ResponseEntity<ApiResponse<List<ItemWithDetails>>> getItemsOfUserInAnEvent(@PathVariable String userID, @PathVariable Long eventID) {
+        System.out.println("Get items of a user in an event" + userID + eventID.toString());
+        return itemService.getItemsOfUserInAnEvent(userID, eventID);
     }
 
     @GetMapping("/itemType/{itemTypeID}")

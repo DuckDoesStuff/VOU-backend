@@ -1,7 +1,5 @@
-package com.vou.api.dto.request;
+package com.vou.api.dto;
 
-
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +12,7 @@ import java.util.ArrayList;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PushTopicNotificationRequest {
     String topic;
-//    @Size(max = 20, message = "INVALID_TITLE")
+    //    @Size(max = 20, message = "INVALID_TITLE")
     String title;
     String content;
     ArrayList<String> receiver;

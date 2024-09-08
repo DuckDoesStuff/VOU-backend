@@ -1,5 +1,6 @@
 package com.vou.api.service;
 
+import com.vou.api.dto.PushTopicNotificationRequest;
 import com.vou.api.dto.UserActivityMessage;
 import com.vou.api.entity.Participant;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -45,5 +46,14 @@ public class KafkaService<T> {
                 .build();
         System.out.println(message);
         kafkaTemplate.send("user_join_quiz_game", (T) message);
+    }
+
+    public void sendUserAGiftUserBAnItem(String userA, String userB) {
+        PushTopicNotificationRequest message = PushTopicNotificationRequest
+                .builder()
+                .title("Receive a gift from friends")
+                .content("You just received a gift from user: " + userB)
+                .build();
+        kafkaTemplate.send("gave_a_gift", (T) message);
     }
 }

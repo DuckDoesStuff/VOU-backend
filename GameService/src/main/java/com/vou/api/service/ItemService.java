@@ -4,6 +4,7 @@ package com.vou.api.service;
 import com.vou.api.dto.ApiResponse;
 import com.vou.api.dto.ExchangeItemsRequest;
 import com.vou.api.dto.GetRandomItemTypeDTO;
+import com.vou.api.dto.ItemWithDetails;
 import com.vou.api.entity.ExchangeHistory;
 import com.vou.api.entity.Item;
 import com.vou.api.entity.ItemType;
@@ -27,11 +28,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ItemService {
 
-    private ItemRepository itemRepository;
-    private ItemTypeRepository itemTypeRepository;
-    private ExchangeHistoryRepository exchangeHistoryRepository;
-    private ParticipantRepository participantRepository;
-    private KafkaService<Object> kafkaService;
+    private final ItemRepository itemRepository;
+    private final ItemTypeRepository itemTypeRepository;
+    private final ExchangeHistoryRepository exchangeHistoryRepository;
+    private final ParticipantRepository participantRepository;
+    private final KafkaService<Object> kafkaService;
 
     public List<Item> getAllItems() {
         return itemRepository.findAll();
@@ -64,6 +65,13 @@ public class ItemService {
         return itemRepository.findByItemTypeID(itemTypeID);
     }
 
+    public ResponseEntity<ApiResponse<List<ItemWithDetails>>> getItemsOfUserInAnEvent(String userID, Long eventID) {
+        ApiResponse<List<ItemWithDetails>> response = new ApiResponse<>();
+        List<ItemWithDetails> items = itemRepository.getItemsOfUserInAnEvent(userID, eventID);
+        response.setStatus(HttpStatus.OK.value());
+        response.setResult(items);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
     public Item saveItem(Item item) {
         return itemRepository.save(item);
     }
@@ -86,6 +94,7 @@ public class ItemService {
                 gameID,
                 userID
         );
+
         if (participant.isEmpty()) {
             response.setMessage("Please participating before shake item");
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -120,14 +129,16 @@ public class ItemService {
         );
     }
     public ResponseEntity<ApiResponse<String>> exchangeItemsBetweenUsers(ExchangeItemsRequest exchangeItemsRequest) {
-        Long eventID = exchangeItemsRequest.getItemA().getEventID();
-        ObjectId gameID = exchangeItemsRequest.getItemA().getGameID();
-        ObjectId itemTypeIDA = exchangeItemsRequest.getItemA().getItemTypeID();
-        String userIDA = exchangeItemsRequest.getItemA().getUserID();
-        String userIDB = exchangeItemsRequest.getItemB().getUserID();
+        System.out.println(exchangeItemsRequest.toString());
+        Long eventID = exchangeItemsRequest.getEventID();
+        ObjectId gameID = exchangeItemsRequest.getGameID();
+        ObjectId itemTypeIDA = exchangeItemsRequest.getItemTypeID();
+        String userIDA = exchangeItemsRequest.getUserIDA();
+        String userIDB = exchangeItemsRequest.getUserIDB();
         Item itemA = itemRepository.findByEventIDAndGameIDAndItemTypeIDAndUserID(eventID, gameID, itemTypeIDA, userIDA);
         Item itemB = itemRepository.findByEventIDAndGameIDAndItemTypeIDAndUserID(eventID, gameID, itemTypeIDA, userIDB);
-
+        System.out.println(itemA);
+        System.out.println(itemB);
         if (itemA == null || itemB == null || itemA.getQuantity() < 1 || itemB.getQuantity() < 1) {
             return new ResponseEntity<>(
                     new ApiResponse<>(HttpStatus.BAD_REQUEST.value(),
@@ -139,6 +150,9 @@ public class ItemService {
         itemB.setQuantity(itemB.getQuantity() + 1);
         itemRepository.save(itemA);
         itemRepository.save(itemB);
+
+        // Kafka message
+
 
         // Save history
         String currentTime = String.valueOf(System.currentTimeMillis());
