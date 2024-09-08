@@ -18,4 +18,5 @@ public class VoucherTypeMessage{
     private int totalQuantity;
     private int inStock;
     private LocalDateTime expiryDate;
+
 }
