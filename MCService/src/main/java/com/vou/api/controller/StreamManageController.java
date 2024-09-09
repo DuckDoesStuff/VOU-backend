@@ -20,7 +20,7 @@ public class StreamManageController {
 
     @KafkaListener(topics = "startStream")
     public void listenStartStreamRequest(InfoForStream message) {
-//        log.info("InfoForStream: {}", message);
+        log.info("Received request to start game: {}", message.getGameID());
         ((StreamService)streamService).startStream(message);
     }
 }

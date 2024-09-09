@@ -40,6 +40,6 @@ public class PromotionalEvent {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
-    @OneToMany(mappedBy = "promotionalEvent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "promotionalEvent", fetch = FetchType.EAGER)
     private List<VoucherType> vouchers;
 }

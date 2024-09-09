@@ -151,3 +151,34 @@ public class VoucherService {
         return dto;
     }
 }
+
+    public void rewardTopPlayers(GameScore gameScore) {
+        List<VoucherType> voucherType = voucherTypeRepository.findByGameID(gameScore.getGameID()).orElseThrow(() -> new VoucherException(ErrorCode.VOUCHER_NOT_FOUND));
+        if (voucherType.isEmpty()) return;
+        List<UserScore> userScores = gameScore.getUserScores();
+
+        int i = 1;
+        VoucherType voucher = voucherType.getFirst();
+        for (UserScore userScore : userScores) {
+            try {
+                givePlayerVoucher(UUID.fromString(userScore.getUserID()), voucher.getVoucherTypeID());
+            } catch (VoucherException e) {
+                switch (e.getErrorCode()) {
+                    case ErrorCode.VOUCHER_OUT_OF_STOCK:
+                        voucher = voucherType.get(i);
+                        i++;
+                        givePlayerVoucher(UUID.fromString(userScore.getUserID()), voucher.getVoucherTypeID());
+                        break;
+                    case ErrorCode.VOUCHER_ALREADY_SAVED:
+                        givePlayerVoucher(UUID.fromString(userScore.getUserID()), voucherType.get(i+1).getVoucherTypeID());
+                        break;
+                    default:
+                        i++;
+                        break;
+                }
+            } catch (Exception e) {
+                log.warn("Rewarding player: Failed to give player {} voucher", userScore.getUserID());
+            }
+        }
+    }
+}

@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Component
@@ -23,6 +24,7 @@ public class StreamScheduler {
 
     @Scheduled(fixedDelay = 30 * 1000)
     public void scanForStream() {
+        log.info("Game scheduler run");
         List<Game> games = gameRepository.findGamesReadyToStream(LocalDateTime.now());
 
         int count = 0;
@@ -41,7 +43,8 @@ public class StreamScheduler {
             info.setQuestions(game.getQuestions());
 
             infoForStreamKafkaService.send("startStream", info);
-            game.setQuizState("ENDED");
+            log.info("Sent request to stream a game");
+            game.setQuizState("STREAMING");
             gameRepository.save(game);
             count++;
         }
