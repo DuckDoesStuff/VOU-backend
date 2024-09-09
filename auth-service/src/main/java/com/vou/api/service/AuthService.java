@@ -17,8 +17,10 @@ import com.vou.api.repository.SessionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.text.ParseException;
 import java.util.*;
@@ -145,6 +147,7 @@ public class AuthService {
             // Generate OTP
             Otp otp = otpService.createOtp(authRegisterDto.getPhone(), auth);
             // Call SMS Service
+            sendSms(authRegisterDto.getPhone());
             // ??????
             log.info("SMS sent to phone: {}", authRegisterDto.getPhone());
         }
@@ -165,4 +168,36 @@ public class AuthService {
         authRepository.save(auth);
     }
 
+    public void sendSms(String phoneNumber) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://api.brevo.com/v3/transactionalSMS/sms";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("api-key", "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"); // Replace with your actual API key
+        headers.set("Content-Type", "application/json");
+        phoneNumber = phoneNumber.substring(1);
+
+        // Create request body with dynamic phone number
+        String body = "{\n" +
+                "  \"type\": \"marketing\",\n" +
+                "  \"unicodeEnabled\": true,\n" +
+                "  \"sender\": \"VOUAPI\",\n" +
+                "  \"recipient\": \"" + phoneNumber + "\",\n" +
+                "  \"content\": \"12345\",\n" +
+                "  \"tag\": \"testSMS\"\n" +
+                "}";
+
+        // Create HttpEntity
+        HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
+
+        // Make the HTTP POST request
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+
+        // Check response status
+        if (response.getStatusCode() == HttpStatus.OK) {
+            System.out.println("SMS sent successfully!");
+        } else {
+            System.out.println("Failed to send SMS. Status code: " + response.getStatusCode());
+        }
+    }
 }
