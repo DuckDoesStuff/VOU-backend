@@ -106,7 +106,7 @@ public class ExchangeRateService {
 
     public ApiResponse<List<CombinedResult>> getRequiredItemTypeWithExchangeRate(Long voucherTypeID) {
         ApiResponse<List<CombinedResult>> response = new ApiResponse<>();
-        List<CombinedResult> result = exchangeRateRepository.getCombinedResultByEventID(voucherTypeID);
+        List<CombinedResult> result = exchangeRateRepository.getCombinedResultByVoucherTypeID(voucherTypeID);
         response.setStatus(HttpStatus.OK.value());
         response.setResult(result);
         return response;

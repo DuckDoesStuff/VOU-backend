@@ -14,7 +14,7 @@ public interface ExchangeRateRepository extends MongoRepository<ExchangeRate, St
     List<ExchangeRate> findByVoucherTypeID(Long voucherTypeID);
 
     @Aggregation(pipeline = {
-            "{ '$match': { 'voucherTypeID': ?0 } }",  // Match based on eventID
+            "{ '$match': { 'voucherTypeID': ?0 } }",  // Match based on voucherTypeID
             "{ '$lookup': { 'from': 'item_types', 'localField': 'itemTypeID', 'foreignField': '_id', 'as': 'itemTypeDetails' } }",
             "{ '$unwind': '$itemTypeDetails' }",  // Flatten the results
             "{ '$project': { " +
@@ -26,5 +26,5 @@ public interface ExchangeRateRepository extends MongoRepository<ExchangeRate, St
                     "    'itemTypeDetails': 1" +
                     "} }"
     })
-    List<CombinedResult> getCombinedResultByEventID(Long voucherTypeID);
+    List<CombinedResult> getCombinedResultByVoucherTypeID(Long voucherTypeID);
 }

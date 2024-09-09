@@ -28,10 +28,10 @@ public class GameHistoryController {
         return gameHistoryService.getGameHistoriesByEventID(eventID);
     }
 
-    @GetMapping("/user/{userID}")
-    public List<GameHistory> getGameHistoriesByUserID(@PathVariable Long userID) {
-        return gameHistoryService.getGameHistoriesByUserID(userID);
-    }
+//    @GetMapping("/user/{userID}")
+//    public List<GameHistory> getGameHistoriesByUserID(@PathVariable Long userID) {
+//        return gameHistoryService.getGameHistoriesByUserID(userID);
+//    }
 
     @GetMapping("/game/{gameID}")
     public List<GameHistory> getGameHistoriesByGameID(@PathVariable Long gameID) {
