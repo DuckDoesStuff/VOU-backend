@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface VoucherRepository extends JpaRepository<VoucherType, Long> {
+public interface VoucherTypeRepository extends JpaRepository<VoucherType, Long> {
     List<VoucherType> findByPromotionalEvent(PromotionalEvent promotionalEvent);
     VoucherType findByVoucherTypeID(Long voucherTypeID);
+    Optional<List<VoucherType>> findByGameID(String gameID);
 }

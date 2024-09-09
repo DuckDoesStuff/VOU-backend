@@ -38,4 +38,6 @@ public class VoucherType {
     private String description;
 
     private String value;
+    private String code; // NULL -> QR
+    // NOT NULL -> CODE: XEM_PHIM
 }

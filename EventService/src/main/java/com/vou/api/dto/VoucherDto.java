@@ -17,10 +17,11 @@ public class VoucherDto {
     @NotNull(message = "Expiry date is required")
     public LocalDateTime expiryDate;
 
-    @NotNull(message = "Voucher name is required")
+    @NotNull(message = "VoucherUser name is required")
     public String nameOfVoucher;
     public String picture;
     public String description;
-    @NotNull(message = "Voucher value is required")
+    @NotNull(message = "VoucherUser value is required")
     public String value;
+    public String code;
 }
