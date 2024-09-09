@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface GameHistoryRepository extends MongoRepository<GameHistory, String> {
     List<GameHistory> findByEventID(Long eventID);
-//    List<GameHistory> findByUserID(Long userID);
+    List<GameHistory> findByUserID(Long userID);
     List<GameHistory> findByGameID(Long gameID);
 }

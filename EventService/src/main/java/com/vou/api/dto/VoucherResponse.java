@@ -1,14 +1,13 @@
 package com.vou.api.dto;
 
-
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class VoucherDto {
-    @NotNull(message = "EventID is required")
+public class VoucherResponse {
+    private Long voucherTypeID;
     public Long eventID;
     @NotNull(message = "GameID is required")
     public String gameID;

@@ -2,6 +2,7 @@ package com.vou.api.controller;
 
 // ExchangeRateController.java
 import com.vou.api.dto.ApiResponse;
+import com.vou.api.dto.CombinedResult;
 import com.vou.api.dto.CreateExchangeRateDTO;
 import com.vou.api.dto.ExchangeForVoucherDTO;
 import com.vou.api.entity.ExchangeRate;
@@ -37,6 +38,13 @@ public class ExchangeRateController {
     public List<ExchangeRate> getExchangeRatesByGameID(@PathVariable Long gameID) {
         return exchangeRateService.getExchangeRatesByGameID(gameID);
     }
+
+    @GetMapping("/voucher/{voucherTypeID}/required")
+    public ApiResponse<List<CombinedResult>> getRequiredItemTypeWithExchangeRate(@PathVariable Long voucherTypeID) {
+        System.out.println("get required item type with exchange rate " + voucherTypeID);
+        return exchangeRateService.getRequiredItemTypeWithExchangeRate(voucherTypeID);
+    }
+
 
     @GetMapping("/item/{itemTypeID}")
     public List<ExchangeRate> getExchangeRatesByItemTypeID(@PathVariable Long itemTypeID) {

@@ -53,6 +53,16 @@ public class ItemController {
         return itemService.getItemsOfUserInAnEvent(userID, eventID);
     }
 
+    // Get items of user in a game
+    @GetMapping("/user/{userID}/event/{eventID}/game/{gameID}")
+    public ResponseEntity<ApiResponse<List<ItemWithDetails>>> getItemsOfUserInAnEvent(@PathVariable String userID,
+                                                                                      @PathVariable Long eventID,
+                                                                                      @PathVariable ObjectId gameID) {
+        System.out.println("Get items of a user in a game" + userID + eventID.toString());
+        return itemService.getItemsOfUserInAGame(userID, gameID, eventID);
+    }
+
+
     @GetMapping("/itemType/{itemTypeID}")
     public List<Item> getItemsByItemTypeID(@PathVariable ObjectId itemTypeID) {
         return itemService.getItemsByItemTypeID(itemTypeID);
@@ -68,7 +78,7 @@ public class ItemController {
         itemService.deleteItem(id);
     }
 
-    @PostMapping("/random_item_type")
+        @PostMapping("/random_item_type")
     public ResponseEntity<ApiResponse<ItemType>> getRandomItemType(@RequestBody GetRandomItemTypeDTO getRandomItemTypeDTO) {
 //        System.out.println(getRandomItemTypeDTO.toString());
         return itemService.getRandomItem(getRandomItemTypeDTO);

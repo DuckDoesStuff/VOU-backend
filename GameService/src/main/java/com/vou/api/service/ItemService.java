@@ -72,6 +72,14 @@ public class ItemService {
         response.setResult(items);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    public ResponseEntity<ApiResponse<List<ItemWithDetails>>> getItemsOfUserInAGame(String userID, ObjectId gameID, Long eventID) {
+        ApiResponse<List<ItemWithDetails>> response = new ApiResponse<>();
+        List<ItemWithDetails> items = itemRepository.getItemsOfUserInAGame(userID, gameID, eventID);
+        response.setStatus(HttpStatus.OK.value());
+        response.setResult(items);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
     public Item saveItem(Item item) {
         return itemRepository.save(item);
     }
@@ -119,7 +127,6 @@ public class ItemService {
 
         // Send kafka message to report service for tracking user shake game activity
 
-
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("You just achieved an item");
         response.setResult(randomItem);
@@ -139,7 +146,7 @@ public class ItemService {
         Item itemB = itemRepository.findByEventIDAndGameIDAndItemTypeIDAndUserID(eventID, gameID, itemTypeIDA, userIDB);
         System.out.println(itemA);
         System.out.println(itemB);
-        if (itemA == null || itemB == null || itemA.getQuantity() < 1 || itemB.getQuantity() < 1) {
+        if (itemA == null || itemB == null || itemA.getQuantity() < 1) {
             return new ResponseEntity<>(
                     new ApiResponse<>(HttpStatus.BAD_REQUEST.value(),
                             "User does not have this item to exchange", null),

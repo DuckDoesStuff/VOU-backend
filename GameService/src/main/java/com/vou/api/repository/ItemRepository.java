@@ -24,5 +24,12 @@ public interface ItemRepository extends MongoRepository<Item, ObjectId> {
             "{ '$unwind': '$itemTypeDetails' }"
     })
     List<ItemWithDetails> getItemsOfUserInAnEvent(String userID, Long eventID);
+
+    @Aggregation(pipeline = {
+            "{ '$match': { 'userID': ?0, 'gameID': ?1, 'eventID': ?2 }}",
+            "{ '$lookup': { 'from': 'item_types', 'localField': 'itemTypeID', 'foreignField': '_id', 'as': 'itemTypeDetails' }}",
+            "{ '$unwind': '$itemTypeDetails' }"
+    })
+    List<ItemWithDetails> getItemsOfUserInAGame(String userID, ObjectId gameID, Long eventID);
     Item findByEventIDAndGameIDAndItemTypeIDAndUserID(Long eventID, ObjectId gameID, ObjectId itemTypeID, String userID);
 }

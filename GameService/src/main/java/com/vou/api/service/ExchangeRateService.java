@@ -84,6 +84,7 @@ public class ExchangeRateService {
         return exchangeRateRepository.findByVoucherTypeID(voucherTypeID);
     }
 
+
     public ResponseEntity<ApiResponse<CreateExchangeRateDTO>> saveExchangeRate(CreateExchangeRateDTO exchangeRateDTO) {
         // Convert DTO to entity
         ExchangeRate exchangeRate = convertToEntity(exchangeRateDTO);
@@ -101,6 +102,15 @@ public class ExchangeRateService {
         response.setResult(savedExchangeRateDTO);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    public ApiResponse<List<CombinedResult>> getRequiredItemTypeWithExchangeRate(Long voucherTypeID) {
+        ApiResponse<List<CombinedResult>> response = new ApiResponse<>();
+        List<CombinedResult> result = exchangeRateRepository.getCombinedResultByEventID(voucherTypeID);
+        response.setStatus(HttpStatus.OK.value());
+        response.setResult(result);
+        return response;
+//        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     // Conversion from DTO to Entity
@@ -148,23 +158,23 @@ public class ExchangeRateService {
                 // 1.2.1 If yes, decrease in stock and decrease quantity in user items
         item.setQuantity(item.getQuantity() - exchangeForVoucherDTO.getExchangeRate());
         // call event service to decrease voucher type totalQuantity
-        String url = "http://localhost:8003/event/voucher/decrease_quantity";
-        DecreaseQuantityDTO voucherRequest = new DecreaseQuantityDTO();
-        voucherRequest.setVoucherTypeID(exchangeForVoucherDTO.getVoucherTypeID());
-        voucherRequest.setTotalDecreased(exchangeForVoucherDTO.getExchangeRate());
-        HttpEntity<DecreaseQuantityDTO> requestEntity = new HttpEntity<>(voucherRequest);
-
-        ResponseEntity<ApiResponse<String>> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                requestEntity,
-                new ParameterizedTypeReference<ApiResponse<String>>() {}
-        );
-        if (responseEntity.getStatusCode() != HttpStatus.OK) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.setMessage("Cannot exchange this voucher");
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+//        String url = "http://localhost:8003/event/voucher/decrease_quantity";
+//        DecreaseQuantityDTO voucherRequest = new DecreaseQuantityDTO();
+//        voucherRequest.setVoucherTypeID(exchangeForVoucherDTO.getVoucherTypeID());
+//        voucherRequest.setTotalDecreased(exchangeForVoucherDTO.getExchangeRate());
+//        HttpEntity<DecreaseQuantityDTO> requestEntity = new HttpEntity<>(voucherRequest);
+//
+//        ResponseEntity<ApiResponse<String>> responseEntity = restTemplate.exchange(
+//                url,
+//                HttpMethod.POST,
+//                requestEntity,
+//                new ParameterizedTypeReference<ApiResponse<String>>() {}
+//        );
+//        if (responseEntity.getStatusCode() != HttpStatus.OK) {
+//            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+//            response.setMessage("Cannot exchange this voucher");
+//            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
         itemRepository.save(item);
         response.setMessage("You have exchange this voucher successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
