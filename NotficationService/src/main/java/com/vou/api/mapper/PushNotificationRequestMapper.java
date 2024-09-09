@@ -9,7 +9,7 @@ import org.mapstruct.Mappings;
 @Mapper(componentModel = "spring")
 public interface PushNotificationRequestMapper {
     @Mappings({
-         @Mapping(target="topic",source = "gameID"),
+         @Mapping(target="topic",source = "eventID"),
             @Mapping(target = "title", expression = "java(infoForStream.getGameName() + \" has started\")"),
             @Mapping(target = "content", expression = "java(infoForStream.getGameName() + \" of \" + infoForStream.getEventName() + \" is waiting for you to join\")")
     })
