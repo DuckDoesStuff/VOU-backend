@@ -54,4 +54,9 @@ public class GameController {
     public ResponseEntity<ApiResponse<Game>> addGameQuestion(@RequestParam ObjectId gameID, @RequestBody Game.Question questionDto) {
         return gameService.addGameQuestion(gameID, questionDto);
     }
+
+    @GetMapping("/game/ready")
+    public ResponseEntity<ApiResponse<List<Game>>> getGameReadyToStream() {
+        return gameService.getGameReadyToStream();
+    }
 }

@@ -46,8 +46,7 @@ public class AuthService {
     }
 
     public TokenDto authenticate(AuthDto authDto) {
-        if(authDto.getPassword().equals("admin") && authDto.getUsername().equals("admin"))
-        {
+        if (authDto.getPassword().equals("admin") && authDto.getUsername().equals("admin")) {
             System.out.println("Prime admin logging in");
             String token = jwtProvider.generateToken(authDto.getUsername(), Role.ADMIN.toString(), String.valueOf(1), false);
             String refreshToken = jwtProvider.generateToken(authDto.getUsername(), Role.ADMIN.toString(), String.valueOf(1), true);
@@ -65,7 +64,7 @@ public class AuthService {
         if (auth == null)
             throw new AuthException(ErrorCode.USER_NOT_EXIST);
 
-        if(auth.getProfileState() == ProfileState.LOCKED)
+        if (auth.getProfileState() == ProfileState.LOCKED)
             throw new AuthException(ErrorCode.ACCOUNT_LOCKED);
 
         if (auth.getRole() == Role.USER && authDto.getRole() != Role.USER)
@@ -139,13 +138,16 @@ public class AuthService {
         auth.setUsername(authRegisterDto.getUsername());
         auth.setPassword(passwordEncoder.encode(authRegisterDto.getPassword()));
         auth.setRole(authRegisterDto.getRole());
-        auth.setProfileState(ProfileState.PENDING);
+        auth.setProfileState(authRegisterDto.getRole() == Role.ADMIN ? ProfileState.VERIFIED : ProfileState.PENDING);
         authRepository.save(auth);
 
-        // Generate OTP
-        Otp otp = otpService.createOtp(authRegisterDto.getPhone(), auth);
-        // Call SMS Service
-        // ??????
+        if (authRegisterDto.getRole() != Role.ADMIN) {
+            // Generate OTP
+            Otp otp = otpService.createOtp(authRegisterDto.getPhone(), auth);
+            // Call SMS Service
+            // ??????
+            log.info("SMS sent to phone: {}", authRegisterDto.getPhone());
+        }
     }
 
     public void deleteAuth(String id) {
@@ -155,7 +157,7 @@ public class AuthService {
 
     public void updateAuth(String id, Role role, ProfileState state) {
         Optional<Auth> optAuth = authRepository.findById(id);
-        if(optAuth.isEmpty()) return;
+        if (optAuth.isEmpty()) return;
         Auth auth = optAuth.get();
         auth.setRole(role);
         auth.setProfileState(state);

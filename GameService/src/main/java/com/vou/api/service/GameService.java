@@ -14,7 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.w3c.dom.ls.LSException;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +32,7 @@ public class GameService {
     private final RestTemplate restTemplate;
 
     public GameService(RestTemplate restTemplate) {
-        this.restTemplate   = restTemplate;
+        this.restTemplate = restTemplate;
     }
 
     public ResponseEntity<ApiResponse<List<Game>>> getAllGames() {
@@ -194,6 +197,18 @@ public class GameService {
         response.setResult(game);
         return new ResponseEntity<>(
                 response,
+                HttpStatus.OK
+        );
+    }
+
+    public ResponseEntity<ApiResponse<List<Game>>> getGameReadyToStream() {
+        List<Game> games = gameRepository.findGamesReadyToStream(LocalDateTime.now());
+        ApiResponse<List<Game>> apiResponse = new ApiResponse<>();
+        apiResponse.setMessage("Game list at " + LocalDateTime.now());
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setResult(games);
+        return new ResponseEntity<>(
+                apiResponse,
                 HttpStatus.OK
         );
     }

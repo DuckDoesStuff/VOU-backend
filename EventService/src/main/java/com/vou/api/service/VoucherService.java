@@ -251,7 +251,7 @@ public class VoucherService {
 
     public void rewardTopPlayers(GameScore gameScore) {
         List<VoucherType> voucherType = voucherTypeRepository.findByGameID(gameScore.getGameID()).orElseThrow(() -> new VoucherException(ErrorCode.VOUCHER_NOT_FOUND));
-
+        if (voucherType.isEmpty()) return;
         List<UserScore> userScores = gameScore.getUserScores();
 
         int i = 1;
