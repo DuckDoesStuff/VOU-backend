@@ -62,6 +62,7 @@ public class ExchangeRateController {
     }
     @PostMapping("/exchange_rate/voucher")
     public ResponseEntity<ApiResponse<String>> exchangeForVoucher(@RequestBody ExchangeForVoucherDTO exchangeForVoucherDTO) {
+        System.out.println("exchange for voucher controller " + exchangeForVoucherDTO);
         return exchangeRateService.exchangeForVoucher(exchangeForVoucherDTO);
     }
 

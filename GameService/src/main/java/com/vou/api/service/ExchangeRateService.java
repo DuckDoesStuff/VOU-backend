@@ -36,14 +36,9 @@ public class ExchangeRateService {
     private ExchangeRateRepository exchangeRateRepository;
     @Autowired
     private ItemRepository itemRepository;
-    private final RestTemplate restTemplate;
 
-    Logger logger = LoggerFactory.getLogger(ExchangeRateService.class);
-
-
-    public ExchangeRateService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    @Autowired
+    private KafkaService<Object> kafkaService;
 
 
     public List<ExchangeRate> getAllExchangeRates() {
@@ -157,24 +152,14 @@ public class ExchangeRateService {
             // 1.2 Check if quantity is enough for exchangeRate
                 // 1.2.1 If yes, decrease in stock and decrease quantity in user items
         item.setQuantity(item.getQuantity() - exchangeForVoucherDTO.getExchangeRate());
-        // call event service to decrease voucher type totalQuantity
-//        String url = "http://localhost:8003/event/voucher/decrease_quantity";
-//        DecreaseQuantityDTO voucherRequest = new DecreaseQuantityDTO();
-//        voucherRequest.setVoucherTypeID(exchangeForVoucherDTO.getVoucherTypeID());
-//        voucherRequest.setTotalDecreased(exchangeForVoucherDTO.getExchangeRate());
-//        HttpEntity<DecreaseQuantityDTO> requestEntity = new HttpEntity<>(voucherRequest);
-//
-//        ResponseEntity<ApiResponse<String>> responseEntity = restTemplate.exchange(
-//                url,
-//                HttpMethod.POST,
-//                requestEntity,
-//                new ParameterizedTypeReference<ApiResponse<String>>() {}
-//        );
-//        if (responseEntity.getStatusCode() != HttpStatus.OK) {
-//            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-//            response.setMessage("Cannot exchange this voucher");
-//            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
+
+        // call kafka message to event service to update user voucher and voucher type
+        GiveUserVoucherMessage message = new GiveUserVoucherMessage();
+        message.setUserID(userID);
+        message.setVoucherTypeID(exchangeForVoucherDTO.getVoucherTypeID());
+        System.out.println("Give user voucher");
+        kafkaService.giveUserVoucher(message);
+
         itemRepository.save(item);
         response.setMessage("You have exchange this voucher successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);

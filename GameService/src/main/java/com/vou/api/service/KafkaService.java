@@ -1,5 +1,6 @@
 package com.vou.api.service;
 
+import com.vou.api.dto.GiveUserVoucherMessage;
 import com.vou.api.dto.PushTopicNotificationRequest;
 import com.vou.api.dto.UserActivityMessage;
 import com.vou.api.entity.Participant;
@@ -55,5 +56,10 @@ public class KafkaService<T> {
                 .content("You just received a gift from user: " + userB)
                 .build();
         kafkaTemplate.send("gave_a_gift", (T) message);
+    }
+
+    public void giveUserVoucher(GiveUserVoucherMessage message) {
+        System.out.println("Send give-user-voucher message from GameService" + message);
+        kafkaTemplate.send("give-user-voucher", (T) message);
     }
 }
