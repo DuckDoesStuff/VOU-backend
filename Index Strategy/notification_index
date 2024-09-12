@@ -1,0 +1,7 @@
+// notification
+// Tìm thông báo theo topic và người dùng
+db.notification.createIndex({topic:1})
+db.notification.createIndex({receiver:1})
+
+// userSubscribe
+// Không cần phải đặt index vì truy vấn theo userID = _id là khóa chính (dbms đã tự đặt index)

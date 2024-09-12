@@ -1,0 +1,4 @@
+// Câu lệnh tìm kiếm game để start stream
+db.games.createIndex({quizState:1,startTime:1})
+
+//Các câu lệnh còn lại tìm kiếm dựa trên khóa chính nên không đặt index
